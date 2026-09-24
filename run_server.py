@@ -1,5 +1,5 @@
 """
-One-click server launcher for RVSAT-1 Flight Operations Web Application.
+One-click server launcher for Icarus Flight Operations Web Application.
 """
 import sys
 import os
@@ -9,7 +9,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 if __name__ == "__main__":
     print("=======================================================================")
-    print("         LAUNCHING RVSAT-1 MISSION CONTROL FLIGHT SERVER               ")
+    print("         LAUNCHING ICARUS MISSION CONTROL FLIGHT SERVER               ")
     print("=======================================================================")
     print("  URL: http://localhost:8000")
     print("  Scoreboard Projector: http://localhost:8000/scoreboard")
