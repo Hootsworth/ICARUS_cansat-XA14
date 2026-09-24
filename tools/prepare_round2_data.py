@@ -47,7 +47,7 @@ def main():
 
     with zipfile.ZipFile(args.datasets) as source:
         for team_id in range(1, 12):
-            encrypted = encrypt(build_team_package(source, team_id), f"dataset_{team_id:02d}".encode())
+            encrypted = encrypt(build_team_package(source, team_id), key, f"dataset_{team_id:02d}".encode())
             path = os.path.join(args.out, f"dataset_{team_id:02d}.b64")
             with open(path, "wb") as f:
                 f.write(base64.b64encode(encrypted))
