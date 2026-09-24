@@ -238,6 +238,13 @@ async def challenge_detail_page(request: Request, challenge_id: str):
         conn.close()
         raise HTTPException(status_code=404, detail="Challenge not found.")
         
+    if ch["round_id"] == 2 and ch["phase"] in ("PHASE_2", "PHASE_3"):
+        required_phase = "PHASE_1" if ch["phase"] == "PHASE_2" else "PHASE_2"
+        cur.execute("SELECT 1 FROM flags WHERE team_id = ? AND phase = ?", (team["id"], required_phase))
+        if not cur.fetchone():
+            conn.close()
+            return RedirectResponse(url="/round2", status_code=302)
+
     cur.execute("SELECT * FROM submissions WHERE team_id = ? AND challenge_id = ? ORDER BY ts_utc_ms DESC", (team["id"], ch["id"]))
     submissions = [dict(s) for s in cur.fetchall()]
     
