@@ -159,15 +159,11 @@ async def dashboard_page(request: Request):
     
     conn.close()
     
-    # Round 4 retains only its own finale challenge; Round 2 owns C1-C3 and bonus.
+    # Round 4 retains only its live finale. Round 2 owns the telemetry investigation.
     phases = {
-        "PHASE_1": {"title": "Phase 1: Signal Acquisition", "desc": "Decode 30-min raw dump, compute drift, detect gap & tick wrap.", "challenges": []},
-        "PHASE_2": {"title": "Phase 2: Downlink Investigation", "desc": "Analyze 24h beacon & spend credits on 10-min passes to detect faults F1..F4.", "challenges": []},
-        "PHASE_3": {"title": "Phase 3: Fault Isolation", "desc": "Cascade ordering, OBC reboot timestamp, bit recovery, voltage calculation.", "challenges": []},
-        "BONUS": {"title": "Bonus Track: Spoofed Telecommands", "desc": "Verify uplink HMACs using split keys to isolate forged and replayed commands.", "challenges": []},
-        "FINALE": {"title": "Phase 4: Live Contingency Finale", "desc": "Real-time state machine anomaly recovery using flight runbook.", "challenges": []}
+        "FINALE": {"title": "Phase 4: Live Contingency Finale", "desc": "Real-time state machine anomaly recovery using the flight runbook.", "challenges": []}
     }
-    
+
     for ch in challenges:
         ch["is_solved"] = (ch["id"] in solves)
         ch["points_awarded"] = solves[ch["id"]]["points_awarded"] if ch["is_solved"] else 0
