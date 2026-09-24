@@ -298,6 +298,17 @@ async def download_phase_package(request: Request, team_id: int, phase_filename:
     if team and team["id"] != team_id and not is_admin(request):
         raise HTTPException(status_code=403, detail="Access denied to another team's package.")
         
+    # Evidence packages are staged by Round 2 phase.
+    if phase_filename.endswith("_phase2.zip") or phase_filename.endswith("_phase3.zip"):
+        conn = get_db_connection()
+        cur = conn.cursor()
+        required_phase = "PHASE_1" if phase_filename.endswith("_phase2.zip") else "PHASE_2"
+        cur.execute("SELECT 1 FROM flags WHERE team_id = ? AND phase = ?", (team_id, required_phase))
+        unlocked = cur.fetchone()
+        conn.close()
+        if not unlocked and not is_admin(request):
+            raise HTTPException(status_code=403, detail="This telemetry package is still sealed.")
+
     pkg_path = os.path.join(TEAMS_DATA_DIR, f"team_{team_id:02d}", "packages", phase_filename)
     if not os.path.exists(pkg_path):
         raise HTTPException(status_code=404, detail="Package file not found.")
