@@ -138,7 +138,7 @@ async def dashboard_page(request: Request):
     credits = cur.fetchone()["credits"]
     
     # Fetch all challenges
-    cur.execute("SELECT * FROM challenges ORDER BY order_num ASC")
+    cur.execute("SELECT * FROM challenges WHERE round_id IN (2, 4) ORDER BY order_num ASC")
     challenges = [dict(c) for c in cur.fetchall()]
     
     # Fetch team solves
@@ -159,7 +159,7 @@ async def dashboard_page(request: Request):
     
     conn.close()
     
-    # Organize challenges by phase (Round 4)
+    # Round 4 retains only its own finale challenge; Round 2 owns C1-C3 and bonus.
     phases = {
         "PHASE_1": {"title": "Phase 1: Signal Acquisition", "desc": "Decode 30-min raw dump, compute drift, detect gap & tick wrap.", "challenges": []},
         "PHASE_2": {"title": "Phase 2: Downlink Investigation", "desc": "Analyze 24h beacon & spend credits on 10-min passes to detect faults F1..F4.", "challenges": []},
@@ -171,10 +171,10 @@ async def dashboard_page(request: Request):
     for ch in challenges:
         ch["is_solved"] = (ch["id"] in solves)
         ch["points_awarded"] = solves[ch["id"]]["points_awarded"] if ch["is_solved"] else 0
-        if ch["phase"] in phases:
+        if ch["round_id"] == 4 and ch["phase"] in phases:
             phases[ch["phase"]]["challenges"].append(ch)
             
-    round4_score = sum(s["points_awarded"] for s in solves.values())
+    round4_score = sum(s["points_awarded"] for s in solves.values() if any(ch["id"] == s["challenge_id"] and ch["round_id"] == 4 for ch in challenges))
     
     # Establish defaults for each round
     rounds_summary = {}
