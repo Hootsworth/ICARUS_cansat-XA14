@@ -247,13 +247,13 @@
             <!-- Active Quiz Form (Shown after starting) -->
             <form id="r1-quiz-form" style="display: none;" onsubmit="handleRound1Submit(event)">
                 <div class="alert alert-info" style="margin-bottom: 1.5rem; font-size: 0.8rem;">
-                    ● Fullscreen Anti-Cheat Active. Do not switch tabs or exit fullscreen until your quiz is committed.
+                    ● Fullscreen Anti-Cheat Active. Do not switch tabs or exit fullscreen until your quiz is committed. 15 questions total (100 PTS).
                 </div>
 
                 <!-- Q1 -->
                 <div class="quiz-card">
-                    <div class="eyebrow">[PYTHON BASICS / 01]</div>
-                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">Which Python statement correctly opens a flight telemetry CSV for reading and ensures the file is safely closed?</div>
+                    <div class="eyebrow">[PYTHON FILE I/O / 01]</div>
+                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">Which Python statement correctly opens a flight telemetry CSV for reading and ensures the file is safely closed when exiting the context?</div>
                     <label class="quiz-opt"><input type="radio" name="q1" value="A" required> <span><code>f = open('flight.csv', 'r'); f.close()</code></span></label>
                     <label class="quiz-opt"><input type="radio" name="q1" value="B" required> <span><code>with open('flight.csv', 'r') as f:</code></span></label>
                     <label class="quiz-opt"><input type="radio" name="q1" value="C" required> <span><code>import csv; csv.load('flight.csv')</code></span></label>
@@ -263,11 +263,11 @@
                 <!-- Q2 -->
                 <div class="quiz-card">
                     <div class="eyebrow">[ELECTRONICS & OHM'S LAW / 02]</div>
-                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">A 3.3V flight computer bus powers a digital sensor module drawing 100mA (0.1A). What is the effective circuit load resistance?</div>
-                    <label class="quiz-opt"><input type="radio" name="q2" value="A" required> <span>330 &Omega;</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q2" value="B" required> <span>3.3 &Omega;</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q2" value="C" required> <span>33 &Omega; (since R = 3.3V / 0.1A)</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q2" value="D" required> <span>0.33 &Omega;</span></label>
+                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">A telemetry status LED has a forward voltage drop of 2.0V and requires 20mA (0.02A) forward current. When powered from a regulated 3.3V rail, what series resistor is required?</div>
+                    <label class="quiz-opt"><input type="radio" name="q2" value="A" required> <span>10 &Omega;</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q2" value="B" required> <span>65 &Omega; (since R = (3.3V - 2.0V) / 0.02A = 65 &Omega;)</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q2" value="C" required> <span>165 &Omega;</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q2" value="D" required> <span>330 &Omega;</span></label>
                 </div>
 
                 <!-- Q3 -->
@@ -275,7 +275,7 @@
                     <div class="eyebrow">[POWER BUDGET / 03]</div>
                     <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">Your CanSat payload is equipped with a 500 mAh single-cell LiPo battery. If total average continuous current draw during flight is 125 mA, what is the maximum expected runtime?</div>
                     <label class="quiz-opt"><input type="radio" name="q3" value="A" required> <span>2.5 hours</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q3" value="B" required> <span>4.0 hours (500 mAh / 125 mA = 4 hours)</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q3" value="B" required> <span>4.0 hours (500 mAh / 125 mA = 4.0 hours)</span></label>
                     <label class="quiz-opt"><input type="radio" name="q3" value="C" required> <span>6.2 hours</span></label>
                     <label class="quiz-opt"><input type="radio" name="q3" value="D" required> <span>1.25 hours</span></label>
                 </div>
@@ -283,35 +283,125 @@
                 <!-- Q4 -->
                 <div class="quiz-card">
                     <div class="eyebrow">[FLIGHT LOGIC / 04]</div>
-                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">In your onboard descent loop, which conditional statement properly triggers the recovery parachute only after the CanSat has begun falling and drops below 400 meters AGL?</div>
-                    <label class="quiz-opt"><input type="radio" name="q4" value="A" required> <span><code>if altitude < 400 and descent_rate > 0: deploy_chute()</code></span></label>
-                    <label class="quiz-opt"><input type="radio" name="q4" value="B" required> <span><code>if altitude > 400 or descent_rate < 0: deploy_chute()</code></span></label>
+                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">In onboard descent logic, which Python conditional properly commands parachute deployment only after falling below 400m and descending (downward vertical velocity &lt; 0)?</div>
+                    <label class="quiz-opt"><input type="radio" name="q4" value="A" required> <span><code>if altitude < 400 and velocity_z < 0: deploy_chute()</code></span></label>
+                    <label class="quiz-opt"><input type="radio" name="q4" value="B" required> <span><code>if altitude <= 400 or velocity_z > 0: deploy_chute()</code></span></label>
                     <label class="quiz-opt"><input type="radio" name="q4" value="C" required> <span><code>while altitude == 400: deploy_chute()</code></span></label>
-                    <label class="quiz-opt"><input type="radio" name="q4" value="D" required> <span><code>if descent_rate == 0: deploy_chute()</code></span></label>
+                    <label class="quiz-opt"><input type="radio" name="q4" value="D" required> <span><code>if altitude > 400 and velocity_z < 0: deploy_chute()</code></span></label>
                 </div>
 
                 <!-- Q5 -->
                 <div class="quiz-card">
                     <div class="eyebrow">[INSTRUMENTATION / 05]</div>
-                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">Which sensor component is specifically responsible for measuring the 3-axis rotational velocity and angular roll rate of the rocket?</div>
-                    <label class="quiz-opt"><input type="radio" name="q5" value="A" required> <span>Barometric pressure transducer (BMP280)</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q5" value="B" required> <span>Linear optical encoder</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q5" value="C" required> <span>Thermistor bridge</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q5" value="D" required> <span>3-Axis Gyroscope / IMU</span></label>
+                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">Which sensor component is specifically responsible for measuring the 3-axis rotational velocity and angular roll rate of the payload in degrees per second (&deg;/s)?</div>
+                    <label class="quiz-opt"><input type="radio" name="q5" value="A" required> <span>Barometric pressure transducer</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q5" value="B" required> <span>Digital optical encoder</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q5" value="C" required> <span>3-Axis Gyroscope / IMU rate sensor</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q5" value="D" required> <span>Thermistor bridge</span></label>
                 </div>
 
                 <!-- Q6 -->
                 <div class="quiz-card">
-                    <div class="eyebrow">[CIRCUIT DESIGN / 06]</div>
-                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">What hazard occurs if a 5.0V analog sensor is wired directly to an ESP32 / STM32 microcontroller pin with a maximum voltage rating of 3.3V without a voltage divider?</div>
-                    <label class="quiz-opt"><input type="radio" name="q6" value="A" required> <span>The sensor will read half of its true measurement</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q6" value="B" required> <span>Over-voltage injection causes internal clamping diode breakdown and permanent MCU destruction</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q6" value="C" required> <span>The battery voltage automatically drops to 1.8V</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q6" value="D" required> <span>No effect; all modern microcontrollers step down 5V natively</span></label>
+                    <div class="eyebrow">[CIRCUIT DESIGN & LOGIC LEVELS / 06]</div>
+                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">What hazard occurs if an unshifted 5.0V UART output signal is connected directly to a 3.3V microcontroller GPIO pin?</div>
+                    <label class="quiz-opt"><input type="radio" name="q6" value="A" required> <span>The transmission baud rate is cut in half</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q6" value="B" required> <span>Over-voltage injection stresses internal clamping diodes and causes permanent silicon damage</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q6" value="C" required> <span>The signal automatically steps down to 3.3V with zero current</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q6" value="D" required> <span>The battery voltage instantly resets to 0V</span></label>
+                </div>
+
+                <!-- Q7 -->
+                <div class="quiz-card">
+                    <div class="eyebrow">[ELECTRONICS - POWER DECOUPLING / 07]</div>
+                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">What is the primary engineering purpose of placing a 0.1 &mu;F ceramic decoupling capacitor immediately adjacent to an IC's VCC/VDD pin?</div>
+                    <label class="quiz-opt"><input type="radio" name="q7" value="A" required> <span>To step up the DC voltage from 3.3V to 5V</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q7" value="B" required> <span>To filter high-frequency switching noise and provide immediate local charge during transient current demands</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q7" value="C" required> <span>To store enough power to run the payload for hours after battery disconnection</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q7" value="D" required> <span>To pull down open-drain communication signals</span></label>
+                </div>
+
+                <!-- Q8 -->
+                <div class="quiz-card">
+                    <div class="eyebrow">[PYTHON DATA PARSING / 08]</div>
+                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">In Python, how do you safely parse a raw radio packet string like <code>"  1013.25\r\n"</code> into a floating-point number?</div>
+                    <label class="quiz-opt"><input type="radio" name="q8" value="A" required> <span><code>int("  1013.25\r\n")</code></span></label>
+                    <label class="quiz-opt"><input type="radio" name="q8" value="B" required> <span><code>float("  1013.25\r\n".strip())</code></span></label>
+                    <label class="quiz-opt"><input type="radio" name="q8" value="C" required> <span><code>str.to_float("  1013.25\r\n")</code></span></label>
+                    <label class="quiz-opt"><input type="radio" name="q8" value="D" required> <span><code>eval_numeric("  1013.25\r\n")</code></span></label>
+                </div>
+
+                <!-- Q9 -->
+                <div class="quiz-card">
+                    <div class="eyebrow">[COMMUNICATION BUSSES - I2C / 09]</div>
+                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">Why does an I2C communication bus (SDA and SCL) require external pull-up resistors to the positive voltage rail?</div>
+                    <label class="quiz-opt"><input type="radio" name="q9" value="A" required> <span>Because I2C devices generate excessive high-voltage pulses that must be absorbed</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q9" value="B" required> <span>Because I2C pins have open-drain/open-collector drivers and require pull-ups to pull the bus HIGH when idle</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q9" value="C" required> <span>To dynamically synchronize the clock frequency between master and slave</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q9" value="D" required> <span>To convert serial data into parallel words</span></label>
+                </div>
+
+                <!-- Q10 -->
+                <div class="quiz-card">
+                    <div class="eyebrow">[ADC RESOLUTION / 10]</div>
+                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">A microcontroller features a 10-bit Analog-to-Digital Converter (ADC) with a 3.3V reference. How many discrete quantization levels exist, and what is the approximate step resolution?</div>
+                    <label class="quiz-opt"><input type="radio" name="q10" value="A" required> <span>256 steps (&approx; 12.89 mV per step)</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q10" value="B" required> <span>1024 steps (&approx; 3.22 mV per step, since 3.3V / 1024)</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q10" value="C" required> <span>4096 steps (&approx; 0.81 mV per step)</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q10" value="D" required> <span>512 steps (&approx; 6.45 mV per step)</span></label>
+                </div>
+
+                <!-- Q11 -->
+                <div class="quiz-card">
+                    <div class="eyebrow">[PYTHON DATA STRUCTURES / 11]</div>
+                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">Which built-in Python collection data structure is mutable, unordered, and strictly prevents duplicate elements?</div>
+                    <label class="quiz-opt"><input type="radio" name="q11" value="A" required> <span><code>list</code></span></label>
+                    <label class="quiz-opt"><input type="radio" name="q11" value="B" required> <span><code>tuple</code></span></label>
+                    <label class="quiz-opt"><input type="radio" name="q11" value="C" required> <span><code>set</code></span></label>
+                    <label class="quiz-opt"><input type="radio" name="q11" value="D" required> <span><code>dict_keys</code></span></label>
+                </div>
+
+                <!-- Q12 -->
+                <div class="quiz-card">
+                    <div class="eyebrow">[AVIONICS RELIABILITY / 12]</div>
+                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">What is the primary role of an onboard Hardware Watchdog Timer (WDT) in CanSat flight software?</div>
+                    <label class="quiz-opt"><input type="radio" name="q12" value="A" required> <span>To measure battery internal temperature and trigger cooling</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q12" value="B" required> <span>To automatically reboot the microcontroller if firmware freezes, enters an infinite loop, or hangs</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q12" value="C" required> <span>To encrypt radio telemetry packets before transmission</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q12" value="D" required> <span>To calculate GPS clock drift</span></label>
+                </div>
+
+                <!-- Q13 -->
+                <div class="quiz-card">
+                    <div class="eyebrow">[ELECTRONICS - VOLTAGE DIVIDER / 13]</div>
+                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">A voltage divider consists of R1 = 10 k&Omega; and R2 = 10 k&Omega;. If an input voltage of 6.60V is applied across the divider, what voltage appears at the output node across R2?</div>
+                    <label class="quiz-opt"><input type="radio" name="q13" value="A" required> <span>1.65 V</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q13" value="B" required> <span>3.30 V (since Vout = 6.60V &times; [10k / (10k + 10k)])</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q13" value="C" required> <span>5.00 V</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q13" value="D" required> <span>6.60 V</span></label>
+                </div>
+
+                <!-- Q14 -->
+                <div class="quiz-card">
+                    <div class="eyebrow">[PYTHON STATISTICS / 14]</div>
+                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">Given a list of calibrated sensor pressure readings <code>pressures = [1013.2, 1010.5, 1008.0]</code>, which Python expression computes the standard arithmetic mean?</div>
+                    <label class="quiz-opt"><input type="radio" name="q14" value="A" required> <span><code>pressures.mean()</code></span></label>
+                    <label class="quiz-opt"><input type="radio" name="q14" value="B" required> <span><code>sum(pressures) / len(pressures)</code></span></label>
+                    <label class="quiz-opt"><input type="radio" name="q14" value="C" required> <span><code>average(pressures)</code></span></label>
+                    <label class="quiz-opt"><input type="radio" name="q14" value="D" required> <span><code>pressures.average()</code></span></label>
+                </div>
+
+                <!-- Q15 -->
+                <div class="quiz-card">
+                    <div class="eyebrow">[POWER ELECTRONICS / 15]</div>
+                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">A long-range radio transmitter draws 450mA (0.45A) from a 3.3V power bus during an RF burst. What electrical power is consumed during this transmission?</div>
+                    <label class="quiz-opt"><input type="radio" name="q15" value="A" required> <span>0.742 W</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q15" value="B" required> <span>1.485 W (P = V &times; I = 3.3V &times; 0.45A)</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q15" value="C" required> <span>3.750 W</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q15" value="D" required> <span>7.333 W</span></label>
                 </div>
 
                 <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.95rem; font-size: 0.95rem;">
-                    Submit Launch Planning Verification &rarr;
+                    Submit Launch Planning Verification (15/15) &rarr;
                 </button>
             </form>
         </div>
@@ -463,68 +553,162 @@ print(f"Impact Status: {packets[-1]['status_flags']}")
             </div>
 
             <form id="r4-quiz-form" onsubmit="handleRound4Submit(event)">
+                <div class="alert alert-info" style="margin-bottom: 1.5rem; font-size: 0.8rem;">
+                    ● Official Forensic Investigation Board. Answer all 15 questions based on blackbox telemetry (Max 120 PTS: 8 PTS each).
+                </div>
+
                 <!-- Q1 -->
                 <div class="quiz-card">
-                    <div class="eyebrow">[ANOMALY ONSET / 01]</div>
-                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">At what timestamp in the flight record did the electrical bus voltage plunge below safe operational limits (&lt; 3.0V)?</div>
-                    <label class="quiz-opt"><input type="radio" name="q1" value="A" required> <span>t = 15,000 ms (Apogee peak)</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q1" value="B" required> <span>t = 34,500 ms (Onset of transmitter current surge)</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q1" value="C" required> <span>t = 5,000 ms (Initial boost phase)</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q1" value="D" required> <span>t = 61,200 ms (Ground impact)</span></label>
+                    <div class="eyebrow">[APOGEE TIMING / 01]</div>
+                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">At what flight timestamp did the rocket reach its apogee (peak altitude where vertical velocity transitioned to 0.0 m/s)?</div>
+                    <label class="quiz-opt"><input type="radio" name="q1" value="A" required> <span>t = 5,000 ms (5.0s)</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q1" value="B" required> <span>t = 15,000 ms (15.0s)</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q1" value="C" required> <span>t = 25,000 ms (25.0s)</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q1" value="D" required> <span>t = 35,000 ms (35.0s)</span></label>
                 </div>
 
                 <!-- Q2 -->
                 <div class="quiz-card">
-                    <div class="eyebrow">[INITIAL FAILURE SUBSYSTEM / 02]</div>
-                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">Which subsystem suffered the primary root-cause failure that initiated the cascading flight failure?</div>
-                    <label class="quiz-opt"><input type="radio" name="q2" value="A" required> <span>Electrical Power System (EPS battery voltage sag under transmit burst)</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q2" value="B" required> <span>Atmospheric Barometer transducer rupture</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q2" value="C" required> <span>Parachute mechanical canopy fabric tearing</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q2" value="D" required> <span>GPS constellation loss of lock</span></label>
+                    <div class="eyebrow">[PEAK ALTITUDE RECORD / 02]</div>
+                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">What was the absolute maximum altitude achieved by the vehicle above launch level recorded by the barometric sensor?</div>
+                    <label class="quiz-opt"><input type="radio" name="q2" value="A" required> <span>983.0 meters AGL</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q2" value="B" required> <span>1,215.0 meters AGL</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q2" value="C" required> <span>1,580.4 meters AGL</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q2" value="D" required> <span>2,430.0 meters AGL</span></label>
                 </div>
 
                 <!-- Q3 -->
                 <div class="quiz-card">
-                    <div class="eyebrow">[PEAK ALTITUDE / 03]</div>
-                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">What was the true maximum altitude (Apogee) achieved by the vehicle before descending?</div>
-                    <label class="quiz-opt"><input type="radio" name="q3" value="A" required> <span>1,215 meters AGL</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q3" value="B" required> <span>580 meters AGL</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q3" value="C" required> <span>2,400 meters AGL</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q3" value="D" required> <span>320 meters AGL</span></label>
+                    <div class="eyebrow">[LIFTOFF DYNAMICS / 03]</div>
+                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">What was the initial vertical acceleration (Gz) registered by the accelerometer during motor burn at liftoff (t = 0 ms)?</div>
+                    <label class="quiz-opt"><input type="radio" name="q3" value="A" required> <span>+1.00 G</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q3" value="B" required> <span>+3.29 G</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q3" value="C" required> <span>+9.81 G</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q3" value="D" required> <span>+18.40 G</span></label>
                 </div>
 
                 <!-- Q4 -->
                 <div class="quiz-card">
-                    <div class="eyebrow">[RECOVERY FAILURE CAUSE / 04]</div>
-                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">Why did the main recovery parachute fail to deploy at the programmed 400m AGL threshold?</div>
-                    <label class="quiz-opt"><input type="radio" name="q4" value="A" required> <span>MCU brownout reset during bus sag prevented the parachute squib ejection command from executing</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q4" value="B" required> <span>The parachute ejection spring snapped from excessive acceleration</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q4" value="C" required> <span>The CanSat was descending too slowly to trigger the airspeed threshold</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q4" value="D" required> <span>The parachute successfully deployed but was detached by crosswinds</span></label>
+                    <div class="eyebrow">[FREEFALL CHARACTERISTICS / 04]</div>
+                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">Following apogee during initial unpowered descent (t = 25,000 ms to 34,000 ms), what was the steady freefall vertical velocity before anomaly onset?</div>
+                    <label class="quiz-opt"><input type="radio" name="q4" value="A" required> <span>-9.8 m/s</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q4" value="B" required> <span>-38.0 m/s</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q4" value="C" required> <span>-62.5 m/s</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q4" value="D" required> <span>-95.0 m/s</span></label>
                 </div>
 
                 <!-- Q5 -->
                 <div class="quiz-card">
-                    <div class="eyebrow">[IMPACT KINEMATICS / 05]</div>
-                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">What was the peak deceleration shock (G-force) recorded upon ground impact at t = 61,200 ms?</div>
-                    <label class="quiz-opt"><input type="radio" name="q5" value="A" required> <span>-1.0 G</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q5" value="B" required> <span>-5.4 G</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q5" value="C" required> <span>-22.4 G</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q5" value="D" required> <span>-88.0 G</span></label>
+                    <div class="eyebrow">[ANOMALY ONSET / 05]</div>
+                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">At what timestamp in the blackbox telemetry record does the flight status flag first transition to ANOMALY_EPS_VOLTAGE_SAG_BROWNOUT?</div>
+                    <label class="quiz-opt"><input type="radio" name="q5" value="A" required> <span>t = 15,000 ms</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q5" value="B" required> <span>t = 25,000 ms</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q5" value="C" required> <span>t = 35,000 ms (35.0s)</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q5" value="D" required> <span>t = 49,500 ms</span></label>
                 </div>
 
                 <!-- Q6 -->
                 <div class="quiz-card">
-                    <div class="eyebrow">[OFFICIAL CLASSIFICATION / 06]</div>
-                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">What is the final Flight Director anomaly classification for this mission incident?</div>
-                    <label class="quiz-opt"><input type="radio" name="q6" value="A" required> <span>CLASS-A: Primary EPS Voltage Collapse causing Recovery Actuation Failure</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q6" value="B" required> <span>CLASS-B: Structural Aerodynamic Disintegration</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q6" value="C" required> <span>CLASS-C: Ground Station Command Telemetry Loss</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q6" value="D" required> <span>CLASS-D: Sensor Calibration Scale Error</span></label>
+                    <div class="eyebrow">[BUS VOLTAGE COLLAPSE / 06]</div>
+                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">At the onset of the anomaly (t = 35,000 ms), how low did the battery bus voltage plunge from its previous nominal 3.77V level?</div>
+                    <label class="quiz-opt"><input type="radio" name="q6" value="A" required> <span>Dropped to 3.50 V</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q6" value="B" required> <span>Dropped to 2.39 V</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q6" value="C" required> <span>Dropped to 1.20 V</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q6" value="D" required> <span>Dropped to 0.00 V</span></label>
+                </div>
+
+                <!-- Q7 -->
+                <div class="quiz-card">
+                    <div class="eyebrow">[CURRENT CONSUMPTION SURGE / 07]</div>
+                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">What current draw surge directly coincided with the severe voltage collapse between t = 35,000 ms and 36,500 ms?</div>
+                    <label class="quiz-opt"><input type="radio" name="q7" value="A" required> <span>Current remained normal at 140 mA</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q7" value="B" required> <span>Current surged from ~140 mA up to ~700 mA (0.70 A)</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q7" value="C" required> <span>Current dropped to 0 mA due to open circuit</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q7" value="D" required> <span>Current surged past 10,000 mA</span></label>
+                </div>
+
+                <!-- Q8 -->
+                <div class="quiz-card">
+                    <div class="eyebrow">[DEPLOYMENT ALTITUDE CRITERIA / 08]</div>
+                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">According to flight operational parameters, at what target altitude was the recovery parachute deployment squib programmed to trigger?</div>
+                    <label class="quiz-opt"><input type="radio" name="q8" value="A" required> <span>1,000 meters AGL</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q8" value="B" required> <span>400 meters AGL</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q8" value="C" required> <span>200 meters AGL</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q8" value="D" required> <span>50 meters AGL</span></label>
+                </div>
+
+                <!-- Q9 -->
+                <div class="quiz-card">
+                    <div class="eyebrow">[RECOVERY ACTUATION ROOT CAUSE / 09]</div>
+                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">Why did the parachute deployment squib fail to fire when the CanSat descended through the 400m threshold (t &approx; 39,000 ms)?</div>
+                    <label class="quiz-opt"><input type="radio" name="q9" value="A" required> <span>The parachute canopy was torn by high wind shear</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q9" value="B" required> <span>Severe bus voltage sag below 2.4V caused an MCU brownout reset / power lockout, suppressing the squib firing routine</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q9" value="C" required> <span>The barometric sensor disconnected from the I2C bus</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q9" value="D" required> <span>The flight computer assumed the payload had already landed</span></label>
+                </div>
+
+                <!-- Q10 -->
+                <div class="quiz-card">
+                    <div class="eyebrow">[POST-ANOMALY TERMINAL VELOCITY / 10]</div>
+                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">Following recovery failure at t = 42,500 ms (RECOVERY_DEPLOY_FAILED_TERMINAL_DESCENT), what was the uncontrolled terminal descent velocity?</div>
+                    <label class="quiz-opt"><input type="radio" name="q10" value="A" required> <span>-12.0 m/s</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q10" value="B" required> <span>-24.5 m/s</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q10" value="C" required> <span>-43.5 to -44.8 m/s (~160 km/h)</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q10" value="D" required> <span>-98.0 m/s</span></label>
+                </div>
+
+                <!-- Q11 -->
+                <div class="quiz-card">
+                    <div class="eyebrow">[ATTITUDE & STABILITY / 11]</div>
+                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">What do the gyroscope angular rate readings (gyro_x_dps, gyro_y_dps) reveal about payload attitude between 42,500 ms and 60,000 ms?</div>
+                    <label class="quiz-opt"><input type="radio" name="q11" value="A" required> <span>Stable upright orientation with near-zero angular motion</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q11" value="B" required> <span>Severe chaotic tumbling with rotational rates oscillating wildly up to &plusmn;47&deg;/s</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q11" value="C" required> <span>Steady single-axis roll stabilization at 2&deg;/s</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q11" value="D" required> <span>Dead sensor output reporting constant zero</span></label>
+                </div>
+
+                <!-- Q12 -->
+                <div class="quiz-card">
+                    <div class="eyebrow">[GROUND IMPACT TIMESTAMPS / 12]</div>
+                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">At what exact timestamp did the flight computer register ground collision, changing status to GROUND_IMPACT_TERMINATED?</div>
+                    <label class="quiz-opt"><input type="radio" name="q12" value="A" required> <span>t = 35,000 ms</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q12" value="B" required> <span>t = 49,500 ms</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q12" value="C" required> <span>t = 61,500 ms (61.5s)</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q12" value="D" required> <span>t = 75,000 ms</span></label>
+                </div>
+
+                <!-- Q13 -->
+                <div class="quiz-card">
+                    <div class="eyebrow">[IMPACT DECELERATION FORCE / 13]</div>
+                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">What maximum impact deceleration shock was recorded on the vertical Z-axis accelerometer (accel_z_g) upon collision?</div>
+                    <label class="quiz-opt"><input type="radio" name="q13" value="A" required> <span>-3.29 G</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q13" value="B" required> <span>-9.81 G</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q13" value="C" required> <span>-22.40 G</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q13" value="D" required> <span>-55.00 G</span></label>
+                </div>
+
+                <!-- Q14 -->
+                <div class="quiz-card">
+                    <div class="eyebrow">[ROOT CAUSE CLASSIFICATION / 14]</div>
+                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">Based on the comprehensive telemetry investigation, what was the primary root cause that resulted in the total loss of the CanSat?</div>
+                    <label class="quiz-opt"><input type="radio" name="q14" value="A" required> <span>Parachute canopy structural rip caused by aerodynamic buffeting</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q14" value="B" required> <span>Primary EPS battery voltage collapse under high current load causing MCU brownout and recovery deployment lockout</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q14" value="C" required> <span>Barometer calibration error giving false positive ground detection</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q14" value="D" required> <span>RF radio transmitter frequency drift disabling ground control uplink</span></label>
+                </div>
+
+                <!-- Q15 -->
+                <div class="quiz-card">
+                    <div class="eyebrow">[CORRECTIVE ACTION MANDATE / 15]</div>
+                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">To prevent this specific catastrophic failure mode on future missions, what hardware modification is strictly required?</div>
+                    <label class="quiz-opt"><input type="radio" name="q15" value="A" required> <span>Remove the parachute recovery subsystem to save payload weight</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q15" value="B" required> <span>Electrically isolate pyrotechnic squibs / high-current RF stages from MCU logic using separate regulators and supercapacitor buffering</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q15" value="C" required> <span>Reduce telemetry logging frequency from 2 Hz down to 0.1 Hz</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q15" value="D" required> <span>Replace the microcontroller with an analog timer circuit</span></label>
                 </div>
 
                 <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.95rem; font-size: 0.95rem;">
-                    Submit Root-Cause Investigation & Conclude Mission &rarr;
+                    Submit Root-Cause Investigation Findings (15/15) &rarr;
                 </button>
             </form>
         </div>

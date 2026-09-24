@@ -224,21 +224,30 @@ class IcarusGitHubPagesEngine {
     }
 
     // -------------------------------------------------------------------------
-    // Round 1: Launch Planning Quiz Evaluation
+    // Round 1: Launch Planning Quiz Evaluation (15 Questions)
     // -------------------------------------------------------------------------
     submitRound1Quiz(answers) {
         const team = this.getTeamData();
         const rubric = {
-            q1: "B", // with open('flight.csv', 'r') as f:
-            q2: "C", // 33 ohms (3.3V / 0.1A = 33)
-            q3: "B", // 4 hours (500 / 125 = 4)
-            q4: "A", // if altitude < 400 and descent_rate > 0:
-            q5: "D", // Gyroscope (angular rate)
-            q6: "B"  // 3.3V ADC damage / brownout risk
+            q1: "B",  // with open('flight.csv', 'r') as f:
+            q2: "B",  // 65 ohms ((3.3 - 2.0) / 0.02 = 65)
+            q3: "B",  // 4.0 hours (500 / 125 = 4.0)
+            q4: "A",  // if altitude < 400 and velocity_z < 0:
+            q5: "C",  // Gyroscope (angular rotation rate in deg/s)
+            q6: "B",  // Overvoltage damage risk to 3.3V GPIO
+            q7: "B",  // High-frequency decoupling and transient supply stabilization
+            q8: "B",  // float("  1013.25\n".strip())
+            q9: "B",  // Open-drain/open-collector requires pull-ups to pull HIGH
+            q10: "B", // 1024 steps (~3.22 mV per step)
+            q11: "C", // set (unordered, mutable, unique elements)
+            q12: "B", // Watchdog Timer reboots MCU if firmware hangs
+            q13: "B", // 3.30V (6.6 * (10 / 20) = 3.3V)
+            q14: "B", // sum(pressures) / len(pressures)
+            q15: "B"  // 1.485 W (3.3V * 0.45A = 1.485 W)
         };
 
         let correct = 0;
-        const total = 6;
+        const total = 15;
         for (const [k, v] of Object.entries(rubric)) {
             if (answers[k] && answers[k] === v) correct++;
         }
@@ -326,26 +335,35 @@ class IcarusGitHubPagesEngine {
     }
 
     // -------------------------------------------------------------------------
-    // Round 4: Root Cause Investigation Quiz Evaluation
+    // Round 4: Root Cause Investigation Quiz Evaluation (15 Questions)
     // -------------------------------------------------------------------------
     submitRound4Quiz(answers) {
         const team = this.getTeamData();
         const rubric = {
-            q1: "B", // 34500 ms (~34.5s power sag onset)
-            q2: "A", // Electrical Power System (Battery brownout under transmit pulse)
-            q3: "A", // 1215 meters apogee
-            q4: "A", // MCU brownout reset prevented deployment squib firing
-            q5: "C", // -22.4 G ground impact shock
-            q6: "A"  // CLASS-A: Primary EPS Voltage Collapse
+            q1: "B",  // 15,000 ms (15.0s) Apogee timestamp
+            q2: "B",  // 1,215.0 m peak altitude
+            q3: "B",  // 3.29 G liftoff acceleration
+            q4: "B",  // -38.0 m/s nominal freefall velocity
+            q5: "C",  // 35,000 ms (35.0s) EPS voltage sag anomaly onset
+            q6: "B",  // 2.39 V voltage sag level
+            q7: "B",  // ~700 mA current surge
+            q8: "B",  // 400 m deployment threshold altitude
+            q9: "B",  // MCU brownout reset prevented squib firing
+            q10: "C", // -43.5 to -44.8 m/s terminal descent velocity
+            q11: "B", // Violent tumbling with gyro rates swinging to ±47 deg/s
+            q12: "C", // 61,500 ms (61.5s) ground impact timestamp
+            q13: "C", // -22.40 G peak impact deceleration shock
+            q14: "B", // Primary EPS voltage collapse under high load causing recovery failure
+            q15: "B"  // Electrically isolate pyrotechnic/RF circuitry from MCU logic
         };
 
         let correct = 0;
-        const total = 6;
+        const total = 15;
         for (const [k, v] of Object.entries(rubric)) {
             if (answers[k] && answers[k] === v) correct++;
         }
 
-        const score = correct * 20; // 6 * 20 = 120 PTS max
+        const score = correct * 8; // 15 * 8 = 120 PTS max
         team.r4.status = "submitted";
         team.r4.score = score;
         team.r4.answers = answers;
@@ -359,6 +377,51 @@ class IcarusGitHubPagesEngine {
             total: total,
             message: `Root Cause Investigation evaluated: ${correct}/${total} findings correct (+${score} PTS).`
         };
+    }
+
+    // -------------------------------------------------------------------------
+    // Admin Stage Retake & Reset Methods
+    // -------------------------------------------------------------------------
+    resetTeamRound(teamId, roundNum) {
+        const tid = parseInt(teamId);
+        const team = this.getTeamData(tid);
+        const rKey = String(roundNum).toLowerCase();
+
+        if (rKey === "1" || rKey === "r1" || rKey === "all") {
+            team.r1 = { status: "active", score: 0, answers: null, completedAt: null };
+        }
+        if (rKey === "2" || rKey === "r2" || rKey === "all") {
+            team.r2 = { status: "active", rawScore: 0, rankPts: 0, completedAt: null };
+        }
+        if (rKey === "3" || rKey === "r3" || rKey === "all") {
+            team.r3 = { status: "active", score: 0, code: "", completedAt: null };
+        }
+        if (rKey === "4" || rKey === "r4" || rKey === "all") {
+            team.r4 = { status: "active", score: 0, answers: null, completedAt: null };
+        }
+
+        this.saveTeamData(team, tid);
+        this.recalculateRound2Rankings();
+
+        return {
+            success: true,
+            teamId: tid,
+            teamName: team.name,
+            round: rKey,
+            message: `Retake granted: Station ${tid} (${team.name}) round ${rKey.toUpperCase()} reset to active.`
+        };
+    }
+
+    unlockTeamRound(teamId, roundNum) {
+        const tid = parseInt(teamId);
+        const team = this.getTeamData(tid);
+        const rKey = `r${roundNum}`;
+        if (team[rKey]) {
+            team[rKey].status = "active";
+            this.saveTeamData(team, tid);
+            return { success: true, message: `Round ${roundNum} unlocked for Station ${tid}.` };
+        }
+        return { success: false, message: "Invalid round specified." };
     }
 
     // -------------------------------------------------------------------------

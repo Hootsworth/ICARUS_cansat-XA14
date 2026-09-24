@@ -192,6 +192,60 @@
             </div>
         </div>
 
+        <!-- STATION RETAKE & STAGE RESET MANAGER -->
+        <div class="card" style="margin-bottom: 2.5rem; border-left: 4px solid #2563eb;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
+                <div>
+                    <div class="eyebrow" style="color: #2563eb;">[ROUND RETAKE & RECOVERY]</div>
+                    <h2 style="font-size: 1.3rem; margin: 0.2rem 0; color: #000000;">Station Retake & Stage Reset Manager</h2>
+                    <p style="color: var(--text-muted); font-size: 0.82rem;">
+                        Grant permission for specific stations to re-attempt individual rounds. Resets their submission status to active.
+                    </p>
+                </div>
+                <div id="retake-status-notice" class="badge mono" style="display: none; padding: 0.4rem 0.8rem; font-size: 0.75rem; background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe;">
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: flex-end; background: #fafafa; padding: 1.25rem; border: 1px solid var(--border-muted);">
+                <div style="flex: 1; min-width: 220px;">
+                    <label class="form-label" style="font-size: 0.75rem;">Select Station / Flight Group</label>
+                    <select id="retake-team-select" class="form-control mono" style="font-size: 0.8rem;">
+                        <option value="1">Station 01 — ARES Flight Group</option>
+                        <option value="2">Station 02 — ATHENA Orbital</option>
+                        <option value="3">Station 03 — DAEDALUS Dynamics</option>
+                        <option value="4">Station 04 — HELIOS Telemetry</option>
+                        <option value="5">Station 05 — HERMES Flight Unit</option>
+                        <option value="6">Station 06 — TITAN Propulsion</option>
+                        <option value="7">Station 07 — ORION Space Labs</option>
+                        <option value="8">Station 08 — VOYAGER Operations</option>
+                        <option value="9">Station 09 — APOLLO Systems</option>
+                        <option value="10">Station 10 — SELENE Analytics</option>
+                        <option value="11">Station 11 — HYPERION Dynamics</option>
+                    </select>
+                </div>
+
+                <div style="flex: 1; min-width: 200px;">
+                    <label class="form-label" style="font-size: 0.75rem;">Target Stage to Retake / Reset</label>
+                    <select id="retake-round-select" class="form-control mono" style="font-size: 0.8rem;">
+                        <option value="1">Stage 1: Launch Planning Quiz (15 Qs)</option>
+                        <option value="2">Stage 2: 8-Bit Space Arcade Flight</option>
+                        <option value="3">Stage 3: Telemetry Analysis Script</option>
+                        <option value="4">Stage 4: Root-Cause Investigation (15 Qs)</option>
+                        <option value="all">★ All Stages (Full Station Reset)</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem;">
+                    <button type="button" class="btn btn-primary" onclick="handleAdminRetakeSubmit()" style="font-size: 0.78rem; padding: 0.6rem 1.25rem;">
+                        Grant Retake / Reset Stage &rarr;
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="handleAdminForceUnlock()" style="font-size: 0.78rem; padding: 0.6rem 1rem;">
+                        Force Unlock Stage
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- ANTI-CHEAT REAL-TIME SURVEILLANCE FEED -->
         <div class="card" style="margin-bottom: 2.5rem; padding: 0; overflow: hidden; border: 1px solid #000000;">
             <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-muted); display: flex; justify-content: space-between; align-items: center; background: #ffffff;">
@@ -258,11 +312,12 @@
                     <tr>
                         <th style="width: 50px; text-align: center;">Rank</th>
                         <th>Station & Callsign</th>
-                        <th>R1: Planning<br><span style="font-size: 0.7rem; font-weight: 400; color: var(--text-dim);">Max 100 PTS</span></th>
+                        <th>R1: Planning<br><span style="font-size: 0.7rem; font-weight: 400; color: var(--text-dim);">15 Qs (100 PTS)</span></th>
                         <th>R2: Launch (Raw / Rank)<br><span style="font-size: 0.7rem; font-weight: 400; color: var(--text-dim);">Top 5: 5,4,3,2,1 PTS</span></th>
                         <th>R3: Telemetry<br><span style="font-size: 0.7rem; font-weight: 400; color: var(--text-dim);">Max 50 PTS</span></th>
-                        <th>R4: Forensics<br><span style="font-size: 0.7rem; font-weight: 400; color: var(--text-dim);">Max 120 PTS</span></th>
+                        <th>R4: Forensics<br><span style="font-size: 0.7rem; font-weight: 400; color: var(--text-dim);">15 Qs (120 PTS)</span></th>
                         <th style="background: #fafafa; font-weight: 800; color: #000;">Grand Total</th>
+                        <th style="text-align: right; width: 140px;">Stage Retake</th>
                     </tr>
                 </thead>
                 <tbody id="admin-table-body">
@@ -323,6 +378,54 @@
         await triggerRemoteTimer(stageNum, minutes, title);
     }
 
+    function handleAdminRetakeSubmit() {
+        const teamSelect = document.getElementById("retake-team-select");
+        const roundSelect = document.getElementById("retake-round-select");
+        const tid = parseInt(teamSelect.value);
+        const rKey = roundSelect.value;
+
+        const res = window.IcarusEngine.resetTeamRound(tid, rKey);
+        showRetakeNotice(res.message);
+        renderAdminStandings();
+    }
+
+    function handleAdminForceUnlock() {
+        const teamSelect = document.getElementById("retake-team-select");
+        const roundSelect = document.getElementById("retake-round-select");
+        const tid = parseInt(teamSelect.value);
+        const rKey = roundSelect.value;
+        if (rKey === "all") {
+            for (let i = 1; i <= 4; i++) window.IcarusEngine.unlockTeamRound(tid, i);
+        } else {
+            window.IcarusEngine.unlockTeamRound(tid, rKey);
+        }
+        showRetakeNotice(`Stage ${rKey.toUpperCase()} force-unlocked for Station ${tid}.`);
+        renderAdminStandings();
+    }
+
+    function handleRowRetakeSelect(teamId, selectEl) {
+        const rKey = selectEl.value;
+        if (!rKey) return;
+        selectEl.value = "";
+        const label = rKey === 'all' ? 'ALL ROUNDS' : `ROUND ${rKey.toUpperCase()}`;
+        if (confirm(`Allow Station ${teamId} to retake ${label}? Current score for this round will be reset.`)) {
+            const res = window.IcarusEngine.resetTeamRound(teamId, rKey);
+            showRetakeNotice(res.message);
+            renderAdminStandings();
+        }
+    }
+
+    function showRetakeNotice(msg) {
+        const noticeEl = document.getElementById("retake-status-notice");
+        if (noticeEl) {
+            noticeEl.textContent = `✓ ${msg}`;
+            noticeEl.style.display = "inline-block";
+            setTimeout(() => { noticeEl.style.display = "none"; }, 5000);
+        } else {
+            alert(msg);
+        }
+    }
+
     function renderAdminStandings() {
         const teams = window.IcarusEngine.getAllTeamsOverview();
         const tbody = document.getElementById("admin-table-body");
@@ -367,6 +470,16 @@
                 <td class="mono">${r4Str}</td>
                 <td class="mono" style="font-size: 1.15rem; font-weight: 800; background: #fafafa; color: var(--text-main);">
                     ${item.grand_total} PTS
+                </td>
+                <td style="text-align: right;">
+                    <select onchange="handleRowRetakeSelect(${item.team.id}, this)" class="form-control mono" style="display: inline-block; width: 130px; font-size: 0.72rem; padding: 2px 4px;">
+                        <option value="">Reset Stage...</option>
+                        <option value="1">Reset Round 1</option>
+                        <option value="2">Reset Round 2</option>
+                        <option value="3">Reset Round 3</option>
+                        <option value="4">Reset Round 4</option>
+                        <option value="all">Reset All Stages</option>
+                    </select>
                 </td>
             `;
             tbody.appendChild(tr);
