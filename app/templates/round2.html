@@ -1,211 +1,677 @@
 {% extends "base.html" %}
 
-{% block title %}Round 2: Flight Readiness Review | ICARUS{% endblock %}
-
 {% block content %}
-<div style="max-width: 960px; margin: 2rem auto; padding: 0;">
-    <!-- Round Header -->
-    <div class="card" style="margin-bottom: 2rem; border-left: 3px solid #000000;">
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem;">
-            <div>
-                <div class="eyebrow">[ROUND 02 / ENGINEERING REVIEW]</div>
-                <h1 style="font-size: 1.6rem; margin: 0.3rem 0; color: #000000;">Mission Go / No-Go: Flight Readiness Review</h1>
-                <p style="color: var(--text-muted); font-size: 0.85rem;">
-                    Analyze pre-flight telemetry across 5 engineering stations. Make the correct aerospace operations call for each subsystem.
-                </p>
-            </div>
-            <div style="text-align: right;">
-                <div class="eyebrow">Operating Station</div>
-                <div class="mono" style="font-weight: 700; color: #000000; font-size: 1rem;">Team {{ team.id }}: {{ team.name }}</div>
-            </div>
+
+<div class="container" style="max-width:1400px;margin:auto;padding:24px;">
+
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;">
+        <div>
+            <h1>Round 2: Telemetry Investigation</h1>
+            <p style="opacity:.75;">
+                Analyze your spacecraft's 24-hour beacon telemetry,
+                compare it against the planned mission timeline,
+                and isolate faults F1-F4.
+            </p>
+        </div>
+
+        <div id="creditBox"
+             style="padding:14px 18px;border:1px solid rgba(255,255,255,.15);border-radius:10px;">
+            <strong>Downlink Credits:</strong>
+            <span id="credits">Loading...</span>
         </div>
     </div>
 
-    {% if not is_active and not is_completed %}
-    <!-- Locked State -->
-    <div class="card" style="text-align: center; padding: 4rem 2rem;">
-        <div class="mono" style="font-size: 2rem; margin-bottom: 1rem;">[LOCKED]</div>
-        <h2 style="color: #000000; margin-bottom: 0.5rem; font-size: 1.3rem;">Round 2 is Currently Locked</h2>
-        <p style="color: var(--text-muted); max-width: 480px; margin: 0 auto 2rem; font-size: 0.85rem;">
-            You must verify your station's Launch Authorisation Code in Round 1 before the Flight Readiness Review unlocks.
-        </p>
-        <a href="/dashboard" class="btn btn-primary">Return to Dashboard</a>
-    </div>
+    {% if not is_active %}
+
+        <div style="margin-top:30px;padding:25px;border-radius:12px;background:rgba(255,255,255,.05);">
+            <h2>Round Locked</h2>
+            <p>Complete Round 1 to unlock the telemetry investigation.</p>
+        </div>
 
     {% elif is_completed %}
-    <!-- Completed State -->
-    <div class="card" style="text-align: center; padding: 4rem 2rem;">
-        <div class="mono" style="font-size: 2rem; margin-bottom: 1rem;">[VERIFIED]</div>
-        <h2 style="color: #000000; margin-bottom: 0.5rem; font-size: 1.3rem;">Flight Readiness Review Certified</h2>
-        <p style="color: var(--text-muted); margin-bottom: 2rem; font-size: 0.85rem;">
-            Your engineering decisions have been validated by the Flight Director.
-        </p>
-        <div style="display: inline-block; border: 1px solid var(--border-muted); padding: 1.5rem 3rem; margin-bottom: 2rem;">
-            <div class="eyebrow" style="margin-bottom: 0.5rem;">Readiness Score</div>
-            <div class="mono" style="font-size: 2.8rem; font-weight: 800; color: #000000;">{{ final_score }} <span style="font-size: 1rem; color: var(--text-dim);">/ 500 PTS</span></div>
+
+        <div style="margin-top:30px;padding:25px;border-radius:12px;background:rgba(255,255,255,.05);">
+            <h2>Round 2 Complete</h2>
+            <p>Your final Round 2 score:</p>
+            <div style="font-size:42px;font-weight:bold;">
+                {{ final_score }} points
+            </div>
         </div>
-        <div>
-            <a href="/dashboard" class="btn btn-primary">Proceed to Round 3 &rarr;</a>
-        </div>
-    </div>
 
     {% else %}
-    <!-- Active Readiness Review Stations -->
-    <div id="readiness-stations-container">
-        <div class="card" style="text-align: center; padding: 2rem;" id="loading-box">
-            <div class="mono">Loading Pre-Flight Telemetry Dossiers...</div>
-        </div>
-    </div>
 
-    <!-- Submit Section -->
-    <div class="card" style="margin-top: 2rem; text-align: center; padding: 2rem; display: none;" id="submit-card">
-        <div class="eyebrow" style="margin-bottom: 0.5rem;">Certification Sign-Off</div>
-        <h3 style="color: #000000; margin-bottom: 1rem;">Ready to Transmit Flight Decisions?</h3>
-        <p style="color: var(--text-muted); font-size: 0.85rem; max-width: 500px; margin: 0 auto 1.5rem;">
-            Ensure your team has reviewed all 5 subsystem telemetry profiles. Submitting will commit your flight readiness ledger.
-        </p>
-        <button id="btn-submit-review" onclick="submitReadinessReview()" class="btn btn-primary" style="padding: 0.8rem 2.5rem;">
-            Commit Flight Operations Decisions
-        </button>
-        <div id="review-feedback" class="mono" style="font-size: 0.85rem; margin-top: 1rem; display: none;"></div>
-    </div>
-    {% endif %}
-</div>
-{% endblock %}
+        <!-- TELEMETRY OVERVIEW -->
 
-{% block extra_scripts %}
-{% if is_active and not is_completed %}
-<script>
-let stationsData = [];
-const userCalls = {};
-
-async function loadDossiers() {
-    try {
-        const res = await fetch("/api/round2/dossiers");
-        const data = await res.json();
-        stationsData = data.stations || [];
-        renderStations();
-    } catch (e) {
-        document.getElementById("loading-box").innerText = "Failed to load telemetry dossiers.";
-    }
-}
-
-function renderStations() {
-    const container = document.getElementById("readiness-stations-container");
-    container.innerHTML = "";
-    
-    stationsData.forEach((st, idx) => {
-        const card = document.createElement("div");
-        card.className = "card";
-        card.style.marginBottom = "2rem";
-        
-        let telemRows = "";
-        for (const [k, v] of Object.entries(st.telemetry_data)) {
-            telemRows += `<tr><td style="color:#71717a; width:40%;">${k}</td><td class="mono" style="color:var(--text-main); font-weight:600;">${v}</td></tr>`;
-        }
-        
-        let chartRows = st.strip_chart.map(line => `<div>${line}</div>`).join("");
-        
-        let optionsHtml = "";
-        st.options.forEach(opt => {
-            optionsHtml += `
-            <label style="display:flex; align-items:flex-start; gap:0.75rem; padding:0.75rem 1rem; border:1px solid var(--border-muted); margin-bottom:0.5rem; cursor:pointer; background:#ffffff; transition:border-color 0.15s ease;">
-                <input type="radio" name="station_${st.id}" value="${opt.id}" onchange="selectCall(${st.id}, '${opt.id}')" style="margin-top:0.25rem;">
-                <div style="font-size:0.85rem; color:var(--text-main);">
-                    <strong class="mono">[${opt.id}]</strong> ${opt.text}
+        <section style="margin-top:30px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;">
+                <div>
+                    <h2>24-Hour Beacon Telemetry</h2>
+                    <p style="opacity:.7;">
+                        Team-specific telemetry generated from the mission simulation.
+                    </p>
                 </div>
-            </label>
-            `;
-        });
-        
-        card.innerHTML = `
-        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-muted); padding-bottom:0.75rem; margin-bottom:1.25rem;">
-            <div>
-                <span class="eyebrow">[STATION 0${st.id} / 05]</span>
-                <h3 style="font-size:1.15rem; color:var(--text-main); margin-top:0.2rem;">${st.subsystem}</h3>
-                <div class="mono" style="font-size:0.8rem; color:var(--text-dim);">${st.component}</div>
-            </div>
-            <span class="badge" id="badge_station_${st.id}">PENDING</span>
-        </div>
 
-        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:1.5rem; margin-bottom:1.5rem;">
-            <!-- Telemetry Parameters -->
-            <div>
-                <div class="eyebrow" style="margin-bottom:0.5rem;">LIVE SENSOR READINGS</div>
-                <table class="scoreboard-table" style="font-size:0.8rem;">
-                    <tbody>${telemRows}</tbody>
+                <button onclick="loadTelemetry()">
+                    Refresh Telemetry
+                </button>
+            </div>
+
+            <div style="margin-top:20px;">
+                <canvas id="telemetryChart" height="100"></canvas>
+            </div>
+
+            <div style="overflow-x:auto;margin-top:25px;">
+                <table style="width:100%;border-collapse:collapse;" id="telemetryTable">
+                    <thead>
+                        <tr>
+                            <th>UTC</th>
+                            <th>Battery Min (mV)</th>
+                            <th>Battery Mean (mV)</th>
+                            <th>Battery Temp (cC)</th>
+                            <th>OBC Temp (cC)</th>
+                            <th>Gyro Max</th>
+                            <th>RSSI</th>
+                            <th>CRC Errors</th>
+                            <th>Reset Count</th>
+                            <th>Mode</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
                 </table>
             </div>
+        </section>
 
-            <!-- Strip Chart / Plot -->
-            <div>
-                <div class="eyebrow" style="margin-bottom:0.5rem;">${st.chart_label}</div>
-                <div class="mono" style="background:#fafafa; border:1px solid var(--border-hairline); padding:0.75rem; font-size:0.75rem; line-height:1.6; color:#3f3f46; white-space:pre-wrap;">
-                    ${chartRows}
-                </div>
+
+        <!-- MISSION SCHEDULE -->
+
+        <section style="margin-top:40px;">
+            <h2>Planned Mission Schedule</h2>
+
+            <div style="overflow-x:auto;">
+                <table style="width:100%;border-collapse:collapse;" id="scheduleTable">
+                    <thead>
+                        <tr>
+                            <th>Event</th>
+                            <th>Start UTC</th>
+                            <th>End UTC</th>
+                            <th>Duration</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
             </div>
-        </div>
+        </section>
 
-        <!-- Engineering Findings -->
-        <div style="border-left:2px solid #000000; padding:0.5rem 1rem; margin-bottom:1.5rem; background:#f4f4f5;">
-            <div class="eyebrow">Operations Note</div>
-            <div style="font-size:0.85rem; color:var(--text-main); margin-top:0.25rem;">${st.findings}</div>
-        </div>
 
-        <!-- Decision Options -->
-        <div>
-            <div class="eyebrow" style="margin-bottom:0.75rem;">SELECT FLIGHT DIRECTOR CALL</div>
-            ${optionsHtml}
-        </div>
-        `;
-        
-        container.appendChild(card);
-    });
-    
-    document.getElementById("submit-card").style.display = "block";
-}
+        <!-- HIGH RATE DOWNLINK -->
 
-function selectCall(stationId, optId) {
-    userCalls[stationId] = optId;
-    const badge = document.getElementById(`badge_station_${stationId}`);
-    if (badge) {
-        badge.innerText = `SELECTED: [${optId}]`;
-        badge.className = "badge badge-active";
+        <section style="margin-top:40px;padding:24px;border-radius:12px;background:rgba(255,255,255,.04);">
+
+            <h2>High-Rate Downlink Request</h2>
+
+            <p style="opacity:.75;">
+                Use your limited downlink credits to retrieve a 10-minute,
+                600-frame high-rate telemetry window from the spacecraft archive.
+            </p>
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+                <input
+                    id="passTime"
+                    type="text"
+                    placeholder="2027-03-14T05:20:00Z"
+                    style="min-width:280px;padding:10px;"
+                >
+
+                <button onclick="requestPass()">
+                    Request Downlink
+                </button>
+            </div>
+
+            <div id="passResult" style="margin-top:15px;"></div>
+
+        </section>
+
+
+        <!-- INVESTIGATION CHALLENGES -->
+
+        <section style="margin-top:40px;">
+
+            <h2>Fault Investigation</h2>
+
+            <p style="opacity:.75;">
+                Identify the earliest defensible onset of each anomaly from
+                the telemetry and high-rate data. Submit answers only when
+                you are confident.
+            </p>
+
+
+            {% for challenge in challenges %}
+
+            <div style="
+                margin-top:22px;
+                padding:24px;
+                border-radius:12px;
+                background:rgba(255,255,255,.04);
+                border:1px solid rgba(255,255,255,.10);
+            ">
+
+                <div style="display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap;">
+
+                    <div>
+                        <h3>{{ challenge.id }} · {{ challenge.title }}</h3>
+                        <p>{{ challenge.question }}</p>
+
+                        <p style="opacity:.65;">
+                            Expected format:
+                            <code>{{ challenge.format }}</code>
+                        </p>
+                    </div>
+
+                    <div style="font-weight:bold;">
+                        {{ challenge.points }} pts
+                    </div>
+
+                </div>
+
+                <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:15px;">
+
+                    <input
+                        id="answer-{{ challenge.id }}"
+                        type="text"
+                        placeholder="Enter answer..."
+                        style="flex:1;min-width:300px;padding:11px;"
+                    >
+
+                    <button
+                        onclick="submitChallenge('{{ challenge.id }}')">
+                        Submit
+                    </button>
+
+                </div>
+
+                <div
+                    id="result-{{ challenge.id }}"
+                    style="margin-top:12px;">
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </section>
+
+
+        <!-- COMPLETE ROUND -->
+
+        <section style="margin-top:40px;text-align:center;">
+
+            <button
+                onclick="completeRound2()"
+                style="padding:14px 28px;font-size:16px;">
+                Complete Round 2
+            </button>
+
+            <div id="completeResult" style="margin-top:15px;"></div>
+
+        </section>
+
+    {% endif %}
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+let telemetryData = [];
+let telemetryChart = null;
+
+
+/* ---------------------------------------------------------
+   LOAD CREDITS
+--------------------------------------------------------- */
+
+async function loadCredits() {
+
+    try {
+
+        const response = await fetch("/api/credits");
+
+        if (!response.ok) {
+            document.getElementById("credits").textContent = "Unavailable";
+            return;
+        }
+
+        const data = await response.json();
+
+        document.getElementById("credits").textContent = data.credits;
+
+    } catch (error) {
+
+        document.getElementById("credits").textContent = "Unavailable";
+
     }
 }
 
-async function submitReadinessReview() {
-    if (Object.keys(userCalls).length < 5) {
-        alert("Please make a flight call for all 5 stations before committing.");
+
+/* ---------------------------------------------------------
+   LOAD TELEMETRY
+--------------------------------------------------------- */
+
+async function loadTelemetry() {
+
+    const response = await fetch("/api/round2/telemetry");
+
+    if (!response.ok) {
+        alert("Unable to load telemetry.");
         return;
     }
-    
-    const btn = document.getElementById("btn-submit-review");
-    const fb = document.getElementById("review-feedback");
-    btn.disabled = true;
-    btn.innerText = "Transmitting Ledger...";
-    fb.style.display = "none";
-    
-    try {
-        const res = await fetch("/api/round2/evaluate", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ calls: userCalls })
+
+    const data = await response.json();
+
+    telemetryData = data.telemetry || [];
+
+    renderTelemetryTable();
+    renderTelemetryChart();
+}
+
+
+/* ---------------------------------------------------------
+   TELEMETRY TABLE
+--------------------------------------------------------- */
+
+function renderTelemetryTable() {
+
+    const tbody = document.querySelector("#telemetryTable tbody");
+
+    tbody.innerHTML = "";
+
+    /*
+       Show every 10th beacon row in the visible table.
+       The complete dataset remains available to the browser.
+    */
+
+    telemetryData.forEach((row, index) => {
+
+        if (index % 10 !== 0) {
+            return;
+        }
+
+        const tr = document.createElement("tr");
+
+        const values = [
+            row.utc_iso,
+            row.bat_v_min_mV,
+            row.bat_v_mean_mV,
+            row.temp_bat_max_cC,
+            row.temp_obc_max_cC,
+            row.gyro_abs_max,
+            row.rssi_min,
+            row.crc_err_cnt,
+            row.reset_cnt,
+            row.mode
+        ];
+
+        values.forEach(value => {
+
+            const td = document.createElement("td");
+
+            td.textContent = value;
+
+            td.style.padding = "8px";
+            td.style.borderBottom =
+                "1px solid rgba(255,255,255,.08)";
+
+            tr.appendChild(td);
+
         });
-        const data = await res.json();
-        
-        fb.style.display = "block";
-        fb.innerText = `✓ ${data.message}`;
-        setTimeout(() => window.location.reload(), 1400);
-    } catch (e) {
-        fb.style.display = "block";
-        fb.innerText = "Network error submitting decisions.";
-        btn.disabled = false;
-        btn.innerText = "Commit Flight Operations Decisions";
+
+        tbody.appendChild(tr);
+
+    });
+}
+
+
+/* ---------------------------------------------------------
+   TELEMETRY CHART
+--------------------------------------------------------- */
+
+function renderTelemetryChart() {
+
+    const canvas = document.getElementById("telemetryChart");
+
+    if (telemetryChart) {
+        telemetryChart.destroy();
+    }
+
+    const labels = telemetryData.map(row => row.utc_iso);
+
+    const battery = telemetryData.map(
+        row => Number(row.bat_v_mean_mV)
+    );
+
+    const gyro = telemetryData.map(
+        row => Number(row.gyro_abs_max)
+    );
+
+    telemetryChart = new Chart(canvas, {
+
+        type: "line",
+
+        data: {
+            labels: labels,
+
+            datasets: [
+                {
+                    label: "Battery Mean (mV)",
+                    data: battery,
+                    yAxisID: "battery"
+                },
+                {
+                    label: "Gyro Max",
+                    data: gyro,
+                    yAxisID: "gyro"
+                }
+            ]
+        },
+
+        options: {
+
+            responsive: true,
+
+            interaction: {
+                mode: "index",
+                intersect: false
+            },
+
+            scales: {
+
+                battery: {
+                    type: "linear",
+                    position: "left"
+                },
+
+                gyro: {
+                    type: "linear",
+                    position: "right"
+                }
+
+            }
+
+        }
+
+    });
+}
+
+
+/* ---------------------------------------------------------
+   LOAD MISSION SCHEDULE
+--------------------------------------------------------- */
+
+async function loadSchedule() {
+
+    const response = await fetch("/api/round2/schedule");
+
+    if (!response.ok) {
+        return;
+    }
+
+    const data = await response.json();
+
+    const tbody = document.querySelector("#scheduleTable tbody");
+
+    tbody.innerHTML = "";
+
+    (data.events || []).forEach(event => {
+
+        const tr = document.createElement("tr");
+
+        const values = [
+            event.event_id,
+            event.start_utc,
+            event.end_utc,
+            event.duration_s,
+            event.description
+        ];
+
+        values.forEach(value => {
+
+            const td = document.createElement("td");
+
+            td.textContent = value;
+
+            td.style.padding = "9px";
+            td.style.borderBottom =
+                "1px solid rgba(255,255,255,.08)";
+
+            tr.appendChild(td);
+
+        });
+
+        tbody.appendChild(tr);
+
+    });
+}
+
+
+/* ---------------------------------------------------------
+   REQUEST HIGH-RATE PASS
+--------------------------------------------------------- */
+
+async function requestPass() {
+
+    const startUtc =
+        document.getElementById("passTime").value.trim();
+
+    const result =
+        document.getElementById("passResult");
+
+    if (!startUtc) {
+
+        result.textContent =
+            "Enter a UTC timestamp first.";
+
+        return;
+    }
+
+    result.textContent = "Requesting downlink...";
+
+    try {
+
+        const response = await fetch("/api/pass", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                start_utc: startUtc
+            })
+
+        });
+
+        if (!response.ok) {
+
+            const error = await response.json();
+
+            result.textContent =
+                error.message ||
+                error.detail ||
+                "Downlink request failed.";
+
+            return;
+        }
+
+        const blob = await response.blob();
+
+        const charged =
+            response.headers.get("X-Credits-Charged");
+
+        const remaining =
+            response.headers.get("X-Credits-Remaining");
+
+        const frames =
+            response.headers.get("X-Frames-Count");
+
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+
+        link.href = url;
+
+        link.download = "telemetry_pass.bin";
+
+        link.textContent =
+            `Download ${frames} frames`;
+
+        result.innerHTML = "";
+
+        result.appendChild(link);
+
+        result.appendChild(
+            document.createTextNode(
+                ` | Credits charged: ${charged} | Remaining: ${remaining}`
+            )
+        );
+
+        document.getElementById("credits").textContent =
+            remaining;
+
+    } catch (error) {
+
+        result.textContent =
+            "Network error while requesting downlink.";
+
     }
 }
 
-document.addEventListener("DOMContentLoaded", loadDossiers);
+
+/* ---------------------------------------------------------
+   SUBMIT CHALLENGE
+--------------------------------------------------------- */
+
+async function submitChallenge(challengeId) {
+
+    const input =
+        document.getElementById(
+            "answer-" + challengeId
+        );
+
+    const result =
+        document.getElementById(
+            "result-" + challengeId
+        );
+
+    const answer = input.value.trim();
+
+    if (!answer) {
+
+        result.textContent =
+            "Enter an answer first.";
+
+        return;
+    }
+
+    result.textContent =
+        "Checking answer...";
+
+    try {
+
+        const response = await fetch("/api/submit", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                challenge_id: challengeId,
+                answer: answer
+            })
+
+        });
+
+        const data = await response.json();
+
+        result.textContent =
+            data.message ||
+            "Submission processed.";
+
+        if (data.status === "correct") {
+
+            result.textContent =
+                `✓ Correct! +${data.points_awarded} points`;
+
+            input.disabled = true;
+
+        }
+
+    } catch (error) {
+
+        result.textContent =
+            "Submission failed.";
+
+    }
+}
+
+
+/* ---------------------------------------------------------
+   COMPLETE ROUND
+--------------------------------------------------------- */
+
+async function completeRound2() {
+
+    const result =
+        document.getElementById("completeResult");
+
+    result.textContent =
+        "Checking Round 2 completion...";
+
+    const response =
+        await fetch("/api/round2/complete", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            }
+
+        });
+
+    const data = await response.json();
+
+    if (data.status === "completed") {
+
+        result.textContent =
+            `Round 2 complete! Score: ${data.score}`;
+
+        setTimeout(() => {
+            window.location.reload();
+        }, 1200);
+
+    } else {
+
+        result.textContent =
+            data.message ||
+            `Still incomplete. Missing: ${(data.missing || []).join(", ")}`;
+
+    }
+}
+
+
+/* ---------------------------------------------------------
+   INITIAL LOAD
+--------------------------------------------------------- */
+
+loadCredits();
+loadTelemetry();
+loadSchedule();
+
 </script>
-{% endif %}
+
 {% endblock %}
