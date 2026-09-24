@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ICARUS Flight Operations{% endblock %}</title>
+    <!-- Sharp Editorial & Monospace Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/dashboard" class="nav-brand">
+            <div style="width: 24px; height: 24px; border: 2px solid #ffffff; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-weight: 800; font-size: 0.75rem;">
+                I
+            </div>
+            <div>
+                <div class="brand-title">ICARUS / OPERATIONS</div>
+                <div class="brand-subtitle">Telemetry Analysis Challenge</div>
+            </div>
+        </a>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="nav-badge mono" id="live-utc-clock">--:--:-- UTC</div>
+            <div class="nav-badge mono" id="mission-countdown" style="border-color: #525252; color: #ffffff;">T-00:00:00</div>
+            <ul class="nav-links">
+                <li><a href="/dashboard" class="nav-link">Dashboard</a></li>
+                <li><a href="/packages" class="nav-link">Packages</a></li>
+                <li><a href="/documents" class="nav-link">Docs</a></li>
+                <li><a href="/console" class="nav-link">Console</a></li>
+                <li><a href="/scoreboard" class="nav-link">Scoreboard</a></li>
+                {% if request.session.get("team_id") %}
+                <li><a href="/logout" class="nav-link" style="border-bottom: 1px solid #737373;">Logout</a></li>
+                {% else %}
+                <li><a href="/login" class="nav-link">Login</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+
+    <script src="/static/js/app.js"></script>
+    <script src="/static/js/firebase_config.js"></script>
+    <script src="/static/js/firebase_sync.js"></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

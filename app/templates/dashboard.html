@@ -1,0 +1,306 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | ICARUS Operations{% endblock %}
+
+{% block content %}
+<!-- Top Metrics Bar -->
+<div class="mission-status-bar">
+    <div class="status-card">
+        <div class="status-label">Callsign / Station</div>
+        <div class="status-value mono">{{ team.name }} <span style="font-size:0.85rem; color:var(--text-dim);">[#{{ team.id }}]</span></div>
+    </div>
+    <div class="status-card">
+        <div class="status-label">Score (R1 + R2 + R4)</div>
+        <div class="status-value mono">{{ total_score }} <span style="font-size:0.8rem; color:var(--text-dim);">PTS</span></div>
+    </div>
+    <div class="status-card">
+        <div class="status-label">Downlink Budget</div>
+        <div class="status-value mono">{{ credits }} <span style="font-size:0.8rem; color:var(--text-dim);">CREDITS</span></div>
+    </div>
+    <div class="status-card">
+        <div class="status-label">Ground Telemetry</div>
+        <div class="status-value mono" style="font-size: 1.15rem;">OPERATIONAL</div>
+    </div>
+</div>
+
+<!-- Errata Notice Banner -->
+{% if app_state.errata_released == 'true' %}
+<div class="alert alert-warning">
+    <div class="mono" style="font-size: 0.9rem; font-weight: 700;">[ERRATA]</div>
+    <div>
+        <strong style="font-size: 0.95rem; color: #ffffff;">12:00 UTC SENSOR CALIBRATION BULLETIN RELEASED</strong>
+        <p style="font-size: 0.85rem; margin-top: 0.25rem; color: var(--text-muted);">
+            Ground station notice: ICD Calibration Offset for OBC Temperature follows Revision B (+1050 raw offset), differing from Rev A battery formulas. Refer to <a href="/documents" style="color: #ffffff; text-decoration: underline;">Flight Docs</a>.
+        </p>
+    </div>
+</div>
+{% endif %}
+
+<!-- Live Finale Alert Banner -->
+{% if app_state.finale_started == 'true' %}
+<div class="alert alert-info">
+    <div class="mono" style="font-size: 0.9rem; font-weight: 700;">[ALERT]</div>
+    <div style="flex-grow: 1;">
+        <strong style="font-size: 0.95rem; color: #ffffff;">PHASE 4: LIVE CONTINGENCY FINALE IN PROGRESS</strong>
+        <p style="font-size: 0.85rem; margin-top: 0.25rem; color: var(--text-muted);">
+            Emergency recovery runbook OP-RB-88 authorized. Connect to live telemetry console to issue command sequence.
+        </p>
+    </div>
+    <a href="/console" class="btn btn-primary" style="font-size: 0.75rem;">Open Console &rarr;</a>
+</div>
+{% endif %}
+
+<!-- 4-ROUND UNIFIED MISSION PROGRESS TRACKER -->
+<div class="card" style="margin-bottom: 3rem;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid var(--border-muted); padding-bottom: 1rem; margin-bottom: 1.5rem;">
+        <div>
+            <div class="eyebrow">Flight Sequence</div>
+            <h2 style="font-size: 1.4rem; color: #ffffff; margin-top: 0.2rem;">4-Round Mission Architecture</h2>
+        </div>
+        <div class="eyebrow">Progression Path</div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem;">
+        <!-- ROUND 1 CARD -->
+        <div class="status-card" style="margin: 0; border: 1px solid {{ 'var(--border-active)' if rounds_summary[1].status == 'submitted' else 'var(--border-muted)' }};">
+            <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                    <span class="eyebrow">[ROUND 01]</span>
+                    {% if rounds_summary[1].status == 'submitted' %}
+                    <span class="badge badge-active">PASS</span>
+                    {% else %}
+                    <span class="badge">ACTIVE</span>
+                    {% endif %}
+                </div>
+                <h3 style="font-size: 1.05rem; margin-bottom: 0.4rem;">Mission Briefing</h3>
+                <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 1rem;">
+                    Solve the physical puzzle dossier to retrieve your station's Launch Authorisation Code.
+                </p>
+            </div>
+            <div>
+                {% if rounds_summary[1].status == 'submitted' %}
+                <div class="mono" style="font-size: 0.85rem; color: #ffffff; font-weight: 700;">
+                    +{{ rounds_summary[1].score }} PTS / VERIFIED
+                </div>
+                {% else %}
+                <div id="r1-gate-box">
+                    <input type="text" id="r1-input-code" class="form-control" placeholder="AUTH-..." style="padding: 0.5rem; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 0.5rem;">
+                    <button id="r1-btn-submit" onclick="submitRound1Code()" class="btn btn-primary" style="width: 100%; padding: 0.5rem; font-size: 0.75rem;">
+                        Verify Code
+                    </button>
+                    <div id="r1-feedback" class="mono" style="font-size: 0.75rem; margin-top: 0.5rem; display: none;"></div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- ROUND 2 CARD -->
+        <div class="status-card" style="margin: 0; border: 1px solid {{ 'var(--border-active)' if rounds_summary[2].status == 'submitted' else 'var(--border-muted)' }};">
+            <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                    <span class="eyebrow">[ROUND 02]</span>
+                    {% if rounds_summary[2].status == 'submitted' %}
+                    <span class="badge badge-active">DONE</span>
+                    {% elif rounds_summary[2].status == 'active' %}
+                    <span class="badge badge-active">ACTIVE</span>
+                    {% else %}
+                    <span class="badge">LOCKED</span>
+                    {% endif %}
+                </div>
+                <h3 style="font-size: 1.05rem; margin-bottom: 0.4rem;">Flight Readiness Review</h3>
+                <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 1rem;">
+                    5 interactive subsystem inspection stations: EPS battery sag, recovery door servo, GNSS HDOP, barometer QNH, and LoRa link.
+                </p>
+            </div>
+            <div>
+                {% if rounds_summary[2].status == 'submitted' %}
+                <div class="mono" style="font-size: 0.85rem; color: #ffffff; font-weight: 700; margin-bottom: 0.5rem;">
+                    +{{ rounds_summary[2].score }} PTS AWARDED
+                </div>
+                <a href="/round2" class="mono" style="font-size: 0.75rem; color: var(--text-dim); text-decoration: underline;">Review &rarr;</a>
+                {% elif rounds_summary[2].status == 'active' %}
+                <a href="/round2" class="btn btn-primary" style="width: 100%; font-size: 0.75rem;">
+                    Begin Review &rarr;
+                </a>
+                {% else %}
+                <div class="eyebrow" style="color: var(--text-dim);">Prerequisite: Round 1</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- ROUND 3 CARD (SECRET SCORING: NO RAW SCORE IN DOM) -->
+        <div class="status-card" style="margin: 0; border: 1px solid {{ 'var(--border-active)' if rounds_summary[3].status == 'submitted' else 'var(--border-muted)' }};">
+            <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                    <span class="eyebrow">[ROUND 03]</span>
+                    {% if rounds_summary[3].status == 'submitted' %}
+                    <span class="badge badge-active">SEALED</span>
+                    {% elif rounds_summary[3].status == 'active' %}
+                    <span class="badge badge-active">ACTIVE</span>
+                    {% else %}
+                    <span class="badge">LOCKED</span>
+                    {% endif %}
+                </div>
+                <h3 style="font-size: 1.05rem; margin-bottom: 0.4rem;">CanSat Parachute Drop Simulator</h3>
+                <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 1rem;">
+                    Atmospheric drop from 1,000m AGL. Parachute deployment timing, aerodynamic fin steering, and acoustic recovery beacon activation.
+                </p>
+            </div>
+            <div>
+                {% if rounds_summary[3].status == 'submitted' %}
+                <div class="mono" style="font-size: 0.8rem; color: #ffffff; font-weight: 600; margin-bottom: 0.4rem;">
+                    TELEMETRY SEALED (SECRET)
+                </div>
+                <a href="/round3" class="mono" style="font-size: 0.75rem; color: var(--text-dim); text-decoration: underline;">View Simulation &rarr;</a>
+                {% elif rounds_summary[3].status == 'active' %}
+                <a href="/round3" class="btn btn-primary" style="width: 100%; font-size: 0.75rem;">
+                    Initiate Drop &rarr;
+                </a>
+                {% else %}
+                <div class="eyebrow" style="color: var(--text-dim);">Prerequisite: Round 2</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- ROUND 4 CARD -->
+        <div class="status-card" style="margin: 0; border: 1px solid {{ 'var(--border-active)' if r4_score > 0 else 'var(--border-muted)' }};">
+            <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                    <span class="eyebrow">[ROUND 04]</span>
+                    {% if r4_score > 0 %}
+                    <span class="badge badge-active">IN PROGRESS</span>
+                    {% elif rounds_summary[4].status == 'active' %}
+                    <span class="badge badge-active">ACTIVE</span>
+                    {% else %}
+                    <span class="badge">LOCKED</span>
+                    {% endif %}
+                </div>
+                <h3 style="font-size: 1.05rem; margin-bottom: 0.4rem;">Telemetry Forensics</h3>
+                <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 1rem;">
+                    Binary frame parsing, anomaly isolation (F1..F4), and real-time live contingency resolution.
+                </p>
+            </div>
+            <div>
+                {% if rounds_summary[4].status == 'active' or rounds_summary[4].status == 'submitted' %}
+                <div class="mono" style="font-size: 0.85rem; color: #ffffff; font-weight: 700; margin-bottom: 0.5rem;">
+                    {{ r4_score }} PTS EARNED
+                </div>
+                <a href="#round4-section" class="mono" style="font-size: 0.75rem; color: #ffffff; text-decoration: underline;">View Tasks &darr;</a>
+                {% else %}
+                <div class="eyebrow" style="color: var(--text-dim);">Prerequisite: Round 3</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ROUND 4: TELEMETRY ANALYSIS DETAILED WORKSPACE -->
+<div id="round4-section">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid var(--border-muted); padding-bottom: 0.75rem; margin-bottom: 2rem;">
+        <div>
+            <div class="eyebrow">Investigation Console</div>
+            <h2 style="font-size: 1.5rem; margin-top: 0.2rem;">Round 4: Satellite Telemetry Analysis & Diagnostics</h2>
+        </div>
+        <div>
+            <a href="/packages" class="btn btn-secondary" style="font-size: 0.75rem;">
+                Download Packages &rarr;
+            </a>
+        </div>
+    </div>
+
+    <!-- Phase Sections -->
+    {% for phase_key, phase_data in phases.items() %}
+    <div class="phase-section">
+        <div class="phase-header">
+            <div>
+                <h3 class="phase-title">{{ phase_data.title }}</h3>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">{{ phase_data.desc }}</p>
+            </div>
+            <div>
+                {% if flags.get(phase_key) %}
+                <span class="nav-badge mono" style="border-color: #ffffff; color: #ffffff;">
+                    FLAG: {{ flags.get(phase_key) }}
+                </span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="challenge-grid">
+            {% for ch in phase_data.challenges %}
+            <a href="/challenge/{{ ch.id }}" class="challenge-card {{ 'solved' if ch.is_solved else '' }}" style="text-decoration: none; color: inherit;">
+                <div>
+                    <div class="card-top">
+                        <span class="challenge-id mono">{{ ch.id }}</span>
+                        <span class="challenge-pts mono">{{ ch.points }} PTS</span>
+                    </div>
+                    <div class="challenge-title">{{ ch.title }}</div>
+                    <div class="challenge-desc">{{ ch.description }}</div>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-hairline); padding-top: 0.75rem; margin-top: 0.5rem;">
+                    <span class="mono" style="font-size: 0.75rem; color: var(--text-dim);">
+                        {% if ch.is_solved %}
+                            <span style="color:#ffffff;">+{{ ch.points_awarded }} PTS</span>
+                        {% else %}
+                            <span>PENDING</span>
+                        {% endif %}
+                    </span>
+                    <span class="mono" style="font-size: 0.75rem; color: #ffffff;">
+                        OPEN &rarr;
+                    </span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+async function submitRound1Code() {
+    const input = document.getElementById("r1-input-code");
+    const btn = document.getElementById("r1-btn-submit");
+    const fb = document.getElementById("r1-feedback");
+    
+    const code = input.value.trim();
+    if (!code) {
+        fb.style.display = "block";
+        fb.style.color = "#a3a3a3";
+        fb.innerText = "Code required.";
+        return;
+    }
+    
+    btn.disabled = true;
+    btn.innerText = "Verifying...";
+    fb.style.display = "none";
+    
+    try {
+        const res = await fetch("/api/round1/submit", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ code: code })
+        });
+        const data = await res.json();
+        
+        fb.style.display = "block";
+        if (data.status === "success" || data.status === "already_submitted") {
+            fb.style.color = "#ffffff";
+            fb.innerText = "✓ " + data.message;
+            setTimeout(() => window.location.reload(), 1200);
+        } else {
+            fb.style.color = "#a3a3a3";
+            fb.innerText = "✗ " + (data.message || "Invalid Code.");
+            btn.disabled = false;
+            btn.innerText = "Verify Code";
+        }
+    } catch (e) {
+        fb.style.display = "block";
+        fb.style.color = "#a3a3a3";
+        fb.innerText = "Network failure.";
+        btn.disabled = false;
+        btn.innerText = "Verify Code";
+    }
+}
+</script>
+{% endblock %}

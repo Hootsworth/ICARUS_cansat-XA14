@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Round 1: Launch Readiness Review - Team {{ "%02d" % team_id }}</title>
+    <link rel="stylesheet" href="/static/css/print.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; padding: 20px; color: #111; }
+        .sheet-header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; }
+        .station-box { border: 1px solid #444; border-radius: 4px; padding: 10px 14px; margin-bottom: 14px; page-break-inside: avoid; }
+        .station-title { font-weight: 800; font-size: 1.05rem; margin-bottom: 6px; border-bottom: 1px solid #ccc; padding-bottom: 3px; }
+        .code-block { font-family: 'JetBrains Mono', monospace; background: #f0f4f8; padding: 6px 10px; border-radius: 3px; border: 1px solid #ccd; font-size: 0.9rem; }
+        table { width: 100%; border-collapse: collapse; margin-top: 6px; }
+        th, td { border: 1px solid #bbb; padding: 4px 8px; font-size: 0.85rem; text-align: left; }
+        th { background: #eee; }
+    </style>
+</head>
+<body>
+    <div class="no-print" style="margin-bottom: 15px; text-align: right;">
+        <button onclick="window.print()" style="padding: 8px 16px; background: #1e3a8a; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+            🖨️ Print Team {{ "%02d" % team_id }} Sheet
+        </button>
+    </div>
+
+    <div class="sheet-container">
+        <div class="sheet-header">
+            <div>
+                <h1 style="font-size: 1.4rem; margin: 0;">RVSAT-1 LAUNCH READINESS REVIEW (ROUND 1)</h1>
+                <div style="font-size: 0.9rem; color: #555;">Flight Readiness Poll & Subsystem Validation Stations</div>
+            </div>
+            <div style="text-align: right;">
+                <h2 style="font-size: 1.3rem; margin: 0; color: #0b1b3d;">TEAM {{ "%02d" % team_id }}</h2>
+                <div style="font-size: 0.85rem; color: #666;">Seed: {{ data.seed }}</div>
+            </div>
+        </div>
+
+        <!-- Station 1 -->
+        <div class="station-box">
+            <div class="station-title">Station 1: Binary Hex Frame Decode (7 Min)</div>
+            <p style="font-size: 0.85rem; margin: 4px 0;">
+                Given the 44-byte raw telemetry frame below, decode the <strong>Spacecraft Mode</strong> (Byte 11) and convert raw <strong>Battery Voltage</strong> (Bytes 12..13) using formula: <code>V_bat = 6000 + 0.05 * raw (mV)</code>.
+            </p>
+            <div class="code-block">
+                1A CF FC E1 42 56 00 12 00 48 01 01 8E 94 01 2C 07 08 30 D4 0A F0 0B 54 0B B8 0C 80 0C 1C 0C E4 00 05 FF FB 00 0A C8 24 00 00 E3 4A
+            </div>
+            <div style="margin-top: 6px; font-size: 0.85rem;">
+                <strong>Q1.1 Mode Name:</strong> ______________________ &nbsp;&nbsp;|&nbsp;&nbsp; 
+                <strong>Q1.2 Battery Voltage (mV):</strong> ______________________ (Score: 0 or 1)
+            </div>
+        </div>
+
+        <!-- Station 2 -->
+        <div class="station-box">
+            <div class="station-title">Station 2: Clock & Tick Math (7 Min)</div>
+            <p style="font-size: 0.85rem; margin: 4px 0;">
+                At UTC <code>2027-03-14T01:45:00Z</code>, OBC Tick counter is <code>65,000</code>. If clock counts at 10.0 ticks/sec, what is the exact UTC timestamp when uint16 tick wraps (reaches <code>0</code>)?
+            </p>
+            <div style="margin-top: 6px; font-size: 0.85rem;">
+                <strong>Calculated Rollover UTC:</strong> ___________________________________ (Score: 0 or 1)
+            </div>
+        </div>
+
+        <!-- Station 3 -->
+        <div class="station-box">
+            <div class="station-title">Station 3: Strip Chart Telemetry Analysis (7 Min)</div>
+            <p style="font-size: 0.85rem; margin: 4px 0;">
+                Review the 4 telemetry traces (A: Bus V, B: Bat Temp, C: Gyro Z, D: RSSI). The Operations Schedule states all heaters are OFF from 02:00 to 03:00. Which trace exhibits an uncommanded excursion at 02:15 UTC?
+            </p>
+            <div style="margin-top: 6px; font-size: 0.85rem;">
+                <strong>Anomalous Trace (A/B/C/D):</strong> ___________ &nbsp;&nbsp;|&nbsp;&nbsp; 
+                <strong>Subsystem:</strong> ______________________ (Score: 0 or 1)
+            </div>
+        </div>
+
+        <!-- Station 4 -->
+        <div class="station-box">
+            <div class="station-title">Station 4: Go / No-Go Subsystem Logic (7 Min)</div>
+            <p style="font-size: 0.85rem; margin: 4px 0;">
+                Launch Criteria: Battery Voltage &gt; 7600 mV, Temp &lt; 35°C, Gyro rates &lt; 0.5 deg/s, All 3 Reaction Wheels &gt; 2500 RPM.
+            </p>
+            <table>
+                <tr><th>Subsystem</th><th>Reading</th><th>Status (GO / NO-GO)</th></tr>
+                <tr><td>EPS</td><td>7740 mV</td><td>__________________</td></tr>
+                <tr><td>Thermal</td><td>28.5 °C</td><td>__________________</td></tr>
+                <tr><td>ADCS Rate</td><td>0.12 deg/s</td><td>__________________</td></tr>
+                <tr><td>ADCS Wheels</td><td>3100, 3200, 2900 RPM</td><td>__________________</td></tr>
+            </table>
+            <div style="margin-top: 6px; font-size: 0.85rem;">
+                <strong>Final Poll Decision:</strong> [ &nbsp; ] GO &nbsp;&nbsp;&nbsp; [ &nbsp; ] NO-GO &nbsp;&nbsp;|&nbsp;&nbsp; (Score: 0 or 1)
+            </div>
+        </div>
+
+        <!-- Launch Auth Card Section -->
+        <div style="border: 2px dashed #000; padding: 12px; margin-top: 15px; background: #fffbe6;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h3 style="margin: 0; font-size: 1rem;">TEAM {{ "%02d" % team_id }} LAUNCH AUTHORISATION &amp; BONUS KEY CARD</h3>
+                    <div style="font-size: 0.8rem; color: #444;">Hand this card to team upon Round 1 completion.</div>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 0.75rem; text-transform: uppercase;">Launch Auth Code</div>
+                    <div class="code-block" style="font-size: 1.1rem; font-weight: 800; color: #b45309;">{{ data.launch_auth_code }}</div>
+                </div>
+            </div>
+            <div style="margin-top: 8px; font-size: 0.85rem;">
+                <strong>Bonus Track HMAC Key (Part B):</strong> <code class="code-block">{{ data.hmac_part_b }}</code>
+            </div>
+        </div>
+
+        <!-- Volunteer Grading Key -->
+        <div class="grading-key" style="margin-top: 15px; font-size: 0.8rem; color: #666;">
+            <strong>[VOLUNTEER GRADING KEY - DO NOT SHOW PARTICIPANTS]:</strong><br>
+            • St 1: Mode = Nominal (1), Bat Voltage = 6000 + 0.05 * 0x8E94(36500) = 7825 mV.<br>
+            • St 2: Ticks to wrap = 65536 - 65000 = 536 ticks = 53.6 seconds -> 2027-03-14T01:45:53Z (or 54s).<br>
+            • St 3: Trace B (Battery Temperature / Thermal).<br>
+            • St 4: GO (All parameters within launch envelope).
+        </div>
+    </div>
+</body>
+</html>

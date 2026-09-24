@@ -1,0 +1,18 @@
+{
+  "temperature": {
+    "offset_c": 4.0,
+    "applies_after_seconds": 1800,
+    "note": "Temperature sensor reads 4.0C high after 1800s from boot. Subtract to get true value."
+  },
+  "altitude": {
+    "noise_m": 0.5,
+    "note": "Altitude has +/- 0.5m random noise per reading."
+  },
+  "status_code_bits": {
+    "bit_0": "GPS_RESET_FLAG",
+    "bit_1": "reserved",
+    "bit_2": "reserved",
+    "bit_3": "BATTERY_FAULT_FLAG",
+    "note": "Bit numbering starts at 0 (least significant)."
+  }
+}

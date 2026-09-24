@@ -1,0 +1,22 @@
+# Python virtual environment
+venv/
+env/
+.env
+
+# Bytecode & Caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Databases & runtime logs
+challenge.db
+*.sqlite3
+*.log
+
+# Large generated server telemetry archives
+generated_data/server_archives/

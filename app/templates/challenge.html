@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% block title %}{{ challenge.id }}: {{ challenge.title }} | RVSAT-1{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 1.5rem;">
+    <a href="/dashboard" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem;">&larr; Back to Dashboard</a>
+</div>
+
+<div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 2rem;">
+    <!-- Left: Challenge Briefing & Submission Form -->
+    <div>
+        <div class="status-card" style="padding: 2rem; border-color: rgba(59, 130, 246, 0.35);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <span class="challenge-id" style="font-size: 1rem; padding: 0.3rem 0.75rem;">{{ challenge.id }}</span>
+                <span class="challenge-pts" style="font-size: 1.1rem;">{{ challenge.points }} BASE POINTS</span>
+            </div>
+            
+            <h1 style="font-size: 1.6rem; margin-bottom: 0.75rem;">{{ challenge.title }}</h1>
+            <p style="font-size: 1rem; color: #cbd5e1; line-height: 1.6; margin-bottom: 1.5rem;">
+                {{ challenge.description }}
+            </p>
+
+            <div style="background: rgba(7, 13, 25, 0.6); border: 1px solid var(--border-glass); border-radius: var(--radius-sm); padding: 1rem; margin-bottom: 2rem;">
+                <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-dim); margin-bottom: 0.3rem;">Required Answer Format:</div>
+                <div class="mono" style="color: var(--cyan-accent); font-size: 0.9rem;">
+                    {% if challenge.tolerance_type == 'iso_time' %}
+                        Exact UTC ISO-8601 Timestamp (e.g. <code>2027-03-14T01:49:13Z</code>)
+                    {% elif challenge.tolerance_type == 'iso_time_and_code' %}
+                        UTC ISO-8601 Timestamp + Fault Code (e.g. <code>2027-03-14T06:12:45Z EPS-07</code>)
+                    {% elif challenge.tolerance_type == 'iso_time_and_val' %}
+                        UTC ISO-8601 Timestamp + Integer Duration (e.g. <code>2027-03-14T01:53:40Z 45</code>)
+                    {% elif challenge.tolerance_type == 'numeric' %}
+                        Numeric Float (e.g. <code>52.4</code>)
+                    {% elif challenge.tolerance_type == 'index_and_mV' %}
+                        0-based Bit Index + Recovered Battery Voltage in mV (e.g. <code>107 7840</code>)
+                    {% elif challenge.tolerance_type == 'orbit_and_mV' %}
+                        Orbit Number + Post-Eclipse Battery Voltage in mV (e.g. <code>4 7620</code>)
+                    {% elif challenge.tolerance_type == 'frame_id_and_code' %}
+                        Frame ID (reset_count:sequence) + Fault Code (e.g. <code>0:71234 COM-04</code>)
+                    {% else %}
+                        Normalized String / Code Identifier
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if is_solved %}
+            <div class="alert alert-info" style="background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.4);">
+                <div style="font-size: 1.5rem;">🎉</div>
+                <div>
+                    <strong style="color: #10b981; font-size: 1.1rem;">CHALLENGE COMPLETED</strong>
+                    <p style="font-size: 0.88rem; margin-top: 0.2rem; color: #e2e8f0;">
+                        Correct submission recorded! Points awarded: <strong style="color:#ffffff;">+{{ solved_sub.points_awarded }} PTS</strong>
+                    </p>
+                </div>
+            </div>
+            {% elif in_cooldown %}
+            <div class="alert alert-warning">
+                <div style="font-size: 1.5rem;">⏳</div>
+                <div>
+                    <strong style="color: #f59e0b;">ATTEMPT LIMIT EXCEEDED (5 WRONG ATTEMPTS)</strong>
+                    <p style="font-size: 0.88rem; margin-top: 0.2rem;">
+                        Ground station uplink in cooldown lock. Try again in <strong>{{ cooldown_rem }}s</strong>.
+                    </p>
+                </div>
+            </div>
+            {% else %}
+            <!-- Submission Box -->
+            <div id="submission-status-box" style="display: none; margin-bottom: 1.25rem;"></div>
+
+            <form id="challenge-submit-form">
+                <input type="hidden" id="challenge_id" value="{{ challenge.id }}">
+                <div class="form-group">
+                    <label class="form-label">Enter Ground Solution</label>
+                    <input type="text" id="answer_input" class="form-control" placeholder="Type solution here..." required autofocus autocomplete="off">
+                </div>
+                <button type="submit" id="submit-btn" class="btn btn-primary" style="width: 100%; padding: 0.85rem;">
+                    Transmit Solution to Mission Control
+                </button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Right: Submission History & Attempt Tracker -->
+    <div>
+        <div class="status-card" style="padding: 1.5rem;">
+            <h3 style="font-size: 1.1rem; margin-bottom: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 0.5rem;">
+                Ground Station Uplink Log
+            </h3>
+            
+            {% if submissions %}
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                {% for sub in submissions %}
+                <div style="background: rgba(7, 13, 25, 0.6); border: 1px solid {{ 'rgba(16, 185, 129, 0.4)' if sub.correct else 'rgba(244, 63, 94, 0.3)' }}; border-radius: var(--radius-sm); padding: 0.75rem 1rem;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 0.25rem;">
+                        <span class="mono" style="color: var(--text-dim);">Attempt #{{ sub.attempt_no }}</span>
+                        <span style="font-weight: 700; color: {{ '#10b981' if sub.correct else '#f43f5e' }};">
+                            {{ 'CORRECT (+{} pts)'.format(sub.points_awarded) if sub.correct else 'INCORRECT' }}
+                        </span>
+                    </div>
+                    <div class="mono" style="color: #ffffff; font-size: 0.88rem; word-break: break-all;">
+                        {{ sub.answer }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div style="color: var(--text-dim); font-size: 0.88rem; text-align: center; padding: 2rem 0;">
+                No telemetry submissions transmitted yet.
+            </div>
+            {% endif %}
+
+            <div style="margin-top: 1.5rem; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 1rem; font-size: 0.8rem; color: var(--text-muted); line-height: 1.5;">
+                <strong style="color:#ffffff;">Scoring Policy:</strong>
+                <ul style="padding-left: 1.2rem; margin-top: 0.3rem;">
+                    <li>5 attempts per challenge before a 10-minute cooldown.</li>
+                    <li>Each incorrect attempt costs -5% of base points.</li>
+                    <li>Time bonus decays linearly over 120 minutes (+30% max).</li>
+                    <li>First solve across all teams earns +10% bonus.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

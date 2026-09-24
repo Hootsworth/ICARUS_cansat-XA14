@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Round 3: CanSat Parachute Drop Simulator | ICARUS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/style.css">
+    <style>
+    .game-hud-box {
+        background: #000000;
+        border: 1px solid var(--border-muted);
+        padding: 0.75rem 1rem;
+        text-align: center;
+        flex: 1;
+    }
+    .game-hud-val {
+        font-family: var(--font-mono);
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #ffffff;
+        margin-top: 0.25rem;
+    }
+    .game-btn {
+        background: #000000;
+        border: 1px solid var(--border-muted);
+        color: #ffffff;
+        padding: 0.75rem 1rem;
+        font-family: var(--font-mono);
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        text-align: center;
+        transition: all 0.15s ease;
+    }
+    .game-btn:hover {
+        border-color: #ffffff;
+        background: #111111;
+    }
+    .game-btn.btn-active {
+        background: #ffffff;
+        color: #000000;
+        border-color: #ffffff;
+    }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="./index.html" class="nav-brand">
+            <div style="width: 24px; height: 24px; border: 2px solid #ffffff; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-weight: 800; font-size: 0.75rem;">
+                I
+            </div>
+            <div>
+                <div class="brand-title">ICARUS / OPERATIONS</div>
+                <div class="brand-subtitle">Telemetry Analysis Challenge</div>
+            </div>
+        </a>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="nav-badge mono" id="live-utc-clock">--:--:-- UTC</div>
+            <div class="nav-badge mono" id="mission-countdown" style="border-color: #525252; color: #ffffff;">T-00:00:00</div>
+            <ul class="nav-links">
+                <li><a href="./index.html" class="nav-link">Dashboard</a></li>
+                <li><a href="./round1.html" class="nav-link">Round 1</a></li>
+                <li><a href="./round2.html" class="nav-link">Round 2</a></li>
+                <li><a href="./round3.html" class="nav-link" style="color:#ffffff;">Round 3</a></li>
+                <li><a href="./round4.html" class="nav-link">Round 4</a></li>
+                <li><a href="./scoreboard.html" class="nav-link">Scoreboard</a></li>
+                <li><a href="./admin.html" class="nav-link">Admin</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container" style="max-width: 920px; padding-top: 2rem;">
+        <div class="card" style="border-left: 3px solid #ffffff; margin-bottom: 2rem;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <div class="eyebrow">[ROUND 03 / ATMOSPHERIC FLIGHT SIMULATION]</div>
+                    <h1 style="font-size: 1.6rem; margin: 0.3rem 0; color: #ffffff;">CanSat Parachute & Ejection Drop Simulator</h1>
+                    <p style="color: var(--text-muted); font-size: 0.85rem;">
+                        Atmospheric drop from 1,000m AGL. Parachute deployment, crosswind fin steering, and acoustic recovery beacon activation.
+                    </p>
+                </div>
+                <div style="text-align: right;">
+                    <div class="eyebrow">Cryptographic Engine</div>
+                    <div class="mono" style="font-weight: 700; color: #ffffff; font-size: 0.95rem;">HMAC-SHA256 SEALED</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="r3-completed-card" class="card" style="display: none; text-align: center; padding: 4rem 2rem;">
+            <div class="mono" style="font-size: 2rem; margin-bottom: 1rem;">[SEALED]</div>
+            <h2 style="color: #ffffff; margin-bottom: 0.5rem; font-size: 1.3rem;">CanSat Atmospheric Flight Telemetry Sealed</h2>
+            <p style="color: var(--text-muted); max-width: 520px; margin: 0 auto 2rem; line-height: 1.6; font-size: 0.85rem;">
+                Your atmospheric drop run has concluded. Your signed telemetry package has been validated by the cryptographic engine and archived for Flight Director evaluation.
+            </p>
+            <div style="display: inline-block; border: 1px solid var(--border-muted); padding: 1.5rem 3rem; margin-bottom: 2rem;">
+                <div class="eyebrow" style="margin-bottom: 0.5rem;">Flight Ledger Status</div>
+                <div class="mono" style="font-size: 1.4rem; font-weight: 700; color: #ffffff;">AUTHENTICATED & STORED</div>
+            </div>
+            <div>
+                <a href="./round4.html" class="btn btn-primary">Proceed to Round 4 &rarr;</a>
+            </div>
+        </div>
+
+        <!-- Pre-Start Briefing Card -->
+        <div id="game-prestart-card" class="card" style="text-align: center; padding: 3rem 2rem;">
+            <h2 style="color: #ffffff; margin-bottom: 0.75rem; font-size: 1.3rem;">CanSat Atmospheric Drop Operations Briefing</h2>
+            <div style="max-width: 620px; margin: 0 auto 2rem; text-align: left; color: var(--text-muted); line-height: 1.6; font-size: 0.85rem;">
+                <p>Your CanSat payload will be ejected at <strong>1,000 meters AGL</strong>:</p>
+                <ul style="padding-left: 1.5rem; margin: 0.75rem 0;">
+                    <li><strong>Parachute Ejection [SPACE]:</strong> Freefall terminal velocity reaches ~44 m/s. Deploy the main parachute between <strong>400m - 500m AGL</strong> to decelerate to nominal landing velocity (<strong>5.0 - 9.0 m/s</strong>). Deploying too late causes ground destruction; deploying too high causes excessive drift.</li>
+                    <li><strong>Crosswind Steering Fin Trimming [A] / [D]:</strong> Atmospheric crosswinds will blow the CanSat off course. Angle the active aerodynamic fins to correct drift and land on the ground recovery bullseye (<strong>0m</strong>).</li>
+                    <li><strong>Recovery Audio Buzzer [B]:</strong> Must arm the 433MHz acoustic tracking beacon below <strong>300m AGL</strong> prior to touchdown.</li>
+                </ul>
+                <p class="mono" style="color: var(--text-dim); font-size: 0.75rem;">
+                    [SECRET SCORING]: Raw flight score is cryptographically signed and stored in the Flight Director ledger. Score is concealed from public scoreboard.
+                </p>
+            </div>
+            <button id="btn-launch-game" class="btn btn-primary" style="padding: 0.8rem 2.5rem; font-size: 0.95rem;">
+                Initiate CanSat Atmospheric Ejection
+            </button>
+        </div>
+
+        <!-- Active Game Screen Container -->
+        <div id="game-container" class="card" style="display: none; padding: 1.5rem; position: relative;">
+            <!-- Telemetry HUD Bar -->
+            <div style="display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+                <div class="game-hud-box">
+                    <div class="eyebrow">ALTITUDE AGL</div>
+                    <div id="hud-altitude" class="game-hud-val">1000 m</div>
+                </div>
+                <div class="game-hud-box">
+                    <div class="eyebrow">DESCENT RATE</div>
+                    <div id="hud-speed" class="game-hud-val">0.0 m/s</div>
+                </div>
+                <div class="game-hud-box">
+                    <div class="eyebrow">BULLSEYE DRIFT</div>
+                    <div id="hud-drift" class="game-hud-val">0.0 m</div>
+                </div>
+                <div class="game-hud-box">
+                    <div class="eyebrow">ACOUSTIC BEACON</div>
+                    <div id="hud-beacon" class="game-hud-val">STANDBY</div>
+                </div>
+            </div>
+
+            <!-- Simulation Canvas -->
+            <div style="position: relative; width: 100%; border: 1px solid var(--border-muted); background: #000000;">
+                <canvas id="sim-canvas" width="860" height="380" style="display: block; width: 100%; height: auto;"></canvas>
+
+                <!-- Overlay for Completion / Alerts -->
+                <div id="game-overlay" style="display: none; position: absolute; inset: 0; background: rgba(0, 0, 0, 0.95); align-items: center; justify-content: center; text-align: center; padding: 2rem; z-index: 10;">
+                    <div id="game-status-msg" style="color: #ffffff; max-width: 540px;">
+                        Simulating...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Flight Action Controls -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; margin-top: 1.5rem;">
+                <button id="btn-chute" class="game-btn" onclick="window.gameInstance && window.gameInstance.deployParachute()">
+                    <span>[SPACE] Deploy Parachute</span>
+                </button>
+                <button id="btn-trim-left" class="game-btn" onmousedown="window.gameInstance && window.gameInstance.trimLeft()" onmouseup="window.gameInstance && (window.gameInstance.finTrim = 0, window.gameInstance.updateButtons())">
+                    <span>[A] Trim Fin Port</span>
+                </button>
+                <button id="btn-trim-right" class="game-btn" onmousedown="window.gameInstance && window.gameInstance.trimRight()" onmouseup="window.gameInstance && (window.gameInstance.finTrim = 0, window.gameInstance.updateButtons())">
+                    <span>[D] Trim Fin Starboard</span>
+                </button>
+                <button id="btn-buzzer" class="game-btn" onclick="window.gameInstance && window.gameInstance.toggleBuzzer()">
+                    <span>[B] Arm Recovery Buzzer</span>
+                </button>
+            </div>
+
+            <!-- Flight Telemetry Event Stream -->
+            <div style="margin-top: 1.5rem; background: #000000; border: 1px solid var(--border-hairline); padding: 0.75rem 1rem; height: 95px; overflow-y: auto; font-family: var(--font-mono); font-size: 0.78rem;" id="game-log">
+                <!-- Dynamic flight logs -->
+            </div>
+        </div>
+    </div>
+
+    <script src="./js/app.js"></script>
+    <script src="./js/firebase_config.js"></script>
+    <script src="./js/firebase_sync.js"></script>
+    <script src="./js/game_round3.js"></script>
+    <script src="./js/github_pages_state.js"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const team = window.IcarusEngine.getTeamData();
+        const prestartCard = document.getElementById("game-prestart-card");
+        const completedCard = document.getElementById("r3-completed-card");
+        const gameContainer = document.getElementById("game-container");
+        const btnLaunch = document.getElementById("btn-launch-game");
+
+        if (team.r3.status === "submitted") {
+            prestartCard.style.display = "none";
+            completedCard.style.display = "block";
+            return;
+        }
+
+        if (btnLaunch) {
+            btnLaunch.addEventListener("click", () => {
+                prestartCard.style.display = "none";
+                gameContainer.style.display = "block";
+
+                window.gameInstance = new CanSatDropGame("sim-canvas");
+                
+                // Override finalizeMission to work seamlessly on GitHub Pages
+                window.gameInstance.finalizeMission = function() {
+                    this.isRunning = false;
+                    const scoring = this.calculateScore();
+                    const rawScore = scoring.totalScore;
+                    const metrics = {
+                        touchdown_velocity_mps: parseFloat(this.vy.toFixed(2)),
+                        landing_offset_m: parseFloat(this.xOffset.toFixed(2)),
+                        chute_deployment_alt_m: Math.round(this.chuteDeployAlt),
+                        beacon_deployed: this.buzzerArmed,
+                        max_g_force: parseFloat(this.maxG.toFixed(2)),
+                        flight_duration_s: parseFloat(this.totalFlightTime.toFixed(1))
+                    };
+
+                    // Persist to IcarusEngine
+                    window.IcarusEngine.submitRound3(rawScore, metrics);
+
+                    const overlay = document.getElementById("game-overlay");
+                    const statusMsg = document.getElementById("game-status-msg");
+                    if (overlay) overlay.style.display = "flex";
+                    if (statusMsg) {
+                        statusMsg.innerHTML = `
+                            <div class="mono" style="font-size:1.8rem; margin-bottom:0.75rem;">[TOUCHDOWN CONFIRMED]</div>
+                            <h3 style="color:#ffffff; margin-bottom:0.5rem; font-size:1.2rem;">CanSat Atmospheric Flight Log Sealed</h3>
+                            <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:1.5rem; line-height:1.5;">
+                                Ground station has authenticated your CanSat descent telemetry package via cryptographic HMAC.
+                                Flight metrics and structural integrity logs have been archived directly into the master flight ledger.
+                            </p>
+                            <div style="display:flex; justify-content:center; gap:1rem; margin-bottom:1.5rem; text-align:center;">
+                                <div style="border:1px solid var(--border-muted); padding:0.6rem 1rem;">
+                                    <div class="eyebrow">TOUCHDOWN VELOCITY</div>
+                                    <div class="mono" style="color:#ffffff; font-weight:700;">${this.vy.toFixed(1)} m/s</div>
+                                </div>
+                                <div style="border:1px solid var(--border-muted); padding:0.6rem 1rem;">
+                                    <div class="eyebrow">BULLSEYE DISPLACEMENT</div>
+                                    <div class="mono" style="color:#ffffff; font-weight:700;">${Math.abs(this.xOffset).toFixed(1)} m</div>
+                                </div>
+                                <div style="border:1px solid var(--border-muted); padding:0.6rem 1rem;">
+                                    <div class="eyebrow">RECOVERY BEACON</div>
+                                    <div class="mono" style="color:#ffffff; font-weight:700;">${this.buzzerArmed ? "AUTHENTICATED" : "NOT ARMED"}</div>
+                                </div>
+                            </div>
+                            <a href="./round4.html" class="btn btn-primary" style="padding:0.75rem 2rem;">Proceed to Round 4 &rarr;</a>
+                        `;
+                    }
+                };
+
+                const sessionId = `r3_${team.id}_ghp`;
+                const sessionToken = "ghpages_session_token_2027";
+                window.gameInstance.start(sessionId, sessionToken);
+            });
+        }
+    });
+    </script>
+</body>
+</html>

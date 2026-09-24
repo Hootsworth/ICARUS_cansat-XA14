@@ -1,0 +1,476 @@
+/* ==========================================================================
+   ICARUS FLIGHT OPERATIONS DESIGN SYSTEM
+   Theme: Minimalist Flat Black & White Editorial
+   ========================================================================== */
+
+:root {
+  --bg-primary: #000000;
+  --bg-secondary: #0a0a0a;
+  --bg-card: #0d0d0d;
+  --bg-card-hover: #141414;
+  --bg-subtle: #171717;
+  
+  --border-hairline: #1f1f1f;
+  --border-muted: #2e2e2e;
+  --border-strong: #525252;
+  --border-active: #ffffff;
+  
+  --text-main: #ffffff;
+  --text-muted: #a3a3a3;
+  --text-dim: #737373;
+  --text-inverse: #000000;
+  
+  --accent-white: #ffffff;
+  --accent-gray: #d4d4d4;
+  --accent-subtle: #404040;
+  
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', 'Menlo', 'Courier New', monospace;
+  
+  --radius-none: 0px;
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Typography */
+h1, h2, h3, h4, .font-heading {
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: #ffffff;
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+.eyebrow {
+  font-size: 0.72rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+}
+
+/* Layout Container */
+.container {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 5rem;
+}
+
+/* Top Navigation Bar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border-muted);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-decoration: none;
+  color: #ffffff;
+}
+
+.brand-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #ffffff;
+}
+
+.brand-subtitle {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  list-style: none;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-family: var(--font-mono);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: color 0.15s ease;
+  padding: 0.35rem 0;
+}
+
+.nav-link:hover {
+  color: #ffffff;
+}
+
+.nav-badge {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  padding: 0.25rem 0.6rem;
+  border: 1px solid var(--border-muted);
+  background: transparent;
+  color: var(--text-main);
+  letter-spacing: 0.05em;
+}
+
+/* Cards & Surfaces */
+.card, .status-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-hairline);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.card:hover, .status-card:hover {
+  border-color: var(--border-muted);
+}
+
+.status-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.status-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-dim);
+  margin-bottom: 0.4rem;
+}
+
+.status-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+}
+
+/* Top Dashboard Metric Grid */
+.mission-status-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+/* Editorial Badges & Pills */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--border-muted);
+  background: transparent;
+  color: var(--text-muted);
+}
+
+.badge-active {
+  border-color: #ffffff;
+  color: #000000;
+  background: #ffffff;
+  font-weight: 700;
+}
+
+.badge-success {
+  border-color: #ffffff;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 600;
+  padding: 0.65rem 1.25rem;
+  cursor: pointer;
+  text-decoration: none;
+  border-radius: var(--radius-xs);
+  transition: all 0.15s ease;
+  border: 1px solid transparent;
+}
+
+.btn-primary {
+  background: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
+}
+
+.btn-primary:hover {
+  background: #e5e5e5;
+  border-color: #e5e5e5;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: #ffffff;
+  border-color: var(--border-muted);
+}
+
+.btn-secondary:hover {
+  border-color: #ffffff;
+  background: var(--bg-subtle);
+}
+
+.btn-danger {
+  background: transparent;
+  color: #ffffff;
+  border-color: #737373;
+}
+
+.btn-danger:hover {
+  background: #ffffff;
+  color: #000000;
+}
+
+.btn-success {
+  background: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
+}
+
+/* Minimalist Tables */
+.scoreboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  text-align: left;
+}
+
+.scoreboard-table th {
+  padding: 0.9rem 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  border-bottom: 2px solid var(--border-muted);
+  background: transparent;
+}
+
+.scoreboard-table td {
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid var(--border-hairline);
+  color: var(--text-main);
+  vertical-align: middle;
+}
+
+.scoreboard-table tr:hover td {
+  background: var(--bg-card-hover);
+}
+
+.rank-pill {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.8rem;
+  width: 28px;
+  height: 28px;
+  line-height: 26px;
+  text-align: center;
+  border: 1px solid var(--border-muted);
+  color: #ffffff;
+}
+
+.rank-1 {
+  background: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
+}
+
+/* Forms and Inputs */
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.4rem;
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.75rem 0.9rem;
+  background: #000000;
+  border: 1px solid var(--border-muted);
+  color: #ffffff;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  border-radius: var(--radius-xs);
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.form-control:focus {
+  border-color: #ffffff;
+}
+
+/* Alerts and Notices */
+.alert {
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--border-muted);
+  background: var(--bg-card);
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.alert-warning {
+  border-left: 3px solid #ffffff;
+}
+
+.alert-info {
+  border-left: 3px solid #a3a3a3;
+}
+
+/* Challenge Grid (Round 4) */
+.phase-section {
+  margin-bottom: 3rem;
+}
+
+.phase-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-bottom: 1px solid var(--border-muted);
+  padding-bottom: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.phase-title {
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+}
+
+.challenge-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.challenge-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-hairline);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.15s ease;
+}
+
+.challenge-card:hover {
+  border-color: #ffffff;
+  background: var(--bg-card-hover);
+}
+
+.challenge-card.solved {
+  border-left: 3px solid #ffffff;
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.challenge-id {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+}
+
+.challenge-pts {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.challenge-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  color: #ffffff;
+}
+
+.challenge-desc {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+  margin-bottom: 1rem;
+}
+
+/* Interactive Mini-Game Controls */
+.game-btn {
+  background: #000000;
+  border: 1px solid var(--border-muted);
+  color: #ffffff;
+  padding: 0.8rem 1.2rem;
+  border-radius: var(--radius-xs);
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.game-btn:hover {
+  border-color: #ffffff;
+}
+
+.btn-active {
+  background: #ffffff !important;
+  color: #000000 !important;
+  border-color: #ffffff !important;
+  font-weight: 700;
+}

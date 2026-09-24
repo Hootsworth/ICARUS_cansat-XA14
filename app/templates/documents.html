@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% block title %}Mission Documentation & Flight Manuals | RVSAT-1{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+    <h1 style="font-size: 1.8rem; margin-bottom: 0.25rem;">FLIGHT OPERATIONS DOCUMENTATION</h1>
+    <p style="color: var(--text-muted); font-size: 0.95rem;">
+        Official Interface Control Documents (ICD), Mission Handbook, Runbooks, and Fault Signature Matrices.
+    </p>
+</div>
+
+<div style="display: grid; grid-template-columns: 240px 1fr; gap: 2rem;">
+    <!-- Sidebar Navigation -->
+    <div>
+        <div class="status-card" style="padding: 1rem; position: sticky; top: 80px;">
+            <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem;">
+                <li><a href="#icd" class="nav-link" style="color: var(--cyan-accent); font-weight: 700;">1. ICD (Frame & Specs)</a></li>
+                <li><a href="#handbook" class="nav-link">2. Mission Handbook</a></li>
+                <li><a href="#fault-signatures" class="nav-link">3. Fault Signature Table</a></li>
+                <li><a href="#runbook" class="nav-link">4. Finale Runbook</a></li>
+                <li><a href="#rules" class="nav-link">5. Rules of Conduct</a></li>
+                <li><a href="#errata" class="nav-link" style="color: var(--amber-warning);">6. 12:00 Errata Notice</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Document Viewer -->
+    <div style="display: flex; flex-direction: column; gap: 2.5rem;">
+        <!-- Section 1: ICD -->
+        <div id="icd" class="status-card" style="padding: 2rem;">
+            <h2 style="font-size: 1.4rem; color: var(--cyan-accent); margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.5rem;">
+                1. Interface Control Document (ICD) - RVSAT-ICD-REV-B
+            </h2>
+
+            <h3 style="font-size: 1.1rem; margin: 1rem 0 0.5rem 0;">1.1 Telemetry Frame Format (44 Bytes)</h3>
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1rem;">
+                All frames are 44 bytes fixed length. Big-endian byte order applies across all fields. (Note: Frame ASM is <code>0x1ACFFCE1</code>, Spacecraft ID is <code>0x4256</code>).
+            </p>
+
+            <table class="scoreboard-table" style="font-size: 0.85rem;">
+                <thead>
+                    <tr>
+                        <th>Offset</th>
+                        <th>Size</th>
+                        <th>Field Name</th>
+                        <th>Data Type</th>
+                        <th>Notes & Calibration</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>0</td><td>4</td><td>ASM (Sync Marker)</td><td>bytes</td><td><code>1A CF FC E1</code></td></tr>
+                    <tr><td>4</td><td>2</td><td>Spacecraft ID</td><td>uint16</td><td>Fixed <code>0x4256</code> ('RV')</td></tr>
+                    <tr><td>6</td><td>2</td><td>Sequence Counter</td><td>uint16</td><td>+1 per frame, wraps at 65536</td></tr>
+                    <tr><td>8</td><td>2</td><td>OBC Tick Counter</td><td>uint16</td><td>0.1s resolution (Little-Endian encoding in flight data)</td></tr>
+                    <tr><td>10</td><td>1</td><td>Frame Type</td><td>uint8</td><td>0x01: HK Telemetry, 0x02: TIME_SYNC</td></tr>
+                    <tr><td>11</td><td>1</td><td>Spacecraft Mode</td><td>uint8</td><td>0: Safe, 1: Nominal, 2: Payload, 3: Detumble</td></tr>
+                    <tr><td>12</td><td>2</td><td>Battery Voltage</td><td>uint16</td><td>$V_{bat} = 6000 + 0.05 \times \text{raw}$ (mV)</td></tr>
+                    <tr><td>14</td><td>2</td><td>Battery Current</td><td>int16</td><td>mA (positive = charge, negative = discharge)</td></tr>
+                    <tr><td>16</td><td>2</td><td>Solar Array Current</td><td>uint16</td><td>mA</td></tr>
+                    <tr><td>18</td><td>2</td><td>Bus Voltage</td><td>uint16</td><td>$V_{bus} = 4500 + 0.04 \times \text{raw}$ (mV)</td></tr>
+                    <tr><td>20</td><td>2</td><td>Battery Temperature</td><td>int16</td><td>$T_{bat} = (\text{raw} - 1000) / 100.0$ (°C)</td></tr>
+                    <tr><td>22</td><td>2</td><td>Panel Temperature</td><td>int16</td><td>$T_{panel} = (\text{raw} - 1000) / 100.0$ (°C)</td></tr>
+                    <tr><td>24</td><td>2</td><td>OBC Temperature</td><td>int16</td><td>$T_{obc} = (\text{raw} - 1050) / 100.0$ (°C) [Rev B Offset]</td></tr>
+                    <tr><td>26</td><td>6</td><td>Wheel RPM (1, 2, 3)</td><td>3x int16</td><td>Reaction Wheel RPMs (X, Y, Z axes)</td></tr>
+                    <tr><td>32</td><td>6</td><td>Gyro Rates (X, Y, Z)</td><td>3x int16</td><td>$\omega = \text{raw} \times 0.01$ (deg/s)</td></tr>
+                    <tr><td>38</td><td>1</td><td>RSSI</td><td>int8</td><td>dBm (-120 to -50)</td></tr>
+                    <tr><td>39</td><td>1</td><td>CPU Load</td><td>uint8</td><td>% (0..100)</td></tr>
+                    <tr><td>40</td><td>1</td><td>Reset Count</td><td>uint8</td><td>Increments upon OBC reboot</td></tr>
+                    <tr><td>41</td><td>1</td><td>Flags</td><td>uint8</td><td>bit0: cmd_ack, bit1: heater_on, bit2: payload_on</td></tr>
+                    <tr><td>42</td><td>2</td><td>CRC-16/CCITT-FALSE</td><td>uint16</td><td>Calculated over bytes 4..41 (Poly 0x1021, Init 0xFFFF)</td></tr>
+                </tbody>
+            </table>
+
+            <h3 style="font-size: 1.1rem; margin: 1.5rem 0 0.5rem 0;">1.2 TIME_SYNC Frame Structure (Type 0x02)</h3>
+            <p style="font-size: 0.88rem; color: var(--text-muted);">
+                When Type is <code>0x02</code>, Bytes 12..15 hold the UTC Unix Timestamp (uint32 big-endian seconds). The remaining payload bytes (16..41) are zeroed. The CRC over bytes 4..41 is valid.
+            </p>
+        </div>
+
+        <!-- Section 2: Fault Signature Table -->
+        <div id="fault-signatures" class="status-card" style="padding: 2rem;">
+            <h2 style="font-size: 1.4rem; color: var(--cyan-accent); margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.5rem;">
+                2. ICD Fault Signature Matrix
+            </h2>
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1rem;">
+                Use the following official ICD diagnostic fault codes when submitting anomaly reports:
+            </p>
+
+            <table class="scoreboard-table" style="font-size: 0.85rem;">
+                <thead>
+                    <tr>
+                        <th>Fault Code</th>
+                        <th>Subsystem</th>
+                        <th>Fault Signature & Symptoms</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td class="mono" style="color:var(--cyan-accent);">EPS-01</td><td>EPS</td><td>Solar array shunt circuit failure (sudden 0 mA solar current in sunlight)</td></tr>
+                    <tr><td class="mono" style="color:var(--cyan-accent);">EPS-03</td><td>EPS</td><td>Gradual solar array efficiency degradation</td></tr>
+                    <tr><td class="mono" style="color:var(--cyan-accent); font-weight:700;">EPS-07</td><td>EPS</td><td>Battery cell partial short / abrupt ~150 mV drop during eclipse</td></tr>
+                    <tr><td class="mono" style="color:var(--cyan-accent);">THM-01</td><td>Thermal</td><td>Heater thermostat failure to close (battery under-temperature in eclipse)</td></tr>
+                    <tr><td class="mono" style="color:var(--cyan-accent); font-weight:700;">THM-03</td><td>Thermal</td><td>Heater switch stuck CLOSED outside planned schedule; uncommanded temperature ramp</td></tr>
+                    <tr><td class="mono" style="color:var(--cyan-accent);">ADCS-01</td><td>ADCS</td><td>Reaction wheel tachometer jitter / sensor noise spike</td></tr>
+                    <tr><td class="mono" style="color:var(--cyan-accent); font-weight:700;">ADCS-02</td><td>ADCS</td><td>Reaction wheel motor driver lockup / freeze, resulting in attitude excursion & OBC reset</td></tr>
+                    <tr><td class="mono" style="color:var(--cyan-accent);">COM-01</td><td>TT&C</td><td>LNA gain degradation (permanent -25 dBm drop in RSSI)</td></tr>
+                    <tr><td class="mono" style="color:var(--cyan-accent); font-weight:700;">COM-04</td><td>TT&C</td><td>Single-event upset (SEU) single-bit transmission corruption in downlink frame</td></tr>
+                    <tr><td class="mono" style="color:var(--cyan-accent);">OBC-02</td><td>OBC</td><td>Watchdog timer timeout / uncommanded reboot</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Section 3: Mission Handbook -->
+        <div id="handbook" class="status-card" style="padding: 2rem;">
+            <h2 style="font-size: 1.4rem; color: var(--cyan-accent); margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.5rem;">
+                3. Mission Handbook & Downlink Budget Rules
+            </h2>
+            <div style="font-size: 0.9rem; color: #cbd5e1; line-height: 1.6;">
+                <p style="margin-bottom: 1rem;">
+                    <strong>Downlink Credits & Pass API:</strong><br>
+                    Each team starts with 12 credits (plus 0..4 bonus credits earned in Round 1). Each credit buys a 10-minute high-rate slice (600 frames = 26.4 KB). 
+                    Requests are made via <code>POST /api/pass {"start_utc": "..."}</code>. Rate limit: 1 request per 20 seconds. Identical passes within 5 minutes are free.
+                </p>
+                <p style="margin-bottom: 1rem;">
+                    <strong>Bonus Track (Uplink HMAC Verification):</strong><br>
+                    Uplink telecommand integrity is validated using HMAC-SHA256 (first 16 hex chars). The HMAC key is split into two halves:
+                    <br>• <strong>Part A (Handbook):</strong> Derived from master secret per team.
+                    <br>• <strong>Part B:</strong> Printed on your physical Round 1 Station Completion Card.
+                </p>
+            </div>
+        </div>
+
+        <!-- Section 4: Finale Runbook -->
+        <div id="runbook" class="status-card" style="padding: 2rem;">
+            <h2 style="font-size: 1.4rem; color: var(--cyan-accent); margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.5rem;">
+                4. Flight Operations Runbook: Anomaly Recovery (OP-RB-88)
+            </h2>
+            <div style="font-size: 0.9rem; color: #cbd5e1; line-height: 1.6;">
+                <p style="margin-bottom: 0.75rem;">
+                    <strong>Step 1:</strong> Interrogate telemetry status using <code>GET_HK</code>.
+                </p>
+                <p style="margin-bottom: 0.75rem;">
+                    <strong>Step 2 (Thermal Envelope):</strong> If $T_{bat} > 45.0^\circ\text{C}$, send <code>HEATER A OFF</code> or <code>HEATER B OFF</code> to shed thermal load prior to wheel power cycle. Failure to shed load will cause brownout & bus reset.
+                </p>
+                <p style="margin-bottom: 0.75rem;">
+                    <strong>Step 3 (ADCS Cycle):</strong> Reset the specific faulted wheel with <code>WHEEL &lt;1|2|3&gt; RESET</code>.
+                </p>
+                <p style="margin-bottom: 0.75rem;">
+                    <strong>Step 4 (Spin-Up Verification - Rev 1.2):</strong> Wait 60s (or <code>WAIT 60</code>) for reaction wheel spin-up to complete (~3150 RPM). <em>[Note: Rev 1.0 outdated instruction to transition immediately is deprecated!]</em>
+                </p>
+                <p>
+                    <strong>Step 5 (Nominal Return):</strong> Issue <code>MODE NOMINAL</code>.
+                </p>
+            </div>
+        </div>
+
+        <!-- Section 5: Rules of Conduct -->
+        <div id="rules" class="status-card" style="padding: 2rem;">
+            <h2 style="font-size: 1.4rem; color: var(--cyan-accent); margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.5rem;">
+                5. Rules & Code of Conduct
+            </h2>
+            <div style="font-size: 0.9rem; color: #cbd5e1; line-height: 1.6;">
+                <ul style="padding-left: 1.2rem;">
+                    <li><strong>AI Policy:</strong> AI coding assistants (ChatGPT, Claude, Copilot, Gemini) are permitted. However, flight solutions require human judgment to select analysis windows and diagnose anomalies.</li>
+                    <li><strong>Server Integrity:</strong> Do not execute automated denial-of-service, brute force endpoints, or scrape unauthorized web paths. Any violation results in immediate disqualification.</li>
+                    <li><strong>No Inter-Team Collaboration:</strong> All datasets and flags are uniquely seeded per team. Sharing answers is futile and prohibited.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Section 6: Errata Notice -->
+        <div id="errata" class="status-card" style="padding: 2rem; border-color: rgba(245, 158, 11, 0.4);">
+            <h2 style="font-size: 1.4rem; color: var(--amber-warning); margin-bottom: 1rem; border-bottom: 1px solid rgba(245, 158, 11, 0.2); padding-bottom: 0.5rem;">
+                6. 12:00 UTC Flight Director Errata Notice
+            </h2>
+            <p style="font-size: 0.9rem; color: #fde68a; line-height: 1.6;">
+                <strong>Notice:</strong> OBC Temperature Calibration follows Revision B ($T_{obc} = (\text{raw} - 1050) / 100.0$ °C) rather than Revision A. Battery and solar panel temperature sensors continue to follow Revision A offset (1000).
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

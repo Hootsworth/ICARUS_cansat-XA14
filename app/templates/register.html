@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Station Registration | ICARUS{% endblock %}
+
+{% block content %}
+<div style="max-width: 440px; margin: 3rem auto;">
+    <div class="card" style="padding: 2.5rem; border: 1px solid var(--border-muted);">
+        <div style="margin-bottom: 2rem;">
+            <div class="eyebrow">[REGISTRATION]</div>
+            <h2 style="font-size: 1.4rem; color: #ffffff; margin-top: 0.3rem;">Team Registration</h2>
+            <p style="color: var(--text-muted); font-size: 0.82rem; margin-top: 0.25rem;">Register with your assigned station ID and event join code</p>
+        </div>
+
+        {% if error %}
+        <div class="alert alert-warning" style="padding: 0.75rem 1rem; font-size: 0.82rem; margin-bottom: 1.25rem;">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <form action="/register" method="POST">
+            <div class="form-group">
+                <label class="form-label">Assigned Team Number (1 to 11)</label>
+                <input type="number" name="team_id" class="form-control" min="1" max="11" placeholder="e.g. 1" required autofocus>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Team Name / Callsign</label>
+                <input type="text" name="team_name" class="form-control" placeholder="e.g. Orion Flight Group" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" name="password" class="form-control" placeholder="••••••••" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Event Join Code</label>
+                <input type="text" name="join_code" class="form-control" placeholder="e.g. RVU-ORBIT-2027" required>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem; margin-top: 0.75rem;">
+                Initialize & Register Station
+            </button>
+        </form>
+
+        <div style="margin-top: 1.5rem; font-size: 0.8rem; color: var(--text-dim); text-align: center;">
+            Already registered? <a href="/login" style="color: #ffffff; text-decoration: underline;">Login</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

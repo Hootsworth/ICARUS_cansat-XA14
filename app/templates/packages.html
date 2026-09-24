@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %}Telemetry Packages & Downlink Center | RVSAT-1{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+    <h1 style="font-size: 1.8rem; margin-bottom: 0.5rem;">MISSION DATA PACKAGES</h1>
+    <p style="color: var(--text-muted); font-size: 0.95rem;">
+        Download your team's chained encrypted telemetry packages. Each package is secured with the previous phase's flag.
+    </p>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 1.5rem;">
+    <!-- Phase 1 Package -->
+    <div class="status-card" style="padding: 1.75rem; border-color: rgba(59, 130, 246, 0.4);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <span class="challenge-id">PHASE 1</span>
+            <span class="nav-badge" style="color: #10b981; border-color: #10b981;">AVAILABLE</span>
+        </div>
+        <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem;">Signal Acquisition Package</h3>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+            Contains 30-minute raw telemetry frame dump (<code>sample_dump.bin</code>) and Phase 1 brief.
+        </p>
+        
+        <div style="background: rgba(7, 13, 25, 0.6); border: 1px solid var(--border-glass); border-radius: var(--radius-sm); padding: 0.75rem 1rem; margin-bottom: 1.5rem;">
+            <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-dim);">Archive Password</div>
+            <div class="mono" style="color: #f59e0b; font-weight: 700; font-size: 0.95rem;">
+                {{ team.launch_auth_code }} (Your Launch Auth Code)
+            </div>
+        </div>
+
+        <a href="/download/package/{{ team.id }}/team_{{ '%02d' % team.id }}_phase1.zip" class="btn btn-primary" style="width: 100%;">
+            Download Phase 1 Package (.zip) &darr;
+        </a>
+    </div>
+
+    <!-- Phase 2 Package -->
+    <div class="status-card" style="padding: 1.75rem; border-color: {{ 'rgba(16, 185, 129, 0.4)' if flags.get('PHASE_1') else 'rgba(59, 130, 246, 0.2)' }};">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <span class="challenge-id">PHASE 2</span>
+            {% if flags.get('PHASE_1') %}
+            <span class="nav-badge" style="color: #10b981; border-color: #10b981;">UNLOCKED</span>
+            {% else %}
+            <span class="nav-badge" style="color: #f59e0b; border-color: #f59e0b;">LOCKED (REQUIRES PHASE 1)</span>
+            {% endif %}
+        </div>
+        <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem;">Downlink Investigation Package</h3>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+            Contains 24-hour <code>beacon.csv</code>, <code>planned_schedule.csv</code>, <code>uplink_log.csv</code>, and <code>api_token.txt</code>.
+        </p>
+
+        <div style="background: rgba(7, 13, 25, 0.6); border: 1px solid var(--border-glass); border-radius: var(--radius-sm); padding: 0.75rem 1rem; margin-bottom: 1.5rem;">
+            <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-dim);">Archive Password</div>
+            <div class="mono" style="color: {{ '#10b981' if flags.get('PHASE_1') else '#64748b' }}; font-weight: 700; font-size: 0.95rem;">
+                {{ flags.get('PHASE_1') or 'Earn Phase 1 Flag to Unlock' }}
+            </div>
+        </div>
+
+        <a href="/download/package/{{ team.id }}/team_{{ '%02d' % team.id }}_phase2.zip" class="btn btn-secondary" style="width: 100%;">
+            Download Phase 2 Package (.zip) &darr;
+        </a>
+    </div>
+
+    <!-- Phase 3 Package -->
+    <div class="status-card" style="padding: 1.75rem; border-color: {{ 'rgba(16, 185, 129, 0.4)' if flags.get('PHASE_2') else 'rgba(59, 130, 246, 0.2)' }};">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <span class="challenge-id">PHASE 3</span>
+            {% if flags.get('PHASE_2') %}
+            <span class="nav-badge" style="color: #10b981; border-color: #10b981;">UNLOCKED</span>
+            {% else %}
+            <span class="nav-badge" style="color: #f59e0b; border-color: #f59e0b;">LOCKED (REQUIRES PHASE 2)</span>
+            {% endif %}
+        </div>
+        <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem;">Fault Isolation Package</h3>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+            Contains Phase 3 telemetry questions and quick isolation formulas.
+        </p>
+
+        <div style="background: rgba(7, 13, 25, 0.6); border: 1px solid var(--border-glass); border-radius: var(--radius-sm); padding: 0.75rem 1rem; margin-bottom: 1.5rem;">
+            <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-dim);">Archive Password</div>
+            <div class="mono" style="color: {{ '#10b981' if flags.get('PHASE_2') else '#64748b' }}; font-weight: 700; font-size: 0.95rem;">
+                {{ flags.get('PHASE_2') or 'Earn Phase 2 Flag to Unlock' }}
+            </div>
+        </div>
+
+        <a href="/download/package/{{ team.id }}/team_{{ '%02d' % team.id }}_phase3.zip" class="btn btn-secondary" style="width: 100%;">
+            Download Phase 3 Package (.zip) &darr;
+        </a>
+    </div>
+</div>
+
+<div class="status-card" style="margin-top: 2rem; padding: 1.5rem;">
+    <h3 style="font-size: 1.1rem; margin-bottom: 0.75rem; color: var(--cyan-accent);">
+        High-Rate Telemetry Downlink Pass API
+    </h3>
+    <p style="font-size: 0.9rem; color: #cbd5e1; line-height: 1.6;">
+        To request a 10-minute full-rate telemetry pass (600 frames, 26.4 KB), send a POST request to <code>/api/pass</code>:
+    </p>
+    <div class="mono" style="background: #040810; border: 1px solid #1e3a8a; border-radius: var(--radius-sm); padding: 1rem; margin-top: 0.75rem; color: #38bdf8; font-size: 0.85rem;">
+        curl -X POST http://localhost:8000/api/pass \<br>
+        &nbsp;&nbsp;-H "Authorization: Bearer {{ team.api_token }}" \<br>
+        &nbsp;&nbsp;-H "Content-Type: application/json" \<br>
+        &nbsp;&nbsp;-d '{"start_utc": "2027-03-14T05:20:00Z"}' --output pass_window.bin
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,59 @@
+{
+  "flight": {
+    "peak_altitude_m": 1000,
+    "peak_time_seconds": 1500,
+    "total_duration_s": 3600
+  },
+  "real_anomalies": [
+    {
+      "id": "A1",
+      "sensor": "gps",
+      "time_seconds": 1240,
+      "description": "Sudden GPS position jump of ~7km, inconsistent with flight.",
+      "explained_by": "CMD_GPS_RESET in commands.log at 10:20:40",
+      "correct_classification": "real_event"
+    },
+    {
+      "id": "A2",
+      "sensor": "battery",
+      "time_seconds": 2100,
+      "description": "Battery voltage drops 0.35V in a single reading, violating decay curve.",
+      "explained_by": "status_code bit 3 set at same timestamp; CMD_BATTERY_WARN in log",
+      "correct_classification": "sensor_failure"
+    },
+    {
+      "id": "A3",
+      "sensor": "altitude",
+      "time_seconds": [
+        2700,
+        2850
+      ],
+      "description": "Altitude reads identical value for 150 consecutive seconds while GPS keeps moving.",
+      "explained_by": "CMD_ALT_SENSOR_FAULT in commands.log at 10:47:30",
+      "correct_classification": "sensor_failure"
+    }
+  ],
+  "decoys": [
+    {
+      "id": "D1",
+      "sensor": "temperature",
+      "time_seconds": 600,
+      "description": "Single-reading temp spike of +3.5C.",
+      "why_not_anomaly": "Within combined noise band (+/-0.3 noise, +0.5 altitude noise). Not sustained."
+    },
+    {
+      "id": "D2",
+      "sensor": "temperature",
+      "time_seconds": ">1800",
+      "description": "Temperature reads ~4C higher after 1800s.",
+      "why_not_anomaly": "Documented calibration offset in calibration.json. Subtract 4.0C. Not an anomaly."
+    },
+    {
+      "id": "D3",
+      "sensor": "gps",
+      "time_seconds": 1900,
+      "description": "One row has lat=999.",
+      "why_not_anomaly": "Malformed data. Drop the row. Not a flight anomaly."
+    }
+  ]
+}

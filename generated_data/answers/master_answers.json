@@ -1,0 +1,1069 @@
+{
+  "1": {
+    "seed": 1137,
+    "drift_ppm": 55.79,
+    "launch_auth_code": "AUTH-IC338",
+    "api_token": "icarus_tok_01_1137",
+    "hmac_part_a": "A5FEEB6AC5C35AC8",
+    "hmac_part_b": "6AE664ABB3A0D0B4",
+    "flags": {
+      "PHASE_1": "MISSION{D74AEEC5C41ABA8A}",
+      "PHASE_2": "MISSION{0F058AA5651E1018}",
+      "PHASE_3": "MISSION{8DF142473FF82C40}",
+      "FINALE": "MISSION{0F442B9F83E6C724}"
+    },
+    "challenges": {
+      "C1.1": {
+        "question": "OBC clock oscillator drift rate in PPM (or true dump start UTC)",
+        "answer": "55.8",
+        "alt_answer": "2027-03-14T01:43:20Z",
+        "tolerance": 1.0,
+        "type": "numeric"
+      },
+      "C1.2": {
+        "question": "Telemetry gap start UTC and duration in seconds",
+        "answer": "2027-03-14T01:53:40Z 45",
+        "alt_answer": "2027-03-14T01:53:40Z 45s",
+        "tolerance": 1,
+        "type": "iso_time_and_val"
+      },
+      "C1.3": {
+        "question": "UTC timestamp of uint16 OBC tick counter rollover",
+        "answer": "2027-03-14T01:49:13Z",
+        "tolerance": 1,
+        "type": "iso_time"
+      },
+      "C2.1": {
+        "question": "Fault 1 (EPS) onset UTC and ICD fault code",
+        "answer": "2027-03-14T07:25:54Z EPS-07",
+        "tolerance": 1,
+        "type": "iso_time_and_code"
+      },
+      "C2.2": {
+        "question": "Fault 2 (THM) onset UTC and ICD fault code",
+        "answer": "2027-03-14T11:47:00Z THM-03",
+        "tolerance": 1,
+        "type": "iso_time_and_code"
+      },
+      "C2.3": {
+        "question": "Fault 3 (ADCS) cascade onset UTC and ICD fault code",
+        "answer": "2027-03-14T16:16:28Z ADCS-02",
+        "tolerance": 1,
+        "type": "iso_time_and_code"
+      },
+      "C2.4": {
+        "question": "Fault 4 (Comms) corrupted frame ID (reset_count:sequence) and ICD code",
+        "answer": "1:13242 COM-04",
+        "tolerance": 0,
+        "type": "frame_id_and_code"
+      },
+      "C3.1": {
+        "question": "Ordered list of parameter IDs whose deviation begins in F3 cascade",
+        "answer": "wheel_rpm_2,gyro_z,bus_v",
+        "alt_answer": "wheel2,gyro_z,bus_v",
+        "tolerance": 0,
+        "type": "string"
+      },
+      "C3.2": {
+        "question": "UTC timestamp of first frame after OBC reset",
+        "answer": "2027-03-14T16:22:18Z",
+        "tolerance": 1,
+        "type": "iso_time"
+      },
+      "C3.3": {
+        "question": "0-based flipped bit index in frame and recovered original battery voltage (mV)",
+        "answer": "108 7917",
+        "tolerance": 10,
+        "type": "index_and_mV"
+      },
+      "C3.4": {
+        "question": "Orbit number of F1 onset and battery voltage at end of that eclipse (mV)",
+        "answer": "4 7559",
+        "tolerance": 20,
+        "type": "orbit_and_mV"
+      },
+      "B1.1": {
+        "question": "Bonus: Command ID of the forged telecommand in uplink_log.csv",
+        "answer": "CMD-1014",
+        "tolerance": 0,
+        "type": "string"
+      },
+      "B1.2": {
+        "question": "Bonus: Command ID of the replayed telecommand in uplink_log.csv",
+        "answer": "CMD-1019",
+        "tolerance": 0,
+        "type": "string"
+      }
+    }
+  },
+  "2": {
+    "seed": 1274,
+    "drift_ppm": 90.77,
+    "launch_auth_code": "AUTH-IC475",
+    "api_token": "icarus_tok_02_1274",
+    "hmac_part_a": "913F90C509370EC6",
+    "hmac_part_b": "966395EB016A94AD",
+    "flags": {
+      "PHASE_1": "MISSION{22AF4B1416FC0039}",
+      "PHASE_2": "MISSION{C718B0CEEB55574F}",
+      "PHASE_3": "MISSION{F88CF864D96A7F32}",
+      "FINALE": "MISSION{A82FC75661F69C0D}"
+    },
+    "challenges": {
+      "C1.1": {
+        "question": "OBC clock oscillator drift rate in PPM (or true dump start UTC)",
+        "answer": "90.8",
+        "alt_answer": "2027-03-14T01:43:20Z",
+        "tolerance": 1.0,
+        "type": "numeric"
+      },
+      "C1.2": {
+        "question": "Telemetry gap start UTC and duration in seconds",
+        "answer": "2027-03-14T01:53:40Z 45",
+        "alt_answer": "2027-03-14T01:53:40Z 45s",
+        "tolerance": 1,
+        "type": "iso_time_and_val"
+      },
+      "C1.3": {
+        "question": "UTC timestamp of uint16 OBC tick counter rollover",
+        "answer": "2027-03-14T01:49:13Z",
+        "tolerance": 1,
+        "type": "iso_time"
+      },
+      "C2.1": {
+        "question": "Fault 1 (EPS) onset UTC and ICD fault code",
+        "answer": "2027-03-14T07:28:56Z EPS-07",
+        "tolerance": 1,
+        "type": "iso_time_and_code"
+      },
+      "C2.2": {
+        "question": "Fault 2 (THM) onset UTC and ICD fault code",
+        "answer": "2027-03-14T11:35:42Z THM-03",
+        "tolerance": 1,
+        "type": "iso_time_and_code"
+      },
+      "C2.3": {
+        "question": "Fault 3 (ADCS) cascade onset UTC and ICD fault code",
+        "answer": "2027-03-14T16:12:56Z ADCS-02",
+        "tolerance": 1,
+        "type": "iso_time_and_code"
+      },
+      "C2.4": {
+        "question": "Fault 4 (Comms) corrupted frame ID (reset_count:sequence) and ICD code",
+        "answer": "1:13561 COM-04",
+        "tolerance": 0,
+        "type": "frame_id_and_code"
+      },
+      "C3.1": {
+        "question": "Ordered list of parameter IDs whose deviation begins in F3 cascade",
+        "answer": "wheel_rpm_2,gyro_z,bus_v",
+        "alt_answer": "wheel2,gyro_z,bus_v",
+        "tolerance": 0,
+        "type": "string"
+      },
+      "C3.2": {
+        "question": "UTC timestamp of first frame after OBC reset",
+        "answer": "2027-03-14T16:18:46Z",
+        "tolerance": 1,
+        "type": "iso_time"
+      },
+      "C3.3": {
+        "question": "0-based flipped bit index in frame and recovered original battery voltage (mV)",
+        "answer": "106 7894",
+        "tolerance": 10,
+        "type": "index_and_mV"
+      },
+      "C3.4": {
+        "question": "Orbit number of F1 onset and battery voltage at end of that eclipse (mV)",
+        "answer": "4 7550",
+        "tolerance": 20,
+        "type": "orbit_and_mV"
+      },
+      "B1.1": {
+        "question": "Bonus: Command ID of the forged telecommand in uplink_log.csv",
+        "answer": "CMD-1014",
+        "tolerance": 0,
+        "type": "string"
+      },
+      "B1.2": {
+        "question": "Bonus: Command ID of the replayed telecommand in uplink_log.csv",
+        "answer": "CMD-1019",
+        "tolerance": 0,
+        "type": "string"
+      }
+    }
+  },
+  "3": {
+    "seed": 1411,
+    "drift_ppm": 74.25,
+    "launch_auth_code": "AUTH-IC612",
+    "api_token": "icarus_tok_03_1411",
+    "hmac_part_a": "0D251598258A42EC",
+    "hmac_part_b": "FF824BE86C41E7E6",
+    "flags": {
+      "PHASE_1": "MISSION{A06FCCF5C4EF07DA}",
+      "PHASE_2": "MISSION{1CA1426DB321E0E4}",
+      "PHASE_3": "MISSION{EAF2954B8CC645D1}",
+      "FINALE": "MISSION{3D861AB56991A444}"
+    },
+    "challenges": {
+      "C1.1": {
+        "question": "OBC clock oscillator drift rate in PPM (or true dump start UTC)",
+        "answer": "74.2",
+        "alt_answer": "2027-03-14T01:43:20Z",
+        "tolerance": 1.0,
+        "type": "numeric"
+      },
+      "C1.2": {
+        "question": "Telemetry gap start UTC and duration in seconds",
+        "answer": "2027-03-14T01:53:40Z 45",
+        "alt_answer": "2027-03-14T01:53:40Z 45s",
+        "tolerance": 1,
+        "type": "iso_time_and_val"
+      },
+      "C1.3": {
+        "question": "UTC timestamp of uint16 OBC tick counter rollover",
+        "answer": "2027-03-14T01:49:13Z",
+        "tolerance": 1,
+        "type": "iso_time"
+      },
+      "C2.1": {
+        "question": "Fault 1 (EPS) onset UTC and ICD fault code",
+        "answer": "2027-03-14T07:26:42Z EPS-07",
+        "tolerance": 1,
+        "type": "iso_time_and_code"
+      },
+      "C2.2": {
+        "question": "Fault 2 (THM) onset UTC and ICD fault code",
+        "answer": "2027-03-14T11:37:51Z THM-03",
+        "tolerance": 1,
+        "type": "iso_time_and_code"
+      },
+      "C2.3": {
+        "question": "Fault 3 (ADCS) cascade onset UTC and ICD fault code",
+        "answer": "2027-03-14T16:03:44Z ADCS-02",
+        "tolerance": 1,
+        "type": "iso_time_and_code"
+      },
+      "C2.4": {
+        "question": "Fault 4 (Comms) corrupted frame ID (reset_count:sequence) and ICD code",
+        "answer": "1:14389 COM-04",
+        "tolerance": 0,
+        "type": "frame_id_and_code"
+      },
+      "C3.1": {
+        "question": "Ordered list of parameter IDs whose deviation begins in F3 cascade",
+        "answer": "wheel_rpm_2,gyro_z,bus_v",
+        "alt_answer": "wheel2,gyro_z,bus_v",
+        "tolerance": 0,
+        "type": "string"
+      },
+      "C3.2": {
+        "question": "UTC timestamp of first frame after OBC reset",
+        "answer": "2027-03-14T16:09:34Z",
+        "tolerance": 1,
+        "type": "iso_time"
+      },
+      "C3.3": {
+        "question": "0-based flipped bit index in frame and recovered original battery voltage (mV)",
+        "answer": "107 7815",
+        "tolerance": 10,
+        "type": "index_and_mV"
+      },
+      "C3.4": {
+        "question": "Orbit number of F1 onset and battery voltage at end of that eclipse (mV)",
+        "answer": "4 7548",
+        "tolerance": 20,
+        "type": "orbit_and_mV"
+      },
+      "B1.1": {
+        "question": "Bonus: Command ID of the forged telecommand in uplink_log.csv",
+        "answer": "CMD-1014",
+        "tolerance": 0,
+        "type": "string"
+      },
+      "B1.2": {
+        "question": "Bonus: Command ID of the replayed telecommand in uplink_log.csv",
+        "answer": "CMD-1019",
+        "tolerance": 0,
+        "type": "string"
+      }
+    }
+  },
+  "4": {
+    "seed": 1548,
+    "drift_ppm": 58.92,
+    "launch_auth_code": "AUTH-IC749",
+    "api_token": "icarus_tok_04_1548",
+    "hmac_part_a": "B56574695FA8060B",
+    "hmac_part_b": "62D9174BCF3F856A",
+    "flags": {
+      "PHASE_1": "MISSION{A6DC453F7B8542C7}",
+      "PHASE_2": "MISSION{B9A7AB0A2653B72B}",
+      "PHASE_3": "MISSION{2CA4D35D5E872B84}",
+      "FINALE": "MISSION{A489C8352FCED240}"
+    },
+    "challenges": {
+      "C1.1": {
+        "question": "OBC clock oscillator drift rate in PPM (or true dump start UTC)",
+        "answer": "58.9",
+        "alt_answer": "2027-03-14T01:43:20Z",
+        "tolerance": 1.0,
+        "type": "numeric"
+      },
+      "C1.2": {
+        "question": "Telemetry gap start UTC and duration in seconds",
+        "answer": "2027-03-14T01:53:40Z 45",
+        "alt_answer": "2027-03-14T01:53:40Z 45s",
+        "tolerance": 1,
+        "type": "iso_time_and_val"
+      },
+      "C1.3": {
+        "question": "UTC timestamp of uint16 OBC tick counter rollover",
+        "answer": "2027-03-14T01:49:13Z",
+        "tolerance": 1,
+        "type": "iso_time"
+      },
+      "C2.1": {
+        "question": "Fault 1 (EPS) onset UTC and ICD fault code",
+        "answer": "2027-03-14T07:26:02Z EPS-07",
+        "tolerance": 1,
+        "type": "iso_time_and_code"
+      },
+      "C2.2": {
+        "question": "Fault 2 (THM) onset UTC and ICD fault code",
+        "answer": "2027-03-14T11:36:06Z THM-03",
+        "tolerance": 1,
+        "type": "iso_time_and_code"
+      },
+      "C2.3": {
+        "question": "Fault 3 (ADCS) cascade onset UTC and ICD fault code",
+        "answer": "2027-03-14T16:03:01Z ADCS-02",
+        "tolerance": 1,
+        "type": "iso_time_and_code"
+      },
+      "C2.4": {
+        "question": "Fault 4 (Comms) corrupted frame ID (reset_count:sequence) and ICD code",
+        "answer": "1:14404 COM-04",
+        "tolerance": 0,
+        "type": "frame_id_and_code"
+      },
+      "C3.1": {
+        "question": "Ordered list of parameter IDs whose deviation begins in F3 cascade",
+        "answer": "wheel_rpm_2,gyro_z,bus_v",
+        "alt_answer": "wheel2,gyro_z,bus_v",
+        "tolerance": 0,
+        "type": "string"
+      },
+      "C3.2": {
+        "question": "UTC timestamp of first frame after OBC reset",
+        "answer": "2027-03-14T16:08:51Z",
+        "tolerance": 1,
+        "type": "iso_time"
+      },
+      "C3.3": {
+        "question": "0-based flipped bit index in frame and recovered original battery voltage (mV)",
+        "answer": "106 7826",
+        "tolerance": 10,
+        "type": "index_and_mV"
+      },
+      "C3.4": {
+        "question": "Orbit number of F1 onset and battery voltage at end of that eclipse (mV)",
+        "answer": "4 7552",
+        "tolerance": 20,
+        "type": "orbit_and_mV"
+      },
+      "B1.1": {
+        "question": "Bonus: Command ID of the forged telecommand in uplink_log.csv",
+        "answer": "CMD-1014",
+        "tolerance": 0,
+        "type": "string"
+      },
+      "B1.2": {
+        "question": "Bonus: Command ID of the replayed telecommand in uplink_log.csv",
+        "answer": "CMD-1019",
+        "tolerance": 0,
+        "type": "string"
+      }
+    }
+  },
+  "5": {
+    "seed": 1685,
+    "drift_ppm": 42.42,
+    "launch_auth_code": "AUTH-IC886",
+    "api_token": "icarus_tok_05_1685",
+    "hmac_part_a": "0DC50E1A3EE00230",
+    "hmac_part_b": "BA89160F6D8AC138",
+    "flags": {
+      "PHASE_1": "MISSION{BA37D494A0399D61}",
+      "PHASE_2": "MISSION{C30BB27DEC5F59B1}",
+      "PHASE_3": "MISSION{E89632C0F476DFFE}",
+      "FINALE": "MISSION{C3E73F3DC7164FB9}"
+    },
+    "challenges": {
+      "C1.1": {
+        "question": "OBC clock oscillator drift rate in PPM (or true dump start UTC)",
+        "answer": "42.4",
+        "alt_answer": "2027-03-14T01:43:20Z",
+        "tolerance": 1.0,
+        "type": "numeric"
+      },
+      "C1.2": {
+        "question": "Telemetry gap start UTC and duration in seconds",
+        "answer": "2027-03-14T01:53:40Z 45",
+        "alt_answer": "2027-03-14T01:53:40Z 45s",
+        "tolerance": 1,
+        "type": "iso_time_and_val"
+      },
+      "C1.3": {
+        "question": "UTC timestamp of uint16 OBC tick counter rollover",
+        "answer": "2027-03-14T01:49:13Z",
+        "tolerance": 1,
+        "type": "iso_time"
+      },
+      "C2.1": {
+        "question": "Fault 1 (EPS) onset UTC and ICD fault code",
+        "answer": "2027-03-14T07:26:17Z EPS-07",
+        "tolerance": 1,
+        "type": "iso_time_and_code"
+      },
+      "C2.2": {
+        "question": "Fault 2 (THM) onset UTC and ICD fault code",
+        "answer": "2027-03-14T11:48:27Z THM-03",
+        "tolerance": 1,
+        "type": "iso_time_and_code"
+      },
+      "C2.3": {
+        "question": "Fault 3 (ADCS) cascade onset UTC and ICD fault code",
+        "answer": "2027-03-14T16:07:34Z ADCS-02",
+        "tolerance": 1,
+        "type": "iso_time_and_code"
+      },
+      "C2.4": {
+        "question": "Fault 4 (Comms) corrupted frame ID (reset_count:sequence) and ICD code",
+        "answer": "1:13029 COM-04",
+        "tolerance": 0,
+        "type": "frame_id_and_code"
+      },
+      "C3.1": {
+        "question": "Ordered list of parameter IDs whose deviation begins in F3 cascade",
+        "answer": "wheel_rpm_2,gyro_z,bus_v",
+        "alt_answer": "wheel2,gyro_z,bus_v",
+        "tolerance": 0,
+        "type": "string"
+      },
+      "C3.2": {
+        "question": "UTC timestamp of first frame after OBC reset",
+        "answer": "2027-03-14T16:13:24Z",
+        "tolerance": 1,
+        "type": "iso_time"
+      },
+      "C3.3": {
+        "question": "0-based flipped bit index in frame and recovered original battery voltage (mV)",
+        "answer": "108 7933",
+        "tolerance": 10,
+        "type": "index_and_mV"
+      },
+      "C3.4": {
+        "question": "Orbit number of F1 onset and battery voltage at end of that eclipse (mV)",
+        "answer": "4 7549",
+        "tolerance": 20,
+        "type": "orbit_and_mV"
+      },
+      "B1.1": {
+        "question": "Bonus: Command ID of the forged telecommand in uplink_log.csv",
+        "answer": "CMD-1014",
+        "tolerance": 0,
+        "type": "string"
+      },
+      "B1.2": {
+        "question": "Bonus: Command ID of the replayed telecommand in uplink_log.csv",
+        "answer": "CMD-1019",
+        "tolerance": 0,
+        "type": "string"
+      }
+    }
+  },
+  "6": {
+    "seed": 1822,
+    "drift_ppm": 77.6,
+    "launch_auth_code": "AUTH-IC124",
+    "api_token": "icarus_tok_06_1822",
+    "hmac_part_a": "BE3E386BA7AF8C6A",
+    "hmac_part_b": "701DE7B2AF701163",
+    "flags": {
+      "PHASE_1": "MISSION{19F37164653B5675}",
+      "PHASE_2": "MISSION{07E85E51ADADFDE0}",
+      "PHASE_3": "MISSION{C8DDFA83F1C54B6D}",
+      "FINALE": "MISSION{774EFA33413FF3E1}"
+    },
+    "challenges": {
+      "C1.1": {
+        "question": "OBC clock oscillator drift rate in PPM (or true dump start UTC)",
+        "answer": "77.6",
+        "alt_answer": "2027-03-14T01:43:20Z",
+        "tolerance": 1.0,
+        "type": "numeric"
+      },
+      "C1.2": {
+        "question": "Telemetry gap start UTC and duration in seconds",
+        "answer": "2027-03-14T01:53:40Z 45",
+        "alt_answer": "2027-03-14T01:53:40Z 45s",
+        "tolerance": 1,
+        "type": "iso_time_and_val"
+      },
+      "C1.3": {
+        "question": "UTC timestamp of uint16 OBC tick counter rollover",
+        "answer": "2027-03-14T01:49:13Z",
+        "tolerance": 1,
+        "type": "iso_time"
+      },
+      "C2.1": {
+        "question": "Fault 1 (EPS) onset UTC and ICD fault code",
+        "answer": "2027-03-14T07:31:15Z EPS-07",
+        "tolerance": 1,
+        "type": "iso_time_and_code"
+      },
+      "C2.2": {
+        "question": "Fault 2 (THM) onset UTC and ICD fault code",
+        "answer": "2027-03-14T11:42:54Z THM-03",
+        "tolerance": 1,
+        "type": "iso_time_and_code"
+      },
+      "C2.3": {
+        "question": "Fault 3 (ADCS) cascade onset UTC and ICD fault code",
+        "answer": "2027-03-14T16:08:17Z ADCS-02",
+        "tolerance": 1,
+        "type": "iso_time_and_code"
+      },
+      "C2.4": {
+        "question": "Fault 4 (Comms) corrupted frame ID (reset_count:sequence) and ICD code",
+        "answer": "1:13136 COM-04",
+        "tolerance": 0,
+        "type": "frame_id_and_code"
+      },
+      "C3.1": {
+        "question": "Ordered list of parameter IDs whose deviation begins in F3 cascade",
+        "answer": "wheel_rpm_2,gyro_z,bus_v",
+        "alt_answer": "wheel2,gyro_z,bus_v",
+        "tolerance": 0,
+        "type": "string"
+      },
+      "C3.2": {
+        "question": "UTC timestamp of first frame after OBC reset",
+        "answer": "2027-03-14T16:14:07Z",
+        "tolerance": 1,
+        "type": "iso_time"
+      },
+      "C3.3": {
+        "question": "0-based flipped bit index in frame and recovered original battery voltage (mV)",
+        "answer": "106 7944",
+        "tolerance": 10,
+        "type": "index_and_mV"
+      },
+      "C3.4": {
+        "question": "Orbit number of F1 onset and battery voltage at end of that eclipse (mV)",
+        "answer": "4 7550",
+        "tolerance": 20,
+        "type": "orbit_and_mV"
+      },
+      "B1.1": {
+        "question": "Bonus: Command ID of the forged telecommand in uplink_log.csv",
+        "answer": "CMD-1014",
+        "tolerance": 0,
+        "type": "string"
+      },
+      "B1.2": {
+        "question": "Bonus: Command ID of the replayed telecommand in uplink_log.csv",
+        "answer": "CMD-1019",
+        "tolerance": 0,
+        "type": "string"
+      }
+    }
+  },
+  "7": {
+    "seed": 1959,
+    "drift_ppm": 61.31,
+    "launch_auth_code": "AUTH-IC261",
+    "api_token": "icarus_tok_07_1959",
+    "hmac_part_a": "590AF8F32B7CEBC8",
+    "hmac_part_b": "267EABCC346D99EA",
+    "flags": {
+      "PHASE_1": "MISSION{8C9BE4EDE9BC1F78}",
+      "PHASE_2": "MISSION{368A55633DF07EDA}",
+      "PHASE_3": "MISSION{7A22E058BA536404}",
+      "FINALE": "MISSION{4F9CF1C973BA8517}"
+    },
+    "challenges": {
+      "C1.1": {
+        "question": "OBC clock oscillator drift rate in PPM (or true dump start UTC)",
+        "answer": "61.3",
+        "alt_answer": "2027-03-14T01:43:20Z",
+        "tolerance": 1.0,
+        "type": "numeric"
+      },
+      "C1.2": {
+        "question": "Telemetry gap start UTC and duration in seconds",
+        "answer": "2027-03-14T01:53:40Z 45",
+        "alt_answer": "2027-03-14T01:53:40Z 45s",
+        "tolerance": 1,
+        "type": "iso_time_and_val"
+      },
+      "C1.3": {
+        "question": "UTC timestamp of uint16 OBC tick counter rollover",
+        "answer": "2027-03-14T01:49:13Z",
+        "tolerance": 1,
+        "type": "iso_time"
+      },
+      "C2.1": {
+        "question": "Fault 1 (EPS) onset UTC and ICD fault code",
+        "answer": "2027-03-14T07:31:19Z EPS-07",
+        "tolerance": 1,
+        "type": "iso_time_and_code"
+      },
+      "C2.2": {
+        "question": "Fault 2 (THM) onset UTC and ICD fault code",
+        "answer": "2027-03-14T11:34:16Z THM-03",
+        "tolerance": 1,
+        "type": "iso_time_and_code"
+      },
+      "C2.3": {
+        "question": "Fault 3 (ADCS) cascade onset UTC and ICD fault code",
+        "answer": "2027-03-14T16:07:16Z ADCS-02",
+        "tolerance": 1,
+        "type": "iso_time_and_code"
+      },
+      "C2.4": {
+        "question": "Fault 4 (Comms) corrupted frame ID (reset_count:sequence) and ICD code",
+        "answer": "1:14569 COM-04",
+        "tolerance": 0,
+        "type": "frame_id_and_code"
+      },
+      "C3.1": {
+        "question": "Ordered list of parameter IDs whose deviation begins in F3 cascade",
+        "answer": "wheel_rpm_2,gyro_z,bus_v",
+        "alt_answer": "wheel2,gyro_z,bus_v",
+        "tolerance": 0,
+        "type": "string"
+      },
+      "C3.2": {
+        "question": "UTC timestamp of first frame after OBC reset",
+        "answer": "2027-03-14T16:13:06Z",
+        "tolerance": 1,
+        "type": "iso_time"
+      },
+      "C3.3": {
+        "question": "0-based flipped bit index in frame and recovered original battery voltage (mV)",
+        "answer": "108 7739",
+        "tolerance": 10,
+        "type": "index_and_mV"
+      },
+      "C3.4": {
+        "question": "Orbit number of F1 onset and battery voltage at end of that eclipse (mV)",
+        "answer": "4 7557",
+        "tolerance": 20,
+        "type": "orbit_and_mV"
+      },
+      "B1.1": {
+        "question": "Bonus: Command ID of the forged telecommand in uplink_log.csv",
+        "answer": "CMD-1014",
+        "tolerance": 0,
+        "type": "string"
+      },
+      "B1.2": {
+        "question": "Bonus: Command ID of the replayed telecommand in uplink_log.csv",
+        "answer": "CMD-1019",
+        "tolerance": 0,
+        "type": "string"
+      }
+    }
+  },
+  "8": {
+    "seed": 2096,
+    "drift_ppm": 45.52,
+    "launch_auth_code": "AUTH-IC398",
+    "api_token": "icarus_tok_08_2096",
+    "hmac_part_a": "5A82286576F26C6A",
+    "hmac_part_b": "53EB744D8FD3EB82",
+    "flags": {
+      "PHASE_1": "MISSION{4E6895C0FE97FBE8}",
+      "PHASE_2": "MISSION{CE2EF58365101349}",
+      "PHASE_3": "MISSION{8E922A51F594D760}",
+      "FINALE": "MISSION{97732BD74168D8FC}"
+    },
+    "challenges": {
+      "C1.1": {
+        "question": "OBC clock oscillator drift rate in PPM (or true dump start UTC)",
+        "answer": "45.5",
+        "alt_answer": "2027-03-14T01:43:20Z",
+        "tolerance": 1.0,
+        "type": "numeric"
+      },
+      "C1.2": {
+        "question": "Telemetry gap start UTC and duration in seconds",
+        "answer": "2027-03-14T01:53:40Z 45",
+        "alt_answer": "2027-03-14T01:53:40Z 45s",
+        "tolerance": 1,
+        "type": "iso_time_and_val"
+      },
+      "C1.3": {
+        "question": "UTC timestamp of uint16 OBC tick counter rollover",
+        "answer": "2027-03-14T01:49:13Z",
+        "tolerance": 1,
+        "type": "iso_time"
+      },
+      "C2.1": {
+        "question": "Fault 1 (EPS) onset UTC and ICD fault code",
+        "answer": "2027-03-14T07:28:23Z EPS-07",
+        "tolerance": 1,
+        "type": "iso_time_and_code"
+      },
+      "C2.2": {
+        "question": "Fault 2 (THM) onset UTC and ICD fault code",
+        "answer": "2027-03-14T11:49:44Z THM-03",
+        "tolerance": 1,
+        "type": "iso_time_and_code"
+      },
+      "C2.3": {
+        "question": "Fault 3 (ADCS) cascade onset UTC and ICD fault code",
+        "answer": "2027-03-14T16:06:36Z ADCS-02",
+        "tolerance": 1,
+        "type": "iso_time_and_code"
+      },
+      "C2.4": {
+        "question": "Fault 4 (Comms) corrupted frame ID (reset_count:sequence) and ICD code",
+        "answer": "1:13069 COM-04",
+        "tolerance": 0,
+        "type": "frame_id_and_code"
+      },
+      "C3.1": {
+        "question": "Ordered list of parameter IDs whose deviation begins in F3 cascade",
+        "answer": "wheel_rpm_2,gyro_z,bus_v",
+        "alt_answer": "wheel2,gyro_z,bus_v",
+        "tolerance": 0,
+        "type": "string"
+      },
+      "C3.2": {
+        "question": "UTC timestamp of first frame after OBC reset",
+        "answer": "2027-03-14T16:12:26Z",
+        "tolerance": 1,
+        "type": "iso_time"
+      },
+      "C3.3": {
+        "question": "0-based flipped bit index in frame and recovered original battery voltage (mV)",
+        "answer": "108 7937",
+        "tolerance": 10,
+        "type": "index_and_mV"
+      },
+      "C3.4": {
+        "question": "Orbit number of F1 onset and battery voltage at end of that eclipse (mV)",
+        "answer": "4 7548",
+        "tolerance": 20,
+        "type": "orbit_and_mV"
+      },
+      "B1.1": {
+        "question": "Bonus: Command ID of the forged telecommand in uplink_log.csv",
+        "answer": "CMD-1014",
+        "tolerance": 0,
+        "type": "string"
+      },
+      "B1.2": {
+        "question": "Bonus: Command ID of the replayed telecommand in uplink_log.csv",
+        "answer": "CMD-1019",
+        "tolerance": 0,
+        "type": "string"
+      }
+    }
+  },
+  "9": {
+    "seed": 2233,
+    "drift_ppm": 80.81,
+    "launch_auth_code": "AUTH-IC535",
+    "api_token": "icarus_tok_09_2233",
+    "hmac_part_a": "225D35141F0A03B4",
+    "hmac_part_b": "42D8E4A50099B843",
+    "flags": {
+      "PHASE_1": "MISSION{342EA55F2C0879F3}",
+      "PHASE_2": "MISSION{AAF788A32FE3B725}",
+      "PHASE_3": "MISSION{00AF613F26035624}",
+      "FINALE": "MISSION{1D5845274F31ADAE}"
+    },
+    "challenges": {
+      "C1.1": {
+        "question": "OBC clock oscillator drift rate in PPM (or true dump start UTC)",
+        "answer": "80.8",
+        "alt_answer": "2027-03-14T01:43:20Z",
+        "tolerance": 1.0,
+        "type": "numeric"
+      },
+      "C1.2": {
+        "question": "Telemetry gap start UTC and duration in seconds",
+        "answer": "2027-03-14T01:53:40Z 45",
+        "alt_answer": "2027-03-14T01:53:40Z 45s",
+        "tolerance": 1,
+        "type": "iso_time_and_val"
+      },
+      "C1.3": {
+        "question": "UTC timestamp of uint16 OBC tick counter rollover",
+        "answer": "2027-03-14T01:49:13Z",
+        "tolerance": 1,
+        "type": "iso_time"
+      },
+      "C2.1": {
+        "question": "Fault 1 (EPS) onset UTC and ICD fault code",
+        "answer": "2027-03-14T07:27:26Z EPS-07",
+        "tolerance": 1,
+        "type": "iso_time_and_code"
+      },
+      "C2.2": {
+        "question": "Fault 2 (THM) onset UTC and ICD fault code",
+        "answer": "2027-03-14T11:43:41Z THM-03",
+        "tolerance": 1,
+        "type": "iso_time_and_code"
+      },
+      "C2.3": {
+        "question": "Fault 3 (ADCS) cascade onset UTC and ICD fault code",
+        "answer": "2027-03-14T16:15:23Z ADCS-02",
+        "tolerance": 1,
+        "type": "iso_time_and_code"
+      },
+      "C2.4": {
+        "question": "Fault 4 (Comms) corrupted frame ID (reset_count:sequence) and ICD code",
+        "answer": "1:13213 COM-04",
+        "tolerance": 0,
+        "type": "frame_id_and_code"
+      },
+      "C3.1": {
+        "question": "Ordered list of parameter IDs whose deviation begins in F3 cascade",
+        "answer": "wheel_rpm_2,gyro_z,bus_v",
+        "alt_answer": "wheel2,gyro_z,bus_v",
+        "tolerance": 0,
+        "type": "string"
+      },
+      "C3.2": {
+        "question": "UTC timestamp of first frame after OBC reset",
+        "answer": "2027-03-14T16:21:13Z",
+        "tolerance": 1,
+        "type": "iso_time"
+      },
+      "C3.3": {
+        "question": "0-based flipped bit index in frame and recovered original battery voltage (mV)",
+        "answer": "108 7936",
+        "tolerance": 10,
+        "type": "index_and_mV"
+      },
+      "C3.4": {
+        "question": "Orbit number of F1 onset and battery voltage at end of that eclipse (mV)",
+        "answer": "4 7548",
+        "tolerance": 20,
+        "type": "orbit_and_mV"
+      },
+      "B1.1": {
+        "question": "Bonus: Command ID of the forged telecommand in uplink_log.csv",
+        "answer": "CMD-1014",
+        "tolerance": 0,
+        "type": "string"
+      },
+      "B1.2": {
+        "question": "Bonus: Command ID of the replayed telecommand in uplink_log.csv",
+        "answer": "CMD-1019",
+        "tolerance": 0,
+        "type": "string"
+      }
+    }
+  },
+  "10": {
+    "seed": 2370,
+    "drift_ppm": 64.4,
+    "launch_auth_code": "AUTH-IC672",
+    "api_token": "icarus_tok_10_2370",
+    "hmac_part_a": "4B429A9FD6ECCE74",
+    "hmac_part_b": "18C8E402A7185C62",
+    "flags": {
+      "PHASE_1": "MISSION{03A7D1DFFDC5425E}",
+      "PHASE_2": "MISSION{21CF2E3D432079AF}",
+      "PHASE_3": "MISSION{51DCBF43C7C222A1}",
+      "FINALE": "MISSION{E0EEF46F4E35FFA8}"
+    },
+    "challenges": {
+      "C1.1": {
+        "question": "OBC clock oscillator drift rate in PPM (or true dump start UTC)",
+        "answer": "64.4",
+        "alt_answer": "2027-03-14T01:43:20Z",
+        "tolerance": 1.0,
+        "type": "numeric"
+      },
+      "C1.2": {
+        "question": "Telemetry gap start UTC and duration in seconds",
+        "answer": "2027-03-14T01:53:40Z 45",
+        "alt_answer": "2027-03-14T01:53:40Z 45s",
+        "tolerance": 1,
+        "type": "iso_time_and_val"
+      },
+      "C1.3": {
+        "question": "UTC timestamp of uint16 OBC tick counter rollover",
+        "answer": "2027-03-14T01:49:13Z",
+        "tolerance": 1,
+        "type": "iso_time"
+      },
+      "C2.1": {
+        "question": "Fault 1 (EPS) onset UTC and ICD fault code",
+        "answer": "2027-03-14T07:30:33Z EPS-07",
+        "tolerance": 1,
+        "type": "iso_time_and_code"
+      },
+      "C2.2": {
+        "question": "Fault 2 (THM) onset UTC and ICD fault code",
+        "answer": "2027-03-14T11:50:37Z THM-03",
+        "tolerance": 1,
+        "type": "iso_time_and_code"
+      },
+      "C2.3": {
+        "question": "Fault 3 (ADCS) cascade onset UTC and ICD fault code",
+        "answer": "2027-03-14T16:04:52Z ADCS-02",
+        "tolerance": 1,
+        "type": "iso_time_and_code"
+      },
+      "C2.4": {
+        "question": "Fault 4 (Comms) corrupted frame ID (reset_count:sequence) and ICD code",
+        "answer": "1:13044 COM-04",
+        "tolerance": 0,
+        "type": "frame_id_and_code"
+      },
+      "C3.1": {
+        "question": "Ordered list of parameter IDs whose deviation begins in F3 cascade",
+        "answer": "wheel_rpm_2,gyro_z,bus_v",
+        "alt_answer": "wheel2,gyro_z,bus_v",
+        "tolerance": 0,
+        "type": "string"
+      },
+      "C3.2": {
+        "question": "UTC timestamp of first frame after OBC reset",
+        "answer": "2027-03-14T16:10:42Z",
+        "tolerance": 1,
+        "type": "iso_time"
+      },
+      "C3.3": {
+        "question": "0-based flipped bit index in frame and recovered original battery voltage (mV)",
+        "answer": "108 7930",
+        "tolerance": 10,
+        "type": "index_and_mV"
+      },
+      "C3.4": {
+        "question": "Orbit number of F1 onset and battery voltage at end of that eclipse (mV)",
+        "answer": "4 7551",
+        "tolerance": 20,
+        "type": "orbit_and_mV"
+      },
+      "B1.1": {
+        "question": "Bonus: Command ID of the forged telecommand in uplink_log.csv",
+        "answer": "CMD-1014",
+        "tolerance": 0,
+        "type": "string"
+      },
+      "B1.2": {
+        "question": "Bonus: Command ID of the replayed telecommand in uplink_log.csv",
+        "answer": "CMD-1019",
+        "tolerance": 0,
+        "type": "string"
+      }
+    }
+  },
+  "11": {
+    "seed": 2507,
+    "drift_ppm": 48.9,
+    "launch_auth_code": "AUTH-IC809",
+    "api_token": "icarus_tok_11_2507",
+    "hmac_part_a": "BD5C79B45A71B8B8",
+    "hmac_part_b": "7F6DA86397C0F82D",
+    "flags": {
+      "PHASE_1": "MISSION{50D28CA0F2CEC5D5}",
+      "PHASE_2": "MISSION{FF5B24786CC0B09B}",
+      "PHASE_3": "MISSION{57BB9F2B975A6198}",
+      "FINALE": "MISSION{EB475B6651206D00}"
+    },
+    "challenges": {
+      "C1.1": {
+        "question": "OBC clock oscillator drift rate in PPM (or true dump start UTC)",
+        "answer": "48.9",
+        "alt_answer": "2027-03-14T01:43:20Z",
+        "tolerance": 1.0,
+        "type": "numeric"
+      },
+      "C1.2": {
+        "question": "Telemetry gap start UTC and duration in seconds",
+        "answer": "2027-03-14T01:53:40Z 45",
+        "alt_answer": "2027-03-14T01:53:40Z 45s",
+        "tolerance": 1,
+        "type": "iso_time_and_val"
+      },
+      "C1.3": {
+        "question": "UTC timestamp of uint16 OBC tick counter rollover",
+        "answer": "2027-03-14T01:49:13Z",
+        "tolerance": 1,
+        "type": "iso_time"
+      },
+      "C2.1": {
+        "question": "Fault 1 (EPS) onset UTC and ICD fault code",
+        "answer": "2027-03-14T07:25:52Z EPS-07",
+        "tolerance": 1,
+        "type": "iso_time_and_code"
+      },
+      "C2.2": {
+        "question": "Fault 2 (THM) onset UTC and ICD fault code",
+        "answer": "2027-03-14T11:38:51Z THM-03",
+        "tolerance": 1,
+        "type": "iso_time_and_code"
+      },
+      "C2.3": {
+        "question": "Fault 3 (ADCS) cascade onset UTC and ICD fault code",
+        "answer": "2027-03-14T16:14:35Z ADCS-02",
+        "tolerance": 1,
+        "type": "iso_time_and_code"
+      },
+      "C2.4": {
+        "question": "Fault 4 (Comms) corrupted frame ID (reset_count:sequence) and ICD code",
+        "answer": "1:13823 COM-04",
+        "tolerance": 0,
+        "type": "frame_id_and_code"
+      },
+      "C3.1": {
+        "question": "Ordered list of parameter IDs whose deviation begins in F3 cascade",
+        "answer": "wheel_rpm_2,gyro_z,bus_v",
+        "alt_answer": "wheel2,gyro_z,bus_v",
+        "tolerance": 0,
+        "type": "string"
+      },
+      "C3.2": {
+        "question": "UTC timestamp of first frame after OBC reset",
+        "answer": "2027-03-14T16:20:25Z",
+        "tolerance": 1,
+        "type": "iso_time"
+      },
+      "C3.3": {
+        "question": "0-based flipped bit index in frame and recovered original battery voltage (mV)",
+        "answer": "107 7802",
+        "tolerance": 10,
+        "type": "index_and_mV"
+      },
+      "C3.4": {
+        "question": "Orbit number of F1 onset and battery voltage at end of that eclipse (mV)",
+        "answer": "4 7556",
+        "tolerance": 20,
+        "type": "orbit_and_mV"
+      },
+      "B1.1": {
+        "question": "Bonus: Command ID of the forged telecommand in uplink_log.csv",
+        "answer": "CMD-1014",
+        "tolerance": 0,
+        "type": "string"
+      },
+      "B1.2": {
+        "question": "Bonus: Command ID of the replayed telecommand in uplink_log.csv",
+        "answer": "CMD-1019",
+        "tolerance": 0,
+        "type": "string"
+      }
+    }
+  }
+}

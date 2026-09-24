@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}Live Contingency Terminal | RVSAT-1{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 1.5rem;">
+    <h1 style="font-size: 1.8rem; margin-bottom: 0.25rem;">PHASE 4: LIVE CONTINGENCY CONSOLE</h1>
+    <p style="color: var(--text-muted); font-size: 0.95rem;">
+        Real-time flight terminal interface. Follow the Flight Runbook to recover the spacecraft to Nominal Mode.
+    </p>
+</div>
+
+<div style="display: grid; grid-template-columns: 1.3fr 0.7fr; gap: 1.5rem;">
+    <!-- Terminal Window -->
+    <div>
+        <div class="terminal-window">
+            <div class="terminal-header">
+                <div class="terminal-dots">
+                    <div class="dot red"></div>
+                    <div class="dot yellow"></div>
+                    <div class="dot green"></div>
+                </div>
+                <div>RVSAT-1 // TT&C GROUND UPLINK // {{ team.name }}</div>
+                <div class="mono" style="color: var(--emerald-success);">ONLINE</div>
+            </div>
+            
+            <div class="terminal-body" id="terminal-body">
+                <div style="color: #94a3b8;">[INIT] Connected to Ground Telemetry Station TT&C Uplink...</div>
+                <div style="color: #94a3b8;">[INIT] Querying active spacecraft state via GET_HK...</div>
+            </div>
+
+            <div class="terminal-input-bar">
+                <span class="terminal-prompt">&gt;</span>
+                <input type="text" id="terminal-input" class="terminal-input" placeholder="Enter uplink command (e.g. GET_HK, HEATER A OFF, WHEEL 2 RESET, WAIT 60, MODE NOMINAL)..." autofocus autocomplete="off">
+            </div>
+        </div>
+
+        <!-- Quick Command Chips -->
+        <div style="margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center;">
+            <span style="font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700;">Quick Commands:</span>
+            <button type="button" class="btn btn-secondary cmd-chip" data-cmd="GET_HK" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">GET_HK</button>
+            <button type="button" class="btn btn-secondary cmd-chip" data-cmd="HEATER A OFF" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">HEATER A OFF</button>
+            <button type="button" class="btn btn-secondary cmd-cmd cmd-chip" data-cmd="HEATER B OFF" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">HEATER B OFF</button>
+            <button type="button" class="btn btn-secondary cmd-chip" data-cmd="WHEEL 1 RESET" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">WHEEL 1 RESET</button>
+            <button type="button" class="btn btn-secondary cmd-chip" data-cmd="WHEEL 2 RESET" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">WHEEL 2 RESET</button>
+            <button type="button" class="btn btn-secondary cmd-chip" data-cmd="WHEEL 3 RESET" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">WHEEL 3 RESET</button>
+            <button type="button" class="btn btn-secondary cmd-chip" data-cmd="WAIT 60" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">WAIT 60</button>
+            <button type="button" class="btn btn-primary cmd-chip" data-cmd="MODE NOMINAL" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">MODE NOMINAL</button>
+        </div>
+    </div>
+
+    <!-- Runbook Reference Card -->
+    <div>
+        <div class="status-card" style="padding: 1.5rem;">
+            <h3 style="font-size: 1.1rem; margin-bottom: 0.75rem; color: var(--cyan-accent); border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.5rem;">
+                Emergency Runbook Summary
+            </h3>
+            
+            <div style="font-size: 0.88rem; color: #cbd5e1; line-height: 1.6;">
+                <p style="margin-bottom: 0.75rem;">
+                    <strong>Step 1: Telemetry Assessment</strong><br>
+                    Send <code>GET_HK</code> to diagnose battery temperature, heater flags, and wheel RPM states.
+                </p>
+                <p style="margin-bottom: 0.75rem;">
+                    <strong>Step 2: Thermal Management</strong><br>
+                    If Battery Temp exceeds <strong style="color:#f43f5e;">45.0 °C</strong>, turn the stuck heater OFF first! Initiating wheel power cycling with thermal overload causes a brownout (bus dip & OBC reboot with a +300s penalty).
+                </p>
+                <p style="margin-bottom: 0.75rem;">
+                    <strong>Step 3: ADCS Wheel Power Cycle</strong><br>
+                    Identify the exact faulted wheel and send <code>WHEEL &lt;1|2|3&gt; RESET</code>. Resetting a healthy wheel causes attitude desynchronization and adds a +300s penalty.
+                </p>
+                <p style="margin-bottom: 0.75rem;">
+                    <strong>Step 4: Spin-Up Verification</strong><br>
+                    Wait 60s for wheel spin-up (or send <code>WAIT 60</code>) before sending <code>MODE NOMINAL</code>. Verify wheel reaches ~3150 RPM.
+                </p>
+                <p>
+                    <strong>Step 5: Nominal Mode Transition</strong><br>
+                    Transmit <code>MODE NOMINAL</code>. If all criteria are satisfied, the mission recovery flag will be returned.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="/static/js/console.js"></script>
+{% endblock %}

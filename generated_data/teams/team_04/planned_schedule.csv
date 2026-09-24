@@ -1,0 +1,9 @@
+event_id,start_utc,end_utc,duration_s,description
+GROUND_PASS_1,2027-03-14T00:00:00Z,2027-03-14T00:10:00Z,600,Pass Station Alpha (GS-1)
+GS_HANDOVER_1,2027-03-14T02:14:49Z,2027-03-14T02:15:09Z,20,Station handover GS-1 to GS-2 (gap expected)
+PLANNED_SAFE_MODE_1,2027-03-14T03:07:16Z,2027-03-14T03:17:16Z,600,Planned attitude calibration in Safe Mode
+PAYLOAD_ACTIVATION,2027-03-14T05:03:32Z,2027-03-14T05:23:32Z,1200,Planned Imager / Spectrometer experiment
+PLANNED_HEATER_OP,2027-03-14T06:44:11Z,2027-03-14T06:59:11Z,900,Planned thermal conditioning window
+GS_HANDOVER_2,2027-03-14T08:39:30Z,2027-03-14T08:39:50Z,20,Station handover GS-2 to GS-3 (gap expected)
+PLANNED_SAFE_MODE_2,2027-03-14T09:09:18Z,2027-03-14T09:19:18Z,600,Planned star tracker gyro alignment in Safe Mode
+GS_HANDOVER_3,2027-03-14T18:10:10Z,2027-03-14T18:10:30Z,20,Station handover GS-3 to GS-1 (gap expected)

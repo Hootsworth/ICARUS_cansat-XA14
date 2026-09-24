@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICARUS — Mission Control</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0a0e1a;
+    color: #e6e9f0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    position: relative;
+    overflow-x: hidden;
+  }
+  #stars {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    opacity: 0.6;
+    animation: twinkle 3s infinite ease-in-out;
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.8; }
+  }
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    width: 100%;
+    background: rgba(19, 24, 41, 0.95);
+    border: 1px solid #2a3450;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    backdrop-filter: blur(10px);
+  }
+  h1 {
+    color: #ffb347;
+    font-size: 36px;
+    letter-spacing: 8px;
+    margin-bottom: 4px;
+    text-align: center;
+    font-weight: 800;
+  }
+  .subtitle {
+    color: #8892b0;
+    font-size: 12px;
+    margin-bottom: 40px;
+    letter-spacing: 3px;
+    text-align: center;
+    text-transform: uppercase;
+  }
+  label {
+    display: block;
+    font-size: 11px;
+    color: #8892b0;
+    margin-bottom: 8px;
+    margin-top: 20px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 600;
+  }
+  input, select {
+    width: 100%;
+    padding: 14px;
+    background: #0a0e1a;
+    border: 1px solid #2a3450;
+    border-radius: 10px;
+    color: #e6e9f0;
+    font-size: 15px;
+    font-family: inherit;
+  }
+  input:focus, select:focus {
+    outline: none;
+    border-color: #ffb347;
+    box-shadow: 0 0 0 3px rgba(255,179,71,0.1);
+  }
+  input:disabled { opacity: 0.4; cursor: not-allowed; }
+  button {
+    background: #ffb347;
+    color: #0a0e1a;
+    border: none;
+    padding: 16px;
+    font-size: 14px;
+    font-weight: 700;
+    border-radius: 10px;
+    cursor: pointer;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  button:hover:not(:disabled) {
+    background: #ffc566;
+    transform: translateY(-1px);
+  }
+  button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .full { width: 100%; margin-top: 24px; }
+  .hidden { display: none !important; }
+
+  /* Dashboard header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #2a3450;
+    margin-bottom: 30px;
+  }
+  .team-name {
+    font-size: 20px;
+    font-weight: 700;
+    color: #e6e9f0;
+  }
+  .logout {
+    font-size: 12px;
+    color: #8892b0;
+    cursor: pointer;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    background: none;
+    border: none;
+    padding: 0;
+    font-weight: 600;
+  }
+  .logout:hover { color: #ffb347; }
+
+  /* Stats */
+  .stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .stat {
+    background: #0a0e1a;
+    border: 1px solid #2a3450;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+  }
+  .stat-value {
+    font-size: 32px;
+    font-weight: 800;
+    color: #ffb347;
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 11px;
+    color: #8892b0;
+    margin-top: 8px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .letters-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+  .letter-slot {
+    width: 44px;
+    height: 44px;
+    border: 2px solid #2a3450;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 800;
+    color: #ffb347;
+    background: rgba(255,179,71,0.05);
+  }
+  .letter-slot.filled {
+    border-color: #ffb347;
+    background: rgba(255,179,71,0.15);
+  }
+
+  /* Section */
+  .section {
+    margin-top: 30px;
+    padding-top: 30px;
+    border-top: 1px solid #2a3450;
+  }
+  .section-title {
+    font-size: 12px;
+    color: #ffb347;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    font-weight: 700;
+  }
+
+  /* Resource buttons */
+  .resources {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+  }
+  .resource-btn {
+    background: #0a0e1a;
+    border: 1px solid #2a3450;
+    color: #e6e9f0;
+    padding: 16px 10px;
+    border-radius: 10px;
+    text-decoration: none;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: all 0.15s;
+    cursor: pointer;
+  }
+  .resource-btn:hover {
+    border-color: #ffb347;
+    color: #ffb347;
+  }
+
+  /* Form row */
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+  }
+
+  /* Message */
+  .message {
+    padding: 14px;
+    border-radius: 10px;
+    margin-top: 16px;
+    font-size: 14px;
+    line-height: 1.5;
+    display: none;
+  }
+  .message.show { display: block; }
+  .message.success {
+    background: rgba(74,222,128,0.1);
+    border: 1px solid rgba(74,222,128,0.3);
+    color: #4ade80;
+  }
+  .message.error {
+    background: rgba(255,71,87,0.1);
+    border: 1px solid rgba(255,71,87,0.3);
+    color: #ff8a94;
+  }
+  .message.info {
+    background: rgba(255,179,71,0.08);
+    border: 1px solid rgba(255,179,71,0.25);
+    color: #ffb347;
+  }
+
+  /* Victory */
+  .victory {
+    text-align: center;
+    padding: 20px 0;
+  }
+  .victory h2 {
+    font-size: 40px;
+    color: #ffb347;
+    letter-spacing: 4px;
+    margin-bottom: 16px;
+  }
+  .victory p {
+    color: #8892b0;
+    line-height: 1.7;
+    margin-bottom: 12px;
+    font-size: 15px;
+  }
+</style>
+</head>
+<body>
+
+<div id="stars"></div>
+
+<div class="container">
+
+  <!-- LOGIN SCREEN -->
+  <div id="screen-login">
+    <h1>ICARUS</h1>
+    <div class="subtitle">Mission Control Access</div>
+
+    <label>Select Team</label>
+    <select id="login-team">
+      <option value="">— Choose your team —</option>
+      <option>Nexus</option>
+      <option>Shinsei</option>
+      <option>Data Miners</option>
+      <option>Flight 370</option>
+      <option>Toders</option>
+      <option>QuantCoders</option>
+      <option>Skill issue</option>
+      <option>Data Detectives</option>
+      <option>Tensai</option>
+      <option>Table Titans</option>
+      <option>Daedalus</option>
+    </select>
+
+    <label>Access Code</label>
+    <input type="password" id="login-pass" placeholder="Enter your access code">
+
+    <button class="full" onclick="doLogin()">ENTER MISSION CONTROL</button>
+    <div class="message error" id="login-error"></div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="screen-dashboard" class="hidden">
+    <div class="header">
+      <div class="team-name" id="dash-team"></div>
+      <button class="logout" onclick="doLogout()">Logout</button>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-value" id="dash-points">0</div>
+        <div class="stat-label">Points</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="dash-letters">0/4</div>
+        <div class="stat-label">Letters Found</div>
+      </div>
+    </div>
+
+    <div class="letters-row" id="letters-row">
+      <div class="letter-slot">?</div>
+      <div class="letter-slot">?</div>
+      <div class="letter-slot">?</div>
+      <div class="letter-slot">?</div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Mission Resources</div>
+      <div class="resources">
+        <a class="resource-btn" href="PASTE_DATASET_LINK_HERE" target="_blank">📡 Dataset</a>
+        <a class="resource-btn" href="PASTE_COMMANDS_LINK_HERE" target="_blank">📋 Commands</a>
+        <a class="resource-btn" href="PASTE_CALIBRATION_LINK_HERE" target="_blank">🔧 Calibration</a>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Report Anomaly</div>
+      <div class="form-row">
+        <select id="sub-sensor">
+          <option value="">Sensor</option>
+          <option value="gps">GPS</option>
+          <option value="battery">Battery</option>
+          <option value="altitude">Altitude</option>
+          <option value="temperature">Temperature</option>
+        </select>
+        <input type="number" id="sub-time" placeholder="Time (s)">
+        <select id="sub-class">
+          <option value="">Classification</option>
+          <option value="real_event">Real Event</option>
+          <option value="sensor_failure">Sensor Failure</option>
+          <option value="calibration">Calibration Issue</option>
+          <option value="data_quality">Data Quality Issue</option>
+          <option value="noise">Noise</option>
+        </select>
+      </div>
+      <button class="full" onclick="submitAnomaly()">SUBMIT REPORT</button>
+      <div class="message" id="sub-message"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Final Unlock</div>
+      <p style="color:#8892b0; font-size:13px; line-height:1.6; margin-bottom:16px;">
+        Collect all 4 letters, then enter the secret word to unlock the final stage.
+      </p>
+      <div class="form-row" style="grid-template-columns: 2fr 1fr;">
+        <input type="text" id="final-word" placeholder="Enter secret word" disabled>
+        <button id="final-btn" onclick="tryUnlock()" disabled>UNLOCK</button>
+      </div>
+      <div class="message" id="final-message"></div>
+    </div>
+  </div>
+
+  <!-- VICTORY -->
+  <div id="screen-victory" class="hidden">
+    <div class="victory">
+      <h1>ICARUS</h1>
+      <div class="subtitle">Final Stage Unlocked</div>
+      <h2 id="victory-team"></h2>
+      <p>You've decoded the signal.</p>
+      <p style="color:#ffb347; font-weight:600; margin-top:20px;">
+        Report to Mission Control (the organizers) to proceed.
+      </p>
+      <button class="full" onclick="doLogout()" style="margin-top:40px;">LOGOUT</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ---------- CONFIG ----------
+const CREDENTIALS = {
+  "Nexus": "NX-4291",
+  "Shinsei": "SS-7834",
+  "Data Miners": "DM-2156",
+  "Flight 370": "F3-9042",
+  "Toders": "TD-3618",
+  "QuantCoders": "QC-5570",
+  "Skill issue": "SI-8823",
+  "Data Detectives": "DD-1409",
+  "Tensai": "TN-6351",
+  "Table Titans": "TT-2974",
+  "Daedalus": "DA-7218"
+};
+
+// Real anomalies: each gives +10 pts and reveals a letter
+const REAL_ANOMALIES = [
+  { id: "A1", sensor: "gps",         time: 1240, tol: 20, letter: "F" },
+  { id: "A2", sensor: "battery",     time: 2100, tol: 20, letter: "I" },
+  { id: "A3", sensor: "altitude",    time: 2700, tol: 30, letter: "R" },
+  { id: "A4", sensor: "temperature", time: 1800, tol: 99999, letter: "E", requiresClass: "calibration" }
+];
+
+// Decoys: -5 pts if flagged as a real anomaly
+const DECOYS = [
+  { id: "D1", sensor: "temperature", time: 600,  tol: 20, label: "Temperature spike at 600s" },
+  { id: "D2", sensor: "temperature", time: 1800, tol: 99999, label: "Temperature offset after 1800s" },
+  { id: "D3", sensor: "gps",         time: 1900, tol: 20, label: "Bad GPS latitude at 1900s" }
+];
+
+const FINAL_WORD = "FIRE";
+
+// ---------- STARS ----------
+(function makeStars() {
+  const container = document.getElementById('stars');
+  for (let i = 0; i < 80; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random() * 2 + 1;
+    s.style.width = size + 'px';
+    s.style.height = size + 'px';
+    s.style.left = Math.random() * 100 + '%';
+    s.style.top = Math.random() * 100 + '%';
+    s.style.animationDelay = (Math.random() * 3) + 's';
+    container.appendChild(s);
+  }
+})();
+
+// ---------- STATE ----------
+let currentTeam = null;
+let state = null;
+
+function storageKey(team) {
+  return 'icarus_' + team;
+}
+
+function loadState(team) {
+  const raw = localStorage.getItem(storageKey(team));
+  if (raw) return JSON.parse(raw);
+  return {
+    team: team,
+    points: 0,
+    letters: [],
+    submitted: [],   // anomaly ids already claimed
+    decoysHit: [],   // decoy ids already penalized
+    unlocked: false
+  };
+}
+
+function saveState() {
+  if (!state) return;
+  localStorage.setItem(storageKey(state.team), JSON.stringify(state));
+}
+
+// ---------- LOGIN ----------
+function doLogin() {
+  const team = document.getElementById('login-team').value;
+  const pass = document.getElementById('login-pass').value;
+  const err = document.getElementById('login-error');
+
+  if (!team) return showMessage(err, "Select your team.", "error");
+  if (!pass)  return showMessage(err, "Enter your access code.", "error");
+  if (CREDENTIALS[team] !== pass) {
+    return showMessage(err, "Incorrect access code.", "error");
+  }
+
+  currentTeam = team;
+  state = loadState(team);
+
+  document.getElementById('login-error').classList.remove('show');
+  document.getElementById('login-pass').value = '';
+  renderDashboard();
+}
+
+function doLogout() {
+  state = null;
+  currentTeam = null;
+  document.getElementById('screen-dashboard').classList.add('hidden');
+  document.getElementById('screen-victory').classList.add('hidden');
+  document.getElementById('screen-login').classList.remove('hidden');
+  document.getElementById('login-team').value = '';
+  document.getElementById('login-pass').value = '';
+}
+
+// ---------- DASHBOARD ----------
+function renderDashboard() {
+  if (state.unlocked) {
+    document.getElementById('screen-login').classList.add('hidden');
+    document.getElementById('screen-dashboard').classList.add('hidden');
+    document.getElementById('screen-victory').classList.remove('hidden');
+    document.getElementById('victory-team').textContent = state.team;
+    return;
+  }
+
+  document.getElementById('screen-login').classList.add('hidden');
+  document.getElementById('screen-victory').classList.add('hidden');
+  document.getElementById('screen-dashboard').classList.remove('hidden');
+
+  document.getElementById('dash-team').textContent = state.team;
+  document.getElementById('dash-points').textContent = state.points;
+  document.getElementById('dash-letters').textContent = state.letters.length + '/4';
+
+  const slots = document.querySelectorAll('.letter-slot');
+  slots.forEach((slot, i) => {
+    if (state.letters[i]) {
+      slot.textContent = state.letters[i];
+      slot.classList.add('filled');
+    } else {
+      slot.textContent = '?';
+      slot.classList.remove('filled');
+    }
+  });
+
+  const hasAll = state.letters.length >= 4;
+  document.getElementById('final-word').disabled = !hasAll;
+  document.getElementById('final-btn').disabled = !hasAll;
+  if (!hasAll) {
+    document.getElementById('final-word').value = '';
+  }
+}
+
+// ---------- SUBMIT ----------
+function submitAnomaly() {
+  const sensor = document.getElementById('sub-sensor').value;
+  const time = parseInt(document.getElementById('sub-time').value);
+  const cls = document.getElementById('sub-class').value;
+  const msg = document.getElementById('sub-message');
+
+  if (!sensor || isNaN(time) || !cls) {
+    return showMessage(msg, "Fill in all three fields.", "error");
+  }
+
+  // 1. Check real anomalies
+  for (const a of REAL_ANOMALIES) {
+    if (state.submitted.includes(a.id)) continue;
+    if (sensor !== a.sensor) continue;
+    if (Math.abs(time - a.time) > a.tol) continue;
+    if (a.requiresClass && cls !== a.requiresClass) continue;
+
+    state.submitted.push(a.id);
+    state.points += 10;
+    state.letters.push(a.letter);
+    saveState();
+    renderDashboard();
+    return showMessage(msg,
+      "Anomaly confirmed. +10 points. Letter unlocked: " + a.letter,
+      "success");
+  }
+
+  // 2. Check decoys
+  for (const d of DECOYS) {
+    if (state.decoysHit.includes(d.id)) continue;
+    if (sensor !== d.sensor) continue;
+    if (Math.abs(time - d.time) > d.tol) continue;
+    // decoy only counts as false positive if they classified as a real problem
+    if (cls === "real_event" || cls === "sensor_failure") {
+      state.decoysHit.push(d.id);
+      state.points -= 5;
+      saveState();
+      renderDashboard();
+      return showMessage(msg,
+        "False positive. That reading is not a real anomaly. -5 points.",
+        "error");
+    }
+    return showMessage(msg,
+      "Correct — that reading is not a real anomaly. No points, but no penalty either.",
+      "info");
+  }
+
+  // 3. Unknown
+  return showMessage(msg,
+    "No match. Either the sensor, time, or classification is off. Try again.",
+    "error");
+}
+
+// ---------- FINAL UNLOCK ----------
+function tryUnlock() {
+  const word = document.getElementById('final-word').value.trim().toUpperCase();
+  const msg = document.getElementById('final-message');
+
+  if (word === FINAL_WORD) {
+    state.unlocked = true;
+    saveState();
+    renderDashboard();
+  } else {
+    return showMessage(msg, "Incorrect word. The letters spell something. Think about the mission.", "error");
+  }
+}
+
+// ---------- MESSAGE HELPER ----------
+function showMessage(el, text, type) {
+  el.textContent = text;
+  el.className = 'message ' + type + ' show';
+}
+</script>
+
+</body>
+</html>

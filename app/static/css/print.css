@@ -1,0 +1,66 @@
+/* Print-optimized styling for Round 1 Launch Readiness Review sheets */
+
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-family: 'Inter', -apple-system, sans-serif !important;
+    font-size: 11pt !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  
+  .no-print, .navbar, .btn {
+    display: none !important;
+  }
+  
+  .sheet-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 15mm !important;
+    page-break-after: always;
+  }
+  
+  .sheet-header {
+    border-bottom: 2px solid #000000;
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .station-box {
+    border: 1px solid #333333;
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    background: #fafafa !important;
+  }
+  
+  .station-title {
+    font-weight: 800;
+    font-size: 12pt;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    border-bottom: 1px solid #cccccc;
+    padding-bottom: 4px;
+  }
+  
+  .code-block {
+    font-family: 'JetBrains Mono', monospace !important;
+    background: #eeeeee !important;
+    padding: 6px 10px;
+    border: 1px solid #cccccc;
+    font-size: 10pt;
+    margin: 8px 0;
+  }
+  
+  .grading-key {
+    border-top: 2px dashed #666666;
+    margin-top: 20px;
+    padding-top: 10px;
+    font-size: 9pt;
+    color: #444444;
+  }
+}
