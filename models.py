@@ -216,7 +216,7 @@ def init_db():
         (1, "Round 1: Mission Briefing", "physical", "Solve the offline physical cipher dossier to retrieve your launch authorization code.", "2027-03-14T00:00:00Z", "2027-03-14T23:59:59Z", None),
         (2, "Round 2: Telemetry Investigation", "telemetry", "Team-specific satellite telemetry investigation with staged evidence, controlled downlink, and fault isolation.", "2027-03-14T00:00:00Z", "2027-03-14T23:59:59Z", 1),
         (3, "Round 3: Mission Ops Mini-Game", "game", "Interactive CanSat/spacecraft resource management simulation across simulated orbits.", "2027-03-14T00:00:00Z", "2027-03-14T23:59:59Z", 2),
-        (4, "Round 4: Telemetry Analysis", "code", "Forensic analysis of CanSat/satellite telemetry, anomaly isolation, and live recovery.", "2027-03-14T00:00:00Z", "2027-03-14T23:59:59Z", 3)
+        (4, "Round 4: Live Contingency Finale", "code", "Real-time live recovery of the spacecraft using the mission runbook and console.", "2027-03-14T00:00:00Z", "2027-03-14T23:59:59Z", 3)
     ]
     for r in default_rounds:
         cur.execute("""
