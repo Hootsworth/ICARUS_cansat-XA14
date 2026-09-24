@@ -149,6 +149,9 @@
                     </p>
                 </div>
                 <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span id="firebase-status-pill" class="badge mono" style="font-size: 0.72rem; background: #18181b; color: #a1a1aa; border: 1px solid #3f3f46;">
+                        FIREBASE: CHECKING...
+                    </span>
                     <span id="current-global-round-badge" class="badge badge-active mono" style="font-size: 0.75rem; background: #ffffff; color: #000000;">
                         ACTIVE: STAGE 1
                     </span>
@@ -443,6 +446,30 @@
         }
     }
 
+    function updateFirebaseStatusIndicator() {
+        const pill = document.getElementById("firebase-status-pill");
+        if (!pill) return;
+        const isConfigured = window.IcarusFirebase && window.IcarusFirebase.isConfigured();
+        const isInit = window.IcarusFirebase && window.IcarusFirebase.isInitialized;
+
+        if (isInit) {
+            pill.textContent = "● FIRESTORE LIVE SYNC";
+            pill.style.background = "rgba(16, 185, 129, 0.15)";
+            pill.style.color = "#34d399";
+            pill.style.borderColor = "rgba(16, 185, 129, 0.4)";
+        } else if (isConfigured) {
+            pill.textContent = "○ CONNECTING...";
+            pill.style.background = "rgba(56, 189, 248, 0.15)";
+            pill.style.color = "#38bdf8";
+            pill.style.borderColor = "rgba(56, 189, 248, 0.4)";
+        } else {
+            pill.textContent = "OFFLINE (LOCAL STORAGE)";
+            pill.style.background = "#18181b";
+            pill.style.color = "#a1a1aa";
+            pill.style.borderColor = "#3f3f46";
+        }
+    }
+
     async function switchMissionStage(stageNum, minutes, title) {
         window.IcarusEngine.setGlobalRound(stageNum);
         updateGlobalRoundDisplay();
@@ -681,11 +708,13 @@
 
     document.addEventListener("DOMContentLoaded", () => {
         checkAdminAuth();
+        updateFirebaseStatusIndicator();
         setInterval(() => {
             if (window.IcarusEngine.isAdminAuthenticated()) {
                 renderAdminStandings();
                 renderSecurityFeed();
                 updateGlobalRoundDisplay();
+                updateFirebaseStatusIndicator();
             }
         }, 3000);
 

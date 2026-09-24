@@ -230,6 +230,9 @@ class IcarusGitHubPagesEngine {
     saveTeamData(data, teamId = null) {
         const id = teamId || data.id || this.getCurrentTeamId();
         localStorage.setItem(`ICARUS_TEAM_${id}`, JSON.stringify(data));
+        if (window.IcarusCommander && window.IcarusCommander.syncTeamData) {
+            window.IcarusCommander.syncTeamData(data, id);
+        }
     }
 
     // -------------------------------------------------------------------------

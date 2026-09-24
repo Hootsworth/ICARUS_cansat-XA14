@@ -33,15 +33,15 @@
                 top: 0;
                 left: 0;
                 right: 0;
-                background: #ffffff;
-                color: #000000;
-                padding: 0.65rem 1.5rem;
+                background: #09090b;
+                color: #ffffff;
+                padding: 0.75rem 1.5rem;
                 font-family: var(--font-mono, monospace);
                 font-size: 0.85rem;
                 font-weight: 700;
                 z-index: 9999;
-                border-bottom: 2px solid #000000;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+                border-bottom: 2px solid #38bdf8;
+                box-shadow: 0 8px 24px rgba(0,0,0,0.5);
                 justify-content: space-between;
                 align-items: center;
             `;
@@ -59,15 +59,23 @@
         compState.timerTitle = state.timer_title || "FLIGHT OPS";
         compState.activeRound = state.active_round || 1;
 
+        // Auto sync active round to local engine if changed
+        if (window.IcarusEngine && state.active_round && window.IcarusEngine.getGlobalRound() !== state.active_round) {
+            localStorage.setItem("ICARUS_GLOBAL_ROUND", String(state.active_round));
+            if (typeof renderCurrentStage === "function") {
+                renderCurrentStage();
+            }
+        }
+
         // 1. Handle Announcement Banner
         if (state.announcement && state.announcement.trim()) {
             if (announcementBanner) {
                 announcementBanner.innerHTML = `
                     <div style="display: flex; align-items: center; gap: 0.75rem;">
-                        <span style="background: #000000; color: #ffffff; padding: 2px 6px; font-size: 0.7rem;">BROADCAST</span>
+                        <span style="background: #38bdf8; color: #000000; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 800;">BROADCAST</span>
                         <span>${state.announcement}</span>
                     </div>
-                    <button onclick="document.getElementById('icarus-announcement-banner').style.display='none'" style="background:transparent; border:none; font-family:monospace; font-weight:700; cursor:pointer; font-size:0.9rem;">[DISMISS ✕]</button>
+                    <button onclick="document.getElementById('icarus-announcement-banner').style.display='none'" style="background:transparent; border:none; color:#a1a1aa; font-family:monospace; font-weight:700; cursor:pointer; font-size:0.9rem;">[DISMISS ✕]</button>
                 `;
                 announcementBanner.style.display = "flex";
             }
@@ -92,8 +100,8 @@
 
         if (!compState.timerRunning || !compState.timerEndsAt) {
             countdownEl.textContent = `[ROUND ${compState.activeRound}: STANDBY]`;
-            countdownEl.style.borderColor = "var(--border-muted, #2e2e2e)";
-            countdownEl.style.color = "var(--text-muted, #737373)";
+            countdownEl.style.borderColor = "#3f3f46";
+            countdownEl.style.color = "#a1a1aa";
             return;
         }
 
@@ -102,8 +110,8 @@
 
         if (diff <= 0) {
             countdownEl.textContent = `00:00:00 [ROUND ${compState.activeRound} TIME EXPIRED]`;
-            countdownEl.style.borderColor = "#ffffff";
-            countdownEl.style.color = "#ffffff";
+            countdownEl.style.borderColor = "#ef4444";
+            countdownEl.style.color = "#ef4444";
             return;
         }
 
@@ -120,7 +128,7 @@
     }
 
     // -------------------------------------------------------------------------
-    // Fallback Local Polling (Runs immediately, seamlessly works offline)
+    // Fallback Local Polling
     // -------------------------------------------------------------------------
     async function pollLocalState() {
         try {
@@ -130,17 +138,17 @@
                 applyState(data);
             }
         } catch (e) {
-            // Server offline or network blip
+            // Local server offline or on static hosting
         }
     }
 
     // -------------------------------------------------------------------------
-    // Firebase Firestore Realtime Connection (if configured)
+    // Firebase Firestore Realtime Connection & Multi-Device Sync
     // -------------------------------------------------------------------------
     async function initFirebaseSync() {
         const isConfigured = window.IcarusFirebase && window.IcarusFirebase.isConfigured();
         if (!isConfigured) {
-            console.log("[ICARUS SYNC] Firebase in local fallback mode. Polling server every 2.5s.");
+            console.log("[ICARUS SYNC] Firebase not yet configured or using local fallback.");
             setInterval(pollLocalState, 2500);
             pollLocalState();
             return;
@@ -148,8 +156,8 @@
 
         try {
             const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js");
-            const { getFirestore, doc, onSnapshot, setDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
-            const { getAuth, signInWithPopup, GoogleAuthProvider, signInAnonymously } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js");
+            const { getFirestore, doc, onSnapshot, setDoc, getDoc, collection, onSnapshot: onCollectionSnapshot } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+            const { getAuth, signInAnonymously, onAuthStateChanged } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js");
 
             const cfg = window.IcarusFirebase.getConfig();
             const app = initializeApp(cfg);
@@ -161,7 +169,15 @@
             window.IcarusFirebase.auth = auth;
             window.IcarusFirebase.isInitialized = true;
 
-            console.log("[ICARUS SYNC] Connected to Firebase Firestore real-time state channel.");
+            console.log("[ICARUS SYNC] Connected to Firebase Firestore real-time channel:", cfg.projectId);
+
+            // Anonymous auth to ensure Firestore security rules allow read/write
+            try {
+                await signInAnonymously(auth);
+                console.log("[ICARUS SYNC] Authenticated anonymously to Firebase.");
+            } catch (authErr) {
+                console.warn("[ICARUS SYNC] Anonymous auth notice:", authErr);
+            }
 
             // Expose Commander API for Admin Console
             window.IcarusCommander = {
@@ -178,48 +194,23 @@
                         updated_at: new Date().toISOString()
                     };
 
-                    // 1. Sync Firestore
                     try {
                         await setDoc(doc(db, "icarus_competition", "state"), statePayload, { merge: true });
                     } catch (err) {
                         console.warn("[Firebase write error]", err);
                     }
-
-                    // 2. Sync FastAPI SQLite
-                    await fetch("/api/admin/competition/state", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            action: "start_timer",
-                            round_num: roundNum,
-                            duration_minutes: minutes,
-                            title: title || `ROUND ${roundNum}`
-                        })
-                    });
                 },
 
                 async pauseTimer() {
                     try {
                         await setDoc(doc(db, "icarus_competition", "state"), { timer_running: false }, { merge: true });
                     } catch (e) {}
-
-                    await fetch("/api/admin/competition/state", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ action: "pause_timer" })
-                    });
                 },
 
                 async resetTimer() {
                     try {
                         await setDoc(doc(db, "icarus_competition", "state"), { timer_running: false, timer_ends_at: 0 }, { merge: true });
                     } catch (e) {}
-
-                    await fetch("/api/admin/competition/state", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ action: "reset_timer" })
-                    });
                 },
 
                 async broadcast(message) {
@@ -229,12 +220,6 @@
                             announcement_id: String(Date.now())
                         }, { merge: true });
                     } catch (e) {}
-
-                    await fetch("/api/admin/competition/state", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ action: "broadcast", message })
-                    });
                 },
 
                 async clearBroadcast() {
@@ -244,75 +229,65 @@
                             announcement_id: ""
                         }, { merge: true });
                     } catch (e) {}
-
-                    await fetch("/api/admin/competition/state", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ action: "clear_broadcast" })
-                    });
-                }
-            };
-
-            // Expose Auth Handlers
-            window.IcarusAuth = {
-                async signInWithGoogle() {
-                    const provider = new GoogleAuthProvider();
-                    const result = await signInWithPopup(auth, provider);
-                    const user = result.user;
-                    
-                    const res = await fetch("/api/auth/firebase_session", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            uid: user.uid,
-                            email: user.email,
-                            displayName: user.displayName,
-                            isAnonymous: false
-                        })
-                    });
-                    const data = await res.json();
-                    if (data.status === "ok") {
-                        window.location.href = data.redirect || "/dashboard";
-                    } else {
-                        alert(data.message || "Authentication failed.");
-                    }
                 },
 
-                async signInAnonymous(stationId = null) {
-                    const result = await signInAnonymously(auth);
-                    const user = result.user;
+                async syncToFirebase(payload) {
+                    try {
+                        await setDoc(doc(db, "icarus_competition", "state"), payload, { merge: true });
+                    } catch (e) {}
+                },
 
-                    const res = await fetch("/api/auth/firebase_session", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            uid: user.uid,
-                            isAnonymous: true,
-                            stationTeamId: stationId
-                        })
-                    });
-                    const data = await res.json();
-                    if (data.status === "ok") {
-                        window.location.href = data.redirect || "/dashboard";
-                    } else {
-                        alert(data.message || "Authentication failed.");
-                    }
+                async syncSecurityEvent(entry) {
+                    try {
+                        await setDoc(doc(db, "icarus_security_logs", String(entry.id)), entry);
+                    } catch (e) {}
+                },
+
+                async syncTeamData(teamData, teamId) {
+                    try {
+                        await setDoc(doc(db, "icarus_teams", `team_${teamId}`), teamData, { merge: true });
+                    } catch (e) {}
                 }
             };
 
-            // Realtime Snapshot listener
+            // Firestore real-time listener for mission state & timer
             onSnapshot(doc(db, "icarus_competition", "state"), (snapshot) => {
                 if (snapshot.exists()) {
                     const data = snapshot.data();
                     applyState(data);
                 }
             }, (error) => {
-                console.warn("[ICARUS SYNC] Snapshot error, falling back to server polling:", error);
-                setInterval(pollLocalState, 3000);
+                console.warn("[ICARUS SYNC] Snapshot error:", error);
+            });
+
+            // Sync teams from Firestore into local cache if on Admin Console
+            onCollectionSnapshot(collection(db, "icarus_teams"), (snapshot) => {
+                snapshot.forEach(docSnap => {
+                    const data = docSnap.data();
+                    if (data && data.id) {
+                        const local = localStorage.getItem(`ICARUS_TEAM_${data.id}`);
+                        // Merge or update local team data
+                        localStorage.setItem(`ICARUS_TEAM_${data.id}`, JSON.stringify(data));
+                    }
+                });
+                if (typeof renderAdminStandings === "function") {
+                    renderAdminStandings();
+                }
+            });
+
+            // Sync security feed
+            onCollectionSnapshot(collection(db, "icarus_security_logs"), (snapshot) => {
+                const logs = [];
+                snapshot.forEach(docSnap => logs.push(docSnap.data()));
+                logs.sort((a, b) => (b.id || "").localeCompare(a.id || ""));
+                localStorage.setItem("ICARUS_SECURITY_LOGS", JSON.stringify(logs.slice(0, 100)));
+                if (typeof renderSecurityFeed === "function") {
+                    renderSecurityFeed();
+                }
             });
 
         } catch (err) {
-            console.warn("[ICARUS SYNC] Firebase initialization error, falling back to server polling:", err);
+            console.warn("[ICARUS SYNC] Firebase initialization error, falling back:", err);
             setInterval(pollLocalState, 3000);
             pollLocalState();
         }

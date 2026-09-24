@@ -3,23 +3,21 @@
  * Supports Google Auth, Anonymous Station Auth, and Firestore Shared Realtime DB.
  */
 
-// Default configuration template
 const DEFAULT_FIREBASE_CONFIG = {
-    apiKey: "AIzaSyDemoTelemetryKeyPlaceholder2027",
-    authDomain: "icarus-telemetry-rvu.firebaseapp.com",
-    projectId: "icarus-telemetry-rvu",
-    storageBucket: "icarus-telemetry-rvu.appspot.com",
-    messagingSenderId: "109876543210",
-    appId: "1:109876543210:web:9876543210abcdef"
+    apiKey: "",
+    authDomain: "",
+    projectId: "",
+    storageBucket: "",
+    messagingSenderId: "",
+    appId: ""
 };
 
-// Retrieve any custom credentials saved in localStorage
 function getFirebaseConfig() {
     try {
         const custom = localStorage.getItem("ICARUS_FIREBASE_CONFIG");
         if (custom) {
             const parsed = JSON.parse(custom);
-            if (parsed && parsed.apiKey && !parsed.apiKey.includes("Placeholder")) {
+            if (parsed && parsed.apiKey && parsed.projectId && !parsed.apiKey.includes("Placeholder")) {
                 return parsed;
             }
         }
@@ -36,7 +34,7 @@ window.IcarusFirebase = {
     isInitialized: false,
     isConfigured() {
         const cfg = getFirebaseConfig();
-        return cfg && cfg.apiKey && !cfg.apiKey.includes("Placeholder");
+        return Boolean(cfg && cfg.apiKey && cfg.projectId && cfg.apiKey.length > 5 && !cfg.apiKey.includes("Placeholder"));
     },
     saveConfig(cfg) {
         localStorage.setItem("ICARUS_FIREBASE_CONFIG", JSON.stringify(cfg));
