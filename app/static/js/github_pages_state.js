@@ -1,25 +1,25 @@
 /**
  * ICARUS Flight Operations State & Storage Engine
- * Handles 4-Round Mission Progression, Real-time Anti-Cheat Event Logging,
- * Retro 8-bit Shooter Top-5 Ranking, In-Browser Telemetry Analysis, and Private Scoreboard.
+ * Handles Station License Key Authentication, 3-Phase Progression,
+ * Real-time Anti-Cheat Event Logging, and Flight Director Retake Management.
  */
 
 const ICARUS_DEFAULT_TEAMS = [
-    { id: 1, name: "Team Icarus Alpha", code: "RVU-ORBIT-2027", password: "icarus_pass_01", credits: 12 },
-    { id: 2, name: "Oreos", code: "RVU-ORBIT-2027", password: "icarus_pass_02", credits: 12 },
-    { id: 3, name: "Apex Flight Systems", code: "RVU-ORBIT-2027", password: "icarus_pass_03", credits: 12 },
-    { id: 4, name: "Polaris Dynamics", code: "RVU-ORBIT-2027", password: "icarus_pass_04", credits: 12 },
-    { id: 5, name: "Zenith Aero Group", code: "RVU-ORBIT-2027", password: "icarus_pass_05", credits: 12 },
-    { id: 6, name: "Vanguard Satellites", code: "RVU-ORBIT-2027", password: "icarus_pass_06", credits: 12 },
-    { id: 7, name: "Horizon Ground Ops", code: "RVU-ORBIT-2027", password: "icarus_pass_07", credits: 12 },
-    { id: 8, name: "StratoCom Laboratory", code: "RVU-ORBIT-2027", password: "icarus_pass_08", credits: 12 },
-    { id: 9, name: "Nova Telemetry Core", code: "RVU-ORBIT-2027", password: "icarus_pass_09", credits: 12 },
-    { id: 10, name: "Astra Recovery Taskforce", code: "RVU-ORBIT-2027", password: "icarus_pass_10", credits: 12 },
-    { id: 11, name: "Celestia Flight Group", code: "RVU-ORBIT-2027", password: "icarus_pass_11", credits: 12 }
+    { id: 1, name: "Ares Flight Group", key: "ICARUS-ARES-7711", code: "RVU-ORBIT-2027", credits: 12 },
+    { id: 2, name: "Athena Orbital", key: "ICARUS-ATHENA-8822", code: "RVU-ORBIT-2027", credits: 12 },
+    { id: 3, name: "Daedalus Dynamics", key: "ICARUS-DAEDALUS-9933", code: "RVU-ORBIT-2027", credits: 12 },
+    { id: 4, name: "Helios Telemetry", key: "ICARUS-HELIOS-1144", code: "RVU-ORBIT-2027", credits: 12 },
+    { id: 5, name: "Hermes Flight Unit", key: "ICARUS-HERMES-2255", code: "RVU-ORBIT-2027", credits: 12 },
+    { id: 6, name: "Titan Propulsion", key: "ICARUS-TITAN-3366", code: "RVU-ORBIT-2027", credits: 12 },
+    { id: 7, name: "Orion Space Labs", key: "ICARUS-ORION-4477", code: "RVU-ORBIT-2027", credits: 12 },
+    { id: 8, name: "Voyager Operations", key: "ICARUS-VOYAGER-5588", code: "RVU-ORBIT-2027", credits: 12 },
+    { id: 9, name: "Apollo Systems", key: "ICARUS-APOLLO-6699", code: "RVU-ORBIT-2027", credits: 12 },
+    { id: 10, name: "Selene Analytics", key: "ICARUS-SELENE-7700", code: "RVU-ORBIT-2027", credits: 12 },
+    { id: 11, name: "Hyperion Dynamics", key: "ICARUS-HYPERION-8811", code: "RVU-ORBIT-2027", credits: 12 }
 ];
 
-const ICARUS_EVENT_JOIN_CODE = "RVU-ORBIT-2027";
 const ICARUS_ADMIN_PASSWORD = "rvu_flight_ops_admin_2027";
+const STATE_VERSION = "ICARUS_V3_LIC_KEY";
 
 class IcarusGitHubPagesEngine {
     constructor() {
@@ -27,26 +27,33 @@ class IcarusGitHubPagesEngine {
     }
 
     init() {
-        if (!localStorage.getItem("ICARUS_GH_INIT")) {
+        const currentVersion = localStorage.getItem("ICARUS_STATE_VERSION");
+        // Initialize or migrate to license keys
+        if (currentVersion !== STATE_VERSION) {
             ICARUS_DEFAULT_TEAMS.forEach(team => {
                 const teamKey = `ICARUS_TEAM_${team.id}`;
-                if (!localStorage.getItem(teamKey)) {
-                    const data = {
-                        id: team.id,
-                        name: team.name,
-                        password: team.password,
-                        credits: team.credits,
-                        code: team.code,
-                        r1: { status: "active", score: 0, answers: null, completedAt: null },
-                        r2: { status: "locked", rawScore: 0, rankPts: 0, completedAt: null },
-                        r3: { status: "locked", score: 50, code: "", completedAt: null },
-                        r4: { status: "locked", score: 0, answers: null, completedAt: null }
-                    };
-                    localStorage.setItem(teamKey, JSON.stringify(data));
+                const existingRaw = localStorage.getItem(teamKey);
+                let existingData = null;
+                if (existingRaw) {
+                    try { existingData = JSON.parse(existingRaw); } catch (e) {}
                 }
+
+                const data = {
+                    id: team.id,
+                    name: (existingData && existingData.name) ? existingData.name : team.name,
+                    key: team.key,
+                    code: team.code,
+                    credits: 12,
+                    r1: (existingData && existingData.r1) ? existingData.r1 : { status: "active", score: 0, details: null, completedAt: null },
+                    r2: (existingData && existingData.r2) ? existingData.r2 : { status: "locked", score: 0, code: "", completedAt: null },
+                    r3: (existingData && existingData.r3) ? existingData.r3 : { status: "locked", score: 0, answers: null, completedAt: null }
+                };
+                localStorage.setItem(teamKey, JSON.stringify(data));
             });
-            localStorage.setItem("ICARUS_GLOBAL_ROUND", "1");
-            localStorage.setItem("ICARUS_GH_INIT", "true");
+            localStorage.setItem("ICARUS_STATE_VERSION", STATE_VERSION);
+            if (!localStorage.getItem("ICARUS_GLOBAL_ROUND")) {
+                localStorage.setItem("ICARUS_GLOBAL_ROUND", "1");
+            }
         }
     }
 
@@ -59,7 +66,6 @@ class IcarusGitHubPagesEngine {
 
     setGlobalRound(roundNum) {
         localStorage.setItem("ICARUS_GLOBAL_ROUND", String(roundNum));
-        // Auto-unlock the corresponding round for all teams
         for (let i = 1; i <= 11; i++) {
             const team = this.getTeamData(i);
             const rKey = `r${roundNum}`;
@@ -89,7 +95,6 @@ class IcarusGitHubPagesEngine {
             timestamp: new Date().toLocaleTimeString() + " UTC (" + new Date().toISOString() + ")"
         };
         events.unshift(entry);
-        // keep recent 100
         if (events.length > 100) events.pop();
         localStorage.setItem("ICARUS_SECURITY_LOGS", JSON.stringify(events));
 
@@ -112,7 +117,7 @@ class IcarusGitHubPagesEngine {
     }
 
     // -------------------------------------------------------------------------
-    // Team Authentication Gate
+    // Team Authentication Gate (License Key + Optional Custom Team Name)
     // -------------------------------------------------------------------------
     getAuthUser() {
         const raw = localStorage.getItem("ICARUS_AUTH_USER");
@@ -122,8 +127,13 @@ class IcarusGitHubPagesEngine {
         return null;
     }
 
-    setAuthUser(teamId, teamName) {
-        const user = { teamId: parseInt(teamId), teamName: teamName, loggedInAt: new Date().toISOString() };
+    setAuthUser(teamId, teamName, key) {
+        const user = {
+            teamId: parseInt(teamId),
+            teamName: teamName,
+            key: key,
+            loggedInAt: new Date().toISOString()
+        };
         localStorage.setItem("ICARUS_AUTH_USER", JSON.stringify(user));
         localStorage.setItem("ICARUS_CURRENT_TEAM_ID", String(teamId));
         return user;
@@ -135,38 +145,34 @@ class IcarusGitHubPagesEngine {
         window.location.href = "./index.html";
     }
 
-    login(callsignOrTeamId, password) {
-        const input = String(callsignOrTeamId).trim().toLowerCase();
+    /**
+     * Authenticate via Station License Key
+     * Allows team to customize/write their team name
+     */
+    loginWithKey(licenseKey, optionalCustomTeamName = "") {
+        const cleanKey = String(licenseKey).trim().toUpperCase();
+        if (!cleanKey) {
+            return { success: false, message: "Please enter your assigned Station License Key." };
+        }
+
         for (let i = 1; i <= 11; i++) {
             const team = this.getTeamData(i);
-            const nameMatch = team.name.toLowerCase() === input || String(team.id) === input || `station ${team.id}` === input;
-            if (nameMatch) {
-                if (team.password === password || password === "icarus123" || password.length >= 4) {
-                    this.setAuthUser(team.id, team.name);
-                    return { success: true, team: team };
-                } else {
-                    return { success: false, message: "Invalid station password." };
+            if (team.key && team.key.toUpperCase() === cleanKey) {
+                // If team provided custom team name, update team profile name
+                if (optionalCustomTeamName && optionalCustomTeamName.trim().length > 0) {
+                    team.name = optionalCustomTeamName.trim();
+                    this.saveTeamData(team, i);
                 }
+
+                this.setAuthUser(team.id, team.name, team.key);
+                return { success: true, team: team };
             }
         }
-        return { success: false, message: "Station / Team not found. Register with Join Code first." };
-    }
 
-    register(teamId, teamName, password, joinCode) {
-        const tid = parseInt(teamId);
-        if (isNaN(tid) || tid < 1 || tid > 11) {
-            return { success: false, message: "Assigned Team Number must be between 1 and 11." };
-        }
-        if (joinCode.trim().toUpperCase() !== ICARUS_EVENT_JOIN_CODE) {
-            return { success: false, message: "Invalid Event Join Code. Check your mission briefing dossier." };
-        }
-
-        const team = this.getTeamData(tid);
-        team.name = teamName.trim();
-        team.password = password;
-        this.saveTeamData(team, tid);
-        this.setAuthUser(tid, team.name);
-        return { success: true, team: team };
+        return {
+            success: false,
+            message: "Invalid Station License Key. Please check the Admin Console or contact Flight Director."
+        };
     }
 
     // -------------------------------------------------------------------------
@@ -203,12 +209,18 @@ class IcarusGitHubPagesEngine {
         if (raw) {
             try { return JSON.parse(raw); } catch (e) {}
         }
-        return {
+        const defaultDef = ICARUS_DEFAULT_TEAMS.find(t => t.id === id) || {
             id: id,
             name: `Station ${id} Flight Group`,
-            password: `icarus_pass_${id}`,
+            key: `ICARUS-STATION-${id}-KEY`,
+            code: "RVU-ORBIT-2027"
+        };
+        return {
+            id: defaultDef.id,
+            name: defaultDef.name,
+            key: defaultDef.key,
+            code: defaultDef.code,
             credits: 12,
-            code: "RVU-ORBIT-2027",
             r1: { status: "active", score: 0, details: null, completedAt: null },
             r2: { status: "locked", score: 0, code: "", completedAt: null },
             r3: { status: "locked", score: 0, answers: null, completedAt: null }
@@ -345,7 +357,7 @@ class IcarusGitHubPagesEngine {
     }
 
     // -------------------------------------------------------------------------
-    // Private Master Scoreboard Overview (Admin Only)
+    // Master Overview & License Key Registry (Admin Only)
     // -------------------------------------------------------------------------
     getAllTeamsOverview() {
         const overview = [];
@@ -357,7 +369,7 @@ class IcarusGitHubPagesEngine {
             const grandTotal = r1Pts + r2Pts + r3Pts;
 
             overview.push({
-                team: { id: team.id, name: team.name, code: team.code },
+                team: { id: team.id, name: team.name, key: team.key, code: team.code },
                 r1: team.r1,
                 r2: team.r2,
                 r3: team.r3,

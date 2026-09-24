@@ -10,9 +10,9 @@
     <link rel="stylesheet" href="./css/style.css">
     <style>
         .badge-sec-tab {
-            background: #2a1215;
-            color: #ef4444;
-            border: 1px solid #7f1d1d;
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.4);
             font-family: var(--font-mono);
             font-size: 0.7rem;
             padding: 3px 8px;
@@ -20,9 +20,9 @@
             font-weight: 700;
         }
         .badge-sec-blur {
-            background: #27272a;
-            color: #f59e0b;
-            border: 1px solid #78350f;
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.4);
             font-family: var(--font-mono);
             font-size: 0.7rem;
             padding: 3px 8px;
@@ -30,21 +30,29 @@
             font-weight: 700;
         }
         .badge-sec-full {
-            background: #271b2d;
+            background: rgba(236, 72, 153, 0.15);
             color: #f472b6;
-            border: 1px solid #831843;
+            border: 1px solid rgba(236, 72, 153, 0.4);
             font-family: var(--font-mono);
             font-size: 0.7rem;
             padding: 3px 8px;
             border-radius: 6px;
             font-weight: 700;
         }
+        .key-copy-badge {
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .key-copy-badge:hover {
+            border-color: #38bdf8;
+            background: #27272a;
+        }
     </style>
 </head>
 <body>
     <nav class="navbar">
         <a href="./admin.html" class="nav-brand">
-            <div style="width: 28px; height: 28px; background: #000000; color: #ffffff; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-weight: 800; font-size: 0.8rem;">
+            <div style="width: 28px; height: 28px; background: #000000; color: #ffffff; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-weight: 800; font-size: 0.85rem;">
                 I
             </div>
             <div>
@@ -62,13 +70,13 @@
     </nav>
 
     <!-- ADMIN LOGIN GATE -->
-    <div id="admin-login-container" class="container" style="max-width: 440px; padding-top: 5rem;">
+    <div id="admin-login-container" class="container" style="max-width: 460px; padding-top: 5rem;">
         <div class="card" style="padding: 2.5rem;">
             <div style="margin-bottom: 2rem;">
                 <div class="eyebrow" style="color: #ef4444;">[RESTRICTED ACCESS]</div>
                 <h2 style="font-size: 1.5rem; color: #ffffff; margin-top: 0.3rem;">Flight Director Authentication</h2>
-                <p style="color: #a1a1aa; font-size: 0.82rem; margin-top: 0.25rem;">
-                    Enter master authorization credentials to unlock flight operations, remote dispatch, and anti-cheat telemetry.
+                <p style="color: #a1a1aa; font-size: 0.84rem; margin-top: 0.3rem; line-height: 1.5;">
+                    Enter master authorization credentials to unlock flight operations, team license keys, remote dispatch, and anti-cheat telemetry.
                 </p>
             </div>
 
@@ -91,27 +99,47 @@
     </div>
 
     <!-- ADMIN CONSOLE -->
-    <div id="admin-console-container" class="container" style="display: none; max-width: 1120px; padding-top: 2rem; padding-bottom: 5rem;">
+    <div id="admin-console-container" class="container" style="display: none; max-width: 1100px; padding-top: 2rem; padding-bottom: 5rem;">
         <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; border-bottom: 1px solid #e4e4e7; padding-bottom: 1.25rem;">
             <div>
-                <div class="eyebrow">[MISSION CONTROL / 3-PHASE ARCHITECTURE]</div>
+                <div class="eyebrow" style="color: #09090b;">[MISSION CONTROL / 3-PHASE ARCHITECTURE]</div>
                 <h1 style="font-size: 1.8rem; margin: 0.2rem 0; color: #000000;">Flight Director Operations Console</h1>
                 <p style="color: #71717a; font-size: 0.84rem; margin: 0;">
-                    Stage dispatcher, live anti-cheat surveillance, retake management, and private master scoring.
+                    Team license keys, stage dispatcher, live anti-cheat surveillance, retake management, and private scoring.
                 </p>
             </div>
             <div style="display: flex; gap: 0.75rem; align-items: center;">
-                <span class="badge badge-active" style="padding: 0.4rem 0.9rem;">
+                <span class="badge badge-active" style="padding: 0.45rem 0.9rem;">
                     FLIGHT DIRECTOR ACTIVE
                 </span>
-                <button onclick="window.IcarusEngine.logoutAdmin()" class="btn btn-secondary" style="font-size: 0.72rem; padding: 0.4rem 0.85rem;">
+                <button onclick="window.IcarusEngine.logoutAdmin()" class="btn btn-secondary" style="font-size: 0.72rem; padding: 0.45rem 0.85rem;">
                     Lock Console ✕
                 </button>
             </div>
         </div>
 
+        <!-- STATION LICENSE KEYS DIRECTORY -->
+        <div class="card card-header-accent-blue" style="margin-bottom: 2rem;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.25rem;">
+                <div>
+                    <div class="eyebrow" style="color: #38bdf8;">[STATION CREDENTIAL DIRECTORY]</div>
+                    <h2 style="font-size: 1.3rem; margin: 0.2rem 0; color: #ffffff;">Team License Keys & Station Assignment</h2>
+                    <p style="color: #a1a1aa; font-size: 0.82rem;">
+                        Distribute these license keys to each team. Teams use only their key to log in. Click any key to copy to clipboard.
+                    </p>
+                </div>
+                <div id="key-copy-notice" class="badge badge-green mono" style="display: none; font-size: 0.75rem;">
+                    ✓ Key copied to clipboard!
+                </div>
+            </div>
+
+            <div class="key-grid" id="license-key-grid">
+                <!-- Dynamically generated keys -->
+            </div>
+        </div>
+
         <!-- 3-ROUND MISSION STAGE SWITCHER & TIMER DISPATCH -->
-        <div class="card" style="margin-bottom: 2rem; border-left: 4px solid #10b981;">
+        <div class="card card-header-accent-green" style="margin-bottom: 2rem;">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.25rem;">
                 <div>
                     <div class="eyebrow" style="color: #10b981;">[SYNCHRONIZED DISPATCH]</div>
@@ -192,7 +220,7 @@
         </div>
 
         <!-- STATION RETAKE & STAGE RESET MANAGER -->
-        <div class="card" style="margin-bottom: 2rem; border-left: 4px solid #38bdf8;">
+        <div class="card card-header-accent-blue" style="margin-bottom: 2rem;">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
                 <div>
                     <div class="eyebrow" style="color: #38bdf8;">[ROUND RETAKE & RECOVERY]</div>
@@ -201,7 +229,7 @@
                         Grant permission for specific stations to re-attempt individual rounds. Resets their submission status to active.
                     </p>
                 </div>
-                <div id="retake-status-notice" class="badge mono" style="display: none; padding: 0.4rem 0.8rem; font-size: 0.75rem; background: #0c4a6e; color: #38bdf8; border: 1px solid #0284c7;">
+                <div id="retake-status-notice" class="badge badge-blue mono" style="display: none; padding: 0.4rem 0.8rem; font-size: 0.75rem;">
                 </div>
             </div>
 
@@ -209,17 +237,17 @@
                 <div style="flex: 1; min-width: 220px;">
                     <label class="form-label" style="font-size: 0.75rem;">Select Station / Flight Group</label>
                     <select id="retake-team-select" class="form-control mono" style="font-size: 0.8rem;">
-                        <option value="1">Station 01 — ARES Flight Group</option>
-                        <option value="2">Station 02 — ATHENA Orbital</option>
-                        <option value="3">Station 03 — DAEDALUS Dynamics</option>
-                        <option value="4">Station 04 — HELIOS Telemetry</option>
-                        <option value="5">Station 05 — HERMES Flight Unit</option>
-                        <option value="6">Station 06 — TITAN Propulsion</option>
-                        <option value="7">Station 07 — ORION Space Labs</option>
-                        <option value="8">Station 08 — VOYAGER Operations</option>
-                        <option value="9">Station 09 — APOLLO Systems</option>
-                        <option value="10">Station 10 — SELENE Analytics</option>
-                        <option value="11">Station 11 — HYPERION Dynamics</option>
+                        <option value="1">Station 01 — Ares Flight Group</option>
+                        <option value="2">Station 02 — Athena Orbital</option>
+                        <option value="3">Station 03 — Daedalus Dynamics</option>
+                        <option value="4">Station 04 — Helios Telemetry</option>
+                        <option value="5">Station 05 — Hermes Flight Unit</option>
+                        <option value="6">Station 06 — Titan Propulsion</option>
+                        <option value="7">Station 07 — Orion Space Labs</option>
+                        <option value="8">Station 08 — Voyager Operations</option>
+                        <option value="9">Station 09 — Apollo Systems</option>
+                        <option value="10">Station 10 — Selene Analytics</option>
+                        <option value="11">Station 11 — Hyperion Dynamics</option>
                     </select>
                 </div>
 
@@ -255,7 +283,7 @@
                     </p>
                 </div>
                 <div style="display: flex; gap: 0.75rem; align-items: center;">
-                    <span id="security-violation-count" class="badge mono" style="background: #2a1215; color: #ef4444; border: 1px solid #7f1d1d; font-weight: 700;">
+                    <span id="security-violation-count" class="badge badge-red mono" style="font-weight: 700;">
                         0 VIOLATIONS
                     </span>
                     <button class="btn btn-secondary" onclick="clearSecurityFeed()" style="font-size: 0.72rem; padding: 0.35rem 0.75rem;">
@@ -310,6 +338,7 @@
                     <tr>
                         <th style="width: 50px; text-align: center;">Rank</th>
                         <th>Station & Callsign</th>
+                        <th>License Key</th>
                         <th>R1: Launch Poll<br><span style="font-size: 0.7rem; font-weight: 400; color: #71717a;">Max 100 PTS</span></th>
                         <th>R2: Telemetry<br><span style="font-size: 0.7rem; font-weight: 400; color: #71717a;">Max 50 PTS</span></th>
                         <th>R3: Forensics<br><span style="font-size: 0.7rem; font-weight: 400; color: #71717a;">15 Qs (120 PTS)</span></th>
@@ -341,6 +370,7 @@
             loginContainer.style.display = "none";
             consoleContainer.style.display = "block";
             updateGlobalRoundDisplay();
+            renderLicenseKeys();
             renderAdminStandings();
             renderSecurityFeed();
         }
@@ -357,6 +387,50 @@
         } else {
             errMsg.style.display = "block";
             errMsg.textContent = "Access Denied: Invalid Flight Director Password.";
+        }
+    }
+
+    function renderLicenseKeys() {
+        const grid = document.getElementById("license-key-grid");
+        if (!grid) return;
+        const teams = window.IcarusEngine.getAllTeamsOverview();
+        grid.innerHTML = "";
+
+        teams.sort((a, b) => a.team.id - b.team.id).forEach(item => {
+            const card = document.createElement("div");
+            card.className = "key-card";
+            card.innerHTML = `
+                <div>
+                    <div style="font-weight: 700; color: #ffffff; font-size: 0.9rem;">Station 0${item.team.id > 9 ? item.team.id : '0' + item.team.id}</div>
+                    <div style="font-size: 0.75rem; color: #a1a1aa; margin-top: 2px;">${item.team.name}</div>
+                </div>
+                <div style="text-align: right;">
+                    <span class="license-pill key-copy-badge" onclick="copyKey('${item.team.key}')" title="Click to copy key">
+                        ${item.team.key}
+                    </span>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    function copyKey(keyText) {
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(keyText).then(() => {
+                showKeyCopyNotice();
+            }).catch(() => {
+                prompt("Copy license key:", keyText);
+            });
+        } else {
+            prompt("Copy license key:", keyText);
+        }
+    }
+
+    function showKeyCopyNotice() {
+        const el = document.getElementById("key-copy-notice");
+        if (el) {
+            el.style.display = "inline-flex";
+            setTimeout(() => { el.style.display = "none"; }, 3000);
         }
     }
 
@@ -450,7 +524,10 @@
                 <td style="text-align: center; font-weight: 700;" class="mono">${index + 1}</td>
                 <td>
                     <div style="font-weight: 700; color: #ffffff;">${item.team.name}</div>
-                    <div class="mono" style="font-size: 0.72rem; color: #a1a1aa;">STATION ${item.team.id} | CODE: ${item.team.code}</div>
+                    <div class="mono" style="font-size: 0.72rem; color: #a1a1aa;">STATION ${item.team.id}</div>
+                </td>
+                <td>
+                    <span class="license-pill key-copy-badge" onclick="copyKey('${item.team.key}')" title="Click to copy">${item.team.key}</span>
                 </td>
                 <td class="mono">${r1Str}</td>
                 <td class="mono">${r2Str}</td>
@@ -479,9 +556,9 @@
 
         if (countBadge) {
             countBadge.textContent = `${events.length} VIOLATIONS LOGGED`;
-            countBadge.style.background = events.length > 0 ? "#2a1215" : "#18181b";
-            countBadge.style.color = events.length > 0 ? "#ef4444" : "#71717a";
-            countBadge.style.borderColor = events.length > 0 ? "#7f1d1d" : "#27272a";
+            countBadge.style.background = events.length > 0 ? "rgba(239, 68, 68, 0.15)" : "#18181b";
+            countBadge.style.color = events.length > 0 ? "#f87171" : "#71717a";
+            countBadge.style.borderColor = events.length > 0 ? "rgba(239, 68, 68, 0.4)" : "#27272a";
         }
 
         if (events.length === 0) {
@@ -534,9 +611,9 @@
 
     function exportScoreboardCSV() {
         const teams = window.IcarusEngine.getAllTeamsOverview();
-        let csv = "Rank,Station ID,Team Name,Round 1 GoNoGo Pts,Round 2 Telemetry Pts,Round 3 Forensics Pts,Grand Total Pts\n";
+        let csv = "Rank,Station ID,Team Name,License Key,Round 1 GoNoGo Pts,Round 2 Telemetry Pts,Round 3 Forensics Pts,Grand Total Pts\n";
         teams.forEach((t, idx) => {
-            csv += `${idx + 1},${t.team.id},"${t.team.name}",${t.r1_pts},${t.r2_pts},${t.r3_pts},${t.grand_total}\n`;
+            csv += `${idx + 1},${t.team.id},"${t.team.name}","${t.team.key}",${t.r1_pts},${t.r2_pts},${t.r3_pts},${t.grand_total}\n`;
         });
 
         const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });

@@ -10,30 +10,12 @@
     <link rel="stylesheet" href="./css/style.css">
     <!-- WebAssembly Python Engine (Pyodide) -->
     <script src="https://cdn.jsdelivr.net/pyodide/v0.26.1/full/pyodide.js" defer></script>
-    <style>
-    .auth-tab {
-        flex: 1;
-        text-align: center;
-        padding: 0.75rem;
-        cursor: pointer;
-        font-family: var(--font-mono);
-        font-size: 0.8rem;
-        font-weight: 700;
-        border-bottom: 2px solid transparent;
-        color: #71717a;
-        transition: all 0.15s ease;
-    }
-    .auth-tab.active {
-        color: #ffffff;
-        border-bottom-color: #ffffff;
-    }
-    </style>
 </head>
 <body>
     <!-- Top Minimal Navigation Bar -->
     <nav class="navbar">
         <div class="nav-brand">
-            <div style="width: 28px; height: 28px; background: #000000; color: #ffffff; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-weight: 800; font-size: 0.8rem;">
+            <div style="width: 28px; height: 28px; background: #000000; color: #ffffff; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-weight: 800; font-size: 0.85rem;">
                 I
             </div>
             <div>
@@ -44,11 +26,11 @@
         <div style="display: flex; align-items: center; gap: 0.75rem;">
             <div class="nav-badge mono" id="live-utc-clock">--:--:-- UTC</div>
             <div class="nav-badge mono authed-only" id="mission-countdown" style="display: none; border-color: #3f3f46; color: #ffffff;">T-00:00:00</div>
-            <div class="authed-only mono" id="top-station-badge" style="display: none; font-size: 0.78rem; font-weight: 700; padding: 0.35rem 0.75rem; border-radius: 8px; background: #f4f4f5; color: #000000; border: 1px solid #e4e4e7;">
+            <div class="authed-only mono" id="top-station-badge" style="display: none; font-size: 0.78rem; font-weight: 700; padding: 0.35rem 0.75rem; border-radius: 8px; background: #09090b; color: #ffffff; border: 1px solid #27272a;">
                 STATION --
             </div>
             <button class="authed-only btn btn-secondary" id="top-logout-btn" style="display: none; font-size: 0.75rem; padding: 0.35rem 0.85rem;" onclick="handleUserLogout()">
-                Logout
+                Logout ✕
             </button>
         </div>
     </nav>
@@ -60,84 +42,62 @@
     </div>
 
     <!-- MAIN APP CONTAINER -->
-    <div id="app-viewport" class="container" style="max-width: 960px; padding-top: 2rem; padding-bottom: 5rem;">
+    <div id="app-viewport" class="container" style="max-width: 920px; padding-top: 2.5rem; padding-bottom: 5rem;">
         
-        <!-- SECTION 0: AUTHENTICATION GATE (Shown ONLY when not logged in) -->
-        <div id="auth-gate-box" style="max-width: 440px; margin: 3rem auto;">
+        <!-- SECTION 0: AUTHENTICATION GATE (License Key Entry) -->
+        <div id="auth-gate-box" style="max-width: 480px; margin: 3rem auto;">
             <div class="card" style="padding: 2.5rem;">
                 <div style="margin-bottom: 1.75rem;">
                     <div class="eyebrow" style="color: #38bdf8;">[STATION ENTRY GATE]</div>
-                    <h2 style="font-size: 1.5rem; color: #ffffff; margin-top: 0.3rem;">ICARUS Flight Operations</h2>
-                    <p style="color: #a1a1aa; font-size: 0.82rem; margin-top: 0.25rem;">Enter workstation credentials or register station</p>
+                    <h2 style="font-size: 1.5rem; color: #ffffff; margin-top: 0.3rem;">Workstation Authentication</h2>
+                    <p style="color: #a1a1aa; font-size: 0.84rem; margin-top: 0.3rem; line-height: 1.5;">
+                        Enter your assigned <strong>Station License Key</strong> provided by Flight Director, and optionally name your flight crew.
+                    </p>
                 </div>
 
                 <div id="auth-error-box" class="alert alert-warning" style="display: none; padding: 0.75rem 1rem; font-size: 0.82rem; margin-bottom: 1.25rem;"></div>
 
-                <div style="display: flex; border-bottom: 1px solid #27272a; margin-bottom: 1.5rem;">
-                    <div id="tab-login-btn" class="auth-tab active" onclick="switchAuthTab('login')">Station Login</div>
-                    <div id="tab-register-btn" class="auth-tab" onclick="switchAuthTab('register')">Register Team</div>
-                </div>
+                <!-- LICENSE KEY FORM -->
+                <form id="form-license-login" onsubmit="handleLicenseSubmit(event)">
+                    <div class="form-group">
+                        <label class="form-label">Station License Key</label>
+                        <input type="text" id="login-license-key" class="form-control mono" placeholder="e.g. ICARUS-ARES-7711" required autofocus style="text-transform: uppercase; font-size: 0.95rem; letter-spacing: 0.05em;">
+                        <span class="mono" style="font-size: 0.72rem; color: #71717a; margin-top: 0.3rem; display: block;">Keys are managed and visible from the Flight Director Console.</span>
+                    </div>
 
-                <!-- LOGIN FORM -->
-                <form id="form-station-login" onsubmit="handleLoginSubmit(event)">
-                    <div class="form-group">
-                        <label class="form-label">Team Name, Callsign, or Station (1-11)</label>
-                        <input type="text" id="login-callsign" class="form-control" placeholder="e.g. 1 or Team Icarus Alpha" required autofocus>
+                    <div class="form-group" style="margin-top: 1.25rem;">
+                        <label class="form-label">Team / Flight Crew Name (Customizable)</label>
+                        <input type="text" id="login-team-name" class="form-control" placeholder="e.g. Ares Flight Crew or Team Alpha" style="font-size: 0.9rem;">
+                        <span class="mono" style="font-size: 0.72rem; color: #71717a; margin-top: 0.3rem; display: block;">Optionally rename your station's callsign for the scoreboard.</span>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Station Password</label>
-                        <input type="password" id="login-password" class="form-control" placeholder="••••••••" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.85rem; margin-top: 0.5rem;">
-                        Authenticate Station &rarr;
-                    </button>
-                </form>
 
-                <!-- REGISTER FORM -->
-                <form id="form-station-register" onsubmit="handleRegisterSubmit(event)" style="display: none;">
-                    <div class="form-group">
-                        <label class="form-label">Assigned Workstation (1 to 11)</label>
-                        <input type="number" id="reg-team-id" class="form-control" min="1" max="11" placeholder="e.g. 1" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Team Name / Callsign</label>
-                        <input type="text" id="reg-team-name" class="form-control" placeholder="e.g. Team Icarus Alpha" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Create Password</label>
-                        <input type="password" id="reg-password" class="form-control" placeholder="Create password" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Event Join Code</label>
-                        <input type="text" id="reg-join-code" class="form-control mono" placeholder="RVU-ORBIT-2027" required style="text-transform: uppercase;">
-                    </div>
-                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.85rem; margin-top: 0.5rem;">
-                        Register Station &rarr;
+                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.85rem; margin-top: 1rem; font-size: 0.85rem;">
+                        Unlock Flight Workstation &rarr;
                     </button>
                 </form>
 
                 <div style="display: flex; align-items: center; margin: 1.75rem 0 1.25rem; gap: 0.75rem;">
                     <div style="flex: 1; height: 1px; background: #27272a;"></div>
-                    <span class="mono" style="font-size: 0.72rem; color: #71717a; text-transform: uppercase;">or instant entry</span>
+                    <span class="mono" style="font-size: 0.72rem; color: #71717a; text-transform: uppercase;">or quick station test</span>
                     <div style="flex: 1; height: 1px; background: #27272a;"></div>
                 </div>
 
                 <div style="display: flex; gap: 0.5rem;">
-                    <select id="quick-station-select" class="form-control mono" style="flex: 1; font-size: 0.78rem; padding: 0.45rem;">
-                        <option value="1">Station 01 (Ares)</option>
-                        <option value="2">Station 02 (Athena)</option>
-                        <option value="3">Station 03 (Daedalus)</option>
-                        <option value="4">Station 04 (Helios)</option>
-                        <option value="5">Station 05 (Hermes)</option>
-                        <option value="6">Station 06 (Titan)</option>
-                        <option value="7">Station 07 (Orion)</option>
-                        <option value="8">Station 08 (Voyager)</option>
-                        <option value="9">Station 09 (Apollo)</option>
-                        <option value="10">Station 10 (Selene)</option>
-                        <option value="11">Station 11 (Hyperion)</option>
+                    <select id="quick-key-select" class="form-control mono" style="flex: 1; font-size: 0.78rem; padding: 0.5rem 0.75rem;">
+                        <option value="ICARUS-ARES-7711">Station 01 — Ares Flight Group</option>
+                        <option value="ICARUS-ATHENA-8822">Station 02 — Athena Orbital</option>
+                        <option value="ICARUS-DAEDALUS-9933">Station 03 — Daedalus Dynamics</option>
+                        <option value="ICARUS-HELIOS-1144">Station 04 — Helios Telemetry</option>
+                        <option value="ICARUS-HERMES-2255">Station 05 — Hermes Flight Unit</option>
+                        <option value="ICARUS-TITAN-3366">Station 06 — Titan Propulsion</option>
+                        <option value="ICARUS-ORION-4477">Station 07 — Orion Space Labs</option>
+                        <option value="ICARUS-VOYAGER-5588">Station 08 — Voyager Operations</option>
+                        <option value="ICARUS-APOLLO-6699">Station 09 — Apollo Systems</option>
+                        <option value="ICARUS-SELENE-7700">Station 10 — Selene Analytics</option>
+                        <option value="ICARUS-HYPERION-8811">Station 11 — Hyperion Dynamics</option>
                     </select>
-                    <button type="button" onclick="handleQuickEntry()" class="btn btn-secondary" style="font-size: 0.78rem; padding: 0.45rem 1rem;">
-                        Enter &rarr;
+                    <button type="button" onclick="handleQuickKeyEntry()" class="btn btn-secondary" style="font-size: 0.78rem; padding: 0.5rem 1rem;">
+                        Fill &rarr;
                     </button>
                 </div>
             </div>
@@ -145,7 +105,7 @@
 
         <!-- SECTION 1: ROUND 1 - GO / NO-GO LAUNCH DECISION GAME -->
         <div id="stage-r1" style="display: none;">
-            <div class="card" style="border-left: 4px solid #10b981; margin-bottom: 2rem;">
+            <div class="card card-header-accent-green" style="margin-bottom: 2rem;">
                 <div class="eyebrow" style="color: #10b981;">[PHASE 01 / LAUNCH READINESS POLL]</div>
                 <h1 style="font-size: 1.8rem; color: #ffffff; margin: 0.3rem 0;">Phase 1: Go / No-Go Flight Verification</h1>
                 <p style="color: #a1a1aa; font-size: 0.88rem; line-height: 1.6;">
@@ -161,7 +121,7 @@
                     You will review 15 telemetry inspection cards. Tap <strong>GO</strong> if parameters are strictly within flight limits, or <strong>NO-GO</strong> if any violation or danger is detected.
                     Keyboard shortcuts: <strong>[G]</strong> for GO &bull; <strong>[N]</strong> for NO-GO.
                 </p>
-                <button type="button" class="btn btn-primary" onclick="startGoNoGoGame()" style="padding: 0.9rem 2.75rem; font-size: 1rem;">
+                <button type="button" class="btn btn-primary" onclick="startGoNoGoGame()" style="padding: 0.9rem 2.75rem; font-size: 0.95rem;">
                     Initiate Launch Poll (60s) &rarr;
                 </button>
             </div>
@@ -174,7 +134,7 @@
 
         <!-- SECTION 2: ROUND 2 - TELEMETRY ANALYSIS (FORCE FULLSCREEN) -->
         <div id="stage-r2" style="display: none;">
-            <div class="card" style="border-left: 4px solid #38bdf8; margin-bottom: 2rem;">
+            <div class="card card-header-accent-blue" style="margin-bottom: 2rem;">
                 <div class="eyebrow" style="color: #38bdf8;">[PHASE 02 / BLACKBOX CRASH ANALYSIS]</div>
                 <h1 style="font-size: 1.8rem; color: #ffffff; margin: 0.3rem 0;">Phase 2: Telemetry Analysis & Python IDE</h1>
                 <p style="color: #a1a1aa; font-size: 0.88rem; line-height: 1.6;">
@@ -190,7 +150,7 @@
                     Competition integrity requires Phase 2 to be executed in <strong>Forced Fullscreen Mode</strong>.
                     Any window unfocus, tab switch, or fullscreen escape is logged directly to the Flight Director's surveillance feed.
                 </p>
-                <button type="button" class="btn btn-primary" onclick="startRound2WithFullscreen()" style="padding: 0.9rem 2.75rem; font-size: 1rem;">
+                <button type="button" class="btn btn-primary" onclick="startRound2WithFullscreen()" style="padding: 0.9rem 2.75rem; font-size: 0.95rem;">
                     Enter Fullscreen & Begin Telemetry Analysis &rarr;
                 </button>
             </div>
@@ -280,7 +240,7 @@ for r in rows:
 
         <!-- SECTION 3: ROUND 3 - ROOT-CAUSE INVESTIGATION QUIZ (FORCE FULLSCREEN) -->
         <div id="stage-r3" style="display: none;">
-            <div class="card" style="border-left: 4px solid #ef4444; margin-bottom: 2rem;">
+            <div class="card card-header-accent-red" style="margin-bottom: 2rem;">
                 <div class="eyebrow" style="color: #ef4444;">[PHASE 03 / ACCIDENT INVESTIGATION BOARD]</div>
                 <h1 style="font-size: 1.8rem; color: #ffffff; margin: 0.3rem 0;">Phase 3: Root-Cause Investigation</h1>
                 <p style="color: #a1a1aa; font-size: 0.88rem; line-height: 1.6;">
@@ -296,7 +256,7 @@ for r in rows:
                     This final forensic exam requires <strong>Forced Fullscreen Mode</strong>.
                     Any window defocussing or tab switching will be logged in real-time to the Flight Director.
                 </p>
-                <button type="button" class="btn btn-primary" onclick="startRound3WithFullscreen()" style="padding: 0.9rem 2.75rem; font-size: 1rem;">
+                <button type="button" class="btn btn-primary" onclick="startRound3WithFullscreen()" style="padding: 0.9rem 2.75rem; font-size: 0.95rem;">
                     Enter Fullscreen & Begin Investigation (15 Qs) &rarr;
                 </button>
             </div>
@@ -457,7 +417,7 @@ for r in rows:
                     <label class="quiz-opt"><input type="radio" name="q15" value="D" required> <span>Replace the microcontroller with an analog timer circuit</span></label>
                 </div>
 
-                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.95rem; font-size: 0.95rem;">
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.95rem; font-size: 0.95rem; margin-top: 1rem;">
                     Submit Root-Cause Investigation Findings (15/15) &rarr;
                 </button>
             </form>
@@ -529,19 +489,11 @@ for r in rows:
         window.IcarusEngine.logout();
     }
 
-    function switchAuthTab(tab) {
-        document.getElementById("tab-login-btn").className = tab === "login" ? "auth-tab active" : "auth-tab";
-        document.getElementById("tab-register-btn").className = tab === "register" ? "auth-tab active" : "auth-tab";
-        document.getElementById("form-station-login").style.display = tab === "login" ? "block" : "none";
-        document.getElementById("form-station-register").style.display = tab === "register" ? "block" : "none";
-        document.getElementById("auth-error-box").style.display = "none";
-    }
-
-    function handleLoginSubmit(e) {
+    function handleLicenseSubmit(e) {
         e.preventDefault();
-        const callsign = document.getElementById("login-callsign").value;
-        const pass = document.getElementById("login-password").value;
-        const res = window.IcarusEngine.login(callsign, pass);
+        const key = document.getElementById("login-license-key").value;
+        const customName = document.getElementById("login-team-name").value;
+        const res = window.IcarusEngine.loginWithKey(key, customName);
 
         if (res.success) {
             renderCurrentStage();
@@ -552,29 +504,10 @@ for r in rows:
         }
     }
 
-    function handleRegisterSubmit(e) {
-        e.preventDefault();
-        const tid = document.getElementById("reg-team-id").value;
-        const tname = document.getElementById("reg-team-name").value;
-        const pass = document.getElementById("reg-password").value;
-        const code = document.getElementById("reg-join-code").value;
-        const res = window.IcarusEngine.register(tid, tname, pass, code);
-
-        if (res.success) {
-            renderCurrentStage();
-        } else {
-            const err = document.getElementById("auth-error-box");
-            err.style.display = "block";
-            err.textContent = res.message;
-        }
-    }
-
-    function handleQuickEntry() {
-        const sel = document.getElementById("quick-station-select").value;
-        const res = window.IcarusEngine.login(sel, "icarus123");
-        if (res.success) {
-            renderCurrentStage();
-        }
+    function handleQuickKeyEntry() {
+        const key = document.getElementById("quick-key-select").value;
+        const keyInput = document.getElementById("login-license-key");
+        if (keyInput) keyInput.value = key;
     }
 
     // -------------------------------------------------------------------------
