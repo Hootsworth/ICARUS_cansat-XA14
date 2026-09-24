@@ -284,12 +284,16 @@ async def packages_page(request: Request):
     cur = conn.cursor()
     cur.execute("SELECT * FROM flags WHERE team_id = ?", (team["id"],))
     flags = {f["phase"]: f["flag"] for f in cur.fetchall()}
+    cur.execute("SELECT status FROM round_status WHERE team_id = ? AND round_id = 1", (team["id"],))
+    r1_row = cur.fetchone()
+    r1_completed = bool(r1_row and r1_row["status"] == "submitted")
     conn.close()
     
     return templates.TemplateResponse("packages.html", {
         "request": request,
         "team": team,
-        "flags": flags
+        "flags": flags,
+        "r1_completed": r1_completed
     })
 
 @pages_router.get("/download/package/{team_id}/{phase_filename}")
