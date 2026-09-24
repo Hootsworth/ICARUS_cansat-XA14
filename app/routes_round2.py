@@ -1,766 +1,300 @@
 """
-Round 2 - Satellite Telemetry Investigation.
-
-This router owns the participant-facing telemetry investigation without
-changing the existing login, Round 1, Round 3, or global challenge APIs.
+Round 2 — Mission Go / No-Go: Flight Readiness Review Engine.
+Interactive pre-flight engineering inspection dossiers testing real CanSat sensor systems.
 """
-
-import json
-import os
 import time
-import csv
+import json
 from datetime import datetime, timezone
-
 from fastapi import APIRouter, Request, HTTPException
-from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse, Response
+from fastapi.responses import JSONResponse, HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
-from config import (
-    TEAMS_DATA_DIR,
-    ANSWERS_DIR,
-    MISSION_EPOCH,
-    MAX_ATTEMPTS_PER_CHALLENGE,
-    COOLDOWN_DURATION_S,
-    WRONG_ATTEMPT_PENALTY_PCT,
-    MAX_TIME_BONUS_PCT,
-    TIME_BONUS_DECAY_WINDOW_S,
-    FIRST_SOLVER_BONUS_PCT,
-    PASS_FRAME_COUNT,
-    PASS_RATE_LIMIT_S,
-    PASS_DEDUP_WINDOW_S,
-    SERVER_ARCHIVES_DIR,
-    FRAME_SIZE_BYTES,
-    TOTAL_DURATION_S,
-)
 from models import get_db_connection
-from app.routes_api import get_current_team_from_request, parse_iso_utc
-from crypto_utils import generate_flag
-
+from app.routes_api import get_current_team_from_request
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
 
-PHASE_2_CHALLENGES = [
+# The 5 Pre-Flight Inspection Stations & Engineering Solutions
+READINESS_STATIONS = [
     {
-        "id": "C2.1",
-        "title": "F1: Electrical Power Fault",
-        "points": 200,
-        "question": "Identify the exact UTC onset time of F1 and its ICD fault code.",
-        "format": "YYYY-MM-DDTHH:MM:SSZ EPS-07",
+        "id": 1,
+        "subsystem": "ELECTRICAL POWER SUBSYSTEM (EPS)",
+        "component": "2S LiPo Battery Pack & Power Distribution Board",
+        "telemetry_data": {
+            "Open Circuit Voltage": "8.38 V (Nominal)",
+            "Loaded Voltage (2.5A Surge)": "6.12 V (Severe Sag)",
+            "Pack Temperature": "-4.2 °C (Ambient Cold)",
+            "Internal Resistance (IR)": "320 mΩ (Elevated 3x above nominal)",
+            "Current Draw": "2.48 A"
+        },
+        "chart_label": "BATTERY VOLTAGE SAG UNDER TRANSIENT LOAD",
+        "strip_chart": [
+            "T-00:05 | 8.38V [======================]",
+            "T-00:04 | 8.35V [===================== ]",
+            "T-00:03 | 6.40V [================      ] LOAD APPLIED (2.5A)",
+            "T-00:02 | 6.18V [==============        ]",
+            "T-00:01 | 6.12V [=============         ] WARNING: REGULATOR DROPOUT MARGIN < 0.2V"
+        ],
+        "findings": "Pack temperature is sub-zero (-4.2°C). High internal cell resistance causes an acute 2.26V drop under RF transmission load, risking an OBC brownout during ascent.",
+        "options": [
+            {"id": "A", "text": "GO FOR FLIGHT: 6.12V is above the 5V bus regulator threshold."},
+            {"id": "B", "text": "HOLD & CONDITION: Pre-warm battery pack to +15°C to restore internal resistance."},
+            {"id": "C", "text": "NO-GO & SCRUB: LiPo cell chemistry permanently degraded, discard pack."},
+            {"id": "D", "text": "GO WITH OVERRIDE: Disable radio telemetry during ascent to prevent current surge."}
+        ],
+        "correct_option": "B",
+        "rationale": "Sub-zero battery temperature drastically elevates internal resistance. Conditioning and warming the pack to +15°C restores nominal IR (~90 mΩ) and eliminates inrush sag without replacing the pack."
     },
     {
-        "id": "C2.2",
-        "title": "F2: Thermal Control Fault",
-        "points": 200,
-        "question": "Identify the exact UTC onset time of F2 and its ICD fault code.",
-        "format": "YYYY-MM-DDTHH:MM:SSZ THM-03",
+        "id": 2,
+        "subsystem": "RECOVERY & SEPARATION (REC)",
+        "component": "Ejection Servo Mechanism & Deploy Door Interlock",
+        "telemetry_data": {
+            "Deploy Servo Current": "115 mA (Nominal)",
+            "Door Microswitch Interlock": "CLOSED (Arm State)",
+            "Servo Angle Range": "0° to 110° verified",
+            "Release Pin Pull Force": "3.8 N (Spec: 3.5 to 5.0 N)",
+            "Canopy Pack Pressure": "Nominal folded tension"
+        },
+        "chart_label": "SERVO ACTUATION PULSE & CURRENT PROFILE",
+        "strip_chart": [
+            "PULSE 1 | 112mA [====                  ] ANGLE: 0° (LATCHED)",
+            "PULSE 2 | 118mA [=====                 ] SWEEP TEST",
+            "PULSE 3 | 115mA [====                  ] ANGLE: 110° (RELEASED)",
+            "PULSE 4 | 022mA [=                     ] RETURN TO DETENT",
+            "STATUS  | INTERLOCK NOMINAL / RETENTION VERIFIED"
+        ],
+        "findings": "All servo actuation currents, release pin pull forces, and interlock microswitches match mechanical specifications exactly.",
+        "options": [
+            {"id": "A", "text": "HOLD: Re-pack parachute canopy with double talcum powder."},
+            {"id": "B", "text": "NO-GO: Servo pull force of 3.8 N is too loose for rocket G-forces."},
+            {"id": "C", "text": "GO FOR FLIGHT: Recovery mechanism actuation and retention within nominal margins."},
+            {"id": "D", "text": "HOLD: Increase servo pulse width by 40% to guarantee ejection door blowout."}
+        ],
+        "correct_option": "C",
+        "rationale": "Pull force of 3.8 N is precisely inside the 3.5–5.0 N specification window, and servo current is completely stable. All recovery parameters report nominal."
     },
     {
-        "id": "C2.3",
-        "title": "F3: ADCS Cascade Fault",
-        "points": 250,
-        "question": "Identify the exact UTC onset time of F3 and its ICD fault code.",
-        "format": "YYYY-MM-DDTHH:MM:SSZ ADCS-02",
+        "id": 3,
+        "subsystem": "NAVIGATION & ATTITUDE (NAV)",
+        "component": "GNSS L1 Receiver & Patch Antenna",
+        "telemetry_data": {
+            "Satellites Tracked": "4 SVs",
+            "Fix Status": "2D Fix Only",
+            "HDOP (Horiz Dilution)": "4.6 (Degraded)",
+            "Altitude Estimate": "240 m ± 65 m (Unstable)",
+            "Carrier-to-Noise (C/N0)": "28 dB-Hz (Fringe)"
+        },
+        "chart_label": "GNSS POSITION RESIDUAL ERRORS & SATELLITE LOCK",
+        "strip_chart": [
+            "EPOCH 1 | SVs: 3 | FIX: NONE | HDOP: 9.9",
+            "EPOCH 2 | SVs: 4 | FIX: 2D   | HDOP: 5.8",
+            "EPOCH 3 | SVs: 4 | FIX: 2D   | HDOP: 4.6 (MARGINAL)",
+            "EPOCH 4 | ALTITUDE VARIANCE: ±65m JITTER",
+            "STATUS  | INSUFFICIENT SATELLITE GEOMETRY FOR 3D TRAJECTORY"
+        ],
+        "findings": "The receiver only tracks 4 satellites with 2D fix and severe HDOP (4.6). Vertical altitude estimate has ±65m jitter, preventing reliable apogee and descent tracking.",
+        "options": [
+            {"id": "A", "text": "GO FOR FLIGHT: CanSat can rely exclusively on barometric altitude for apogee."},
+            {"id": "B", "text": "HOLD: Reposition ground station test bench away from building obstruction to lock 3D fix (HDOP < 2.0)."},
+            {"id": "C", "text": "NO-GO & SCRUB: Replace GNSS patch antenna with helical array."},
+            {"id": "D", "text": "GO WITH OVERRIDE: Set GNSS baud rate from 9600 to 115200 bps."}
+        ],
+        "correct_option": "B",
+        "rationale": "A 2D fix with 4 SVs is caused by local structural multipath/horizon masking on the pre-flight apron. Repositioning achieves a valid 3D fix with 7+ SVs (HDOP < 2.0) necessary for trajectory evaluation."
     },
     {
-        "id": "C2.4",
-        "title": "F4: Communications Bit Error",
-        "points": 200,
-        "question": "Identify the corrupted frame ID and its ICD fault code.",
-        "format": "reset_count:sequence COM-04",
+        "id": 4,
+        "subsystem": "ATMOSPHERIC INSTRUMENTATION (PAYLOAD)",
+        "component": "BMP280 Barometric Pressure & Temperature Sensor",
+        "telemetry_data": {
+            "Raw Pressure Reading": "1018.6 hPa",
+            "Airfield QNH Reference": "1012.8 hPa (METAR)",
+            "Derived Elevation": "-48.2 m (Sub-Surface Error)",
+            "Sensor Temp": "22.4 °C",
+            "I2C Bus Status": "ACK (Bus speed 100 kHz)"
+        },
+        "chart_label": "CALIBRATION RESIDUAL VS AIRFIELD GROUND TRUTH",
+        "strip_chart": [
+            "REF METAR | 1012.8 hPa | AIRFIELD ELEVATION: +12.0m AMSL",
+            "SENSOR    | 1018.6 hPa | COMPUTED: -48.2m AMSL",
+            "RESIDUAL  | +5.8 hPa OFFSET ERROR",
+            "IMPACT    | APOGEE & DESCENT RATE CALCULATIONS SYSTEMATICALLY BIASED",
+            "STATUS    | ZERO-POINT HYPSOMETRIC BIAS DETECTED"
+        ],
+        "findings": "The barometer has a static +5.8 hPa bias compared to official airfield QNH, causing the CanSat to believe it is 48 meters below sea level.",
+        "options": [
+            {"id": "A", "text": "GO FOR FLIGHT: Altitude offsets cancel out when computing vertical descent velocity."},
+            {"id": "B", "text": "NO-GO: Discard BMP280 sensor; sensor element membrane ruptured."},
+            {"id": "C", "text": "CALIBRATE & GO: Apply +5.8 hPa ground reference compensation to flight computer software."},
+            {"id": "D", "text": "HOLD: Submerge CanSat in hermetic chamber to reset factory firmware."}
+        ],
+        "correct_option": "C",
+        "rationale": "Barometric pressure sensors require ground-level baseline zeroing against official QNH. Offsetting the reference pressure calibrates the altitude zero-mark with zero hardware changes."
     },
+    {
+        "id": 5,
+        "subsystem": "TELEMETRY & COMMAND (TT&C)",
+        "component": "LoRa 433 MHz Radio Transceiver & Ground Link",
+        "telemetry_data": {
+            "Tx Power": "20 dBm (100 mW)",
+            "Antenna VSWR": "1.18 : 1 (Excellent match)",
+            "Ground RSSI (100m Line of Sight)": "-48 dBm (Strong)",
+            "Packet Error Rate (PER)": "0.0 % (100/100 Packets)",
+            "Center Frequency Offset": "+1.2 kHz (Within AFC tolerance)"
+        },
+        "chart_label": "RF SPECTRUM PURITY & PACKET LINK MARGIN",
+        "strip_chart": [
+            "LINK TEST | 100 PACKETS TRANSMITTED | 100 ACK RECEIVED",
+            "RSSI      | -48 dBm [======================] MARGIN: +72 dB",
+            "SNR       | +10.5 dB (EXCELLENT SPREADING)",
+            "VSWR      | 1.18 : 1 (REFLECTED POWER < 0.6%)",
+            "STATUS    | FLIGHT RADIO LINK FULLY CERTIFIED"
+        ],
+        "findings": "All radio metrics (VSWR, packet delivery, SNR margin, frequency stability) meet flight ground station criteria.",
+        "options": [
+            {"id": "A", "text": "GO FOR FLIGHT: RF link budget and antenna matching fully certified."},
+            {"id": "B", "text": "HOLD: Increase transmission power to 30 dBm (1W) for extra safety margin."},
+            {"id": "C", "text": "HOLD: Trim antenna length by 5mm to achieve 1.00 VSWR."},
+            {"id": "D", "text": "NO-GO: Frequency offset of +1.2 kHz exceeds civilian radio regulations."}
+        ],
+        "correct_option": "A",
+        "rationale": "A VSWR of 1.18:1 reflects less than 0.6% power, packet error rate is 0.0%, and link margin is +72 dB. Pushing to 30 dBm is illegal and drains battery. The radio is ready for flight."
+    }
 ]
 
-CHALLENGE_IDS = [c["id"] for c in PHASE_2_CHALLENGES]
-CHALLENGE_MAP = {c["id"]: c for c in PHASE_2_CHALLENGES}
-
-
-def _team_data_dir(team_id):
-    return os.path.join(TEAMS_DATA_DIR, f"team_{int(team_id):02d}")
-
-
-def _read_csv(filename, team_id):
-    path = os.path.join(_team_data_dir(team_id), filename)
-
-    if not os.path.exists(path):
-        raise HTTPException(
-            status_code=500,
-            detail=f"Telemetry file not found: {filename}",
-        )
-
-    with open(path, "r", encoding="utf-8", newline="") as f:
-        return list(csv.DictReader(f))
-
-
-def _load_team_answers(team_id):
-    path = os.path.join(ANSWERS_DIR, "master_answers.json")
-
-    if not os.path.exists(path):
-        raise HTTPException(
-            status_code=500,
-            detail="Mission answer key is not available.",
-        )
-
-    with open(path, "r", encoding="utf-8") as f:
-        answers = json.load(f)
-
-    team_answers = answers.get(str(team_id))
-
-    if not team_answers:
-        raise HTTPException(
-            status_code=500,
-            detail="Team telemetry answer key is not available.",
-        )
-
-    return team_answers
-
-
-def _round2_allowed(team_id):
-    conn = get_db_connection()
-    cur = conn.cursor()
-
-    cur.execute(
-        "SELECT status FROM round_status WHERE team_id = ? AND round_id = 1",
-        (team_id,),
-    )
-    r1 = cur.fetchone()
-
-    cur.execute(
-        "SELECT value FROM app_state WHERE key = 'round2_active'"
-    )
-    override = cur.fetchone()
-
-    conn.close()
-
-    r1_completed = bool(r1 and r1["status"] == "submitted")
-    override_active = bool(
-        override and str(override["value"]).lower() == "true"
-    )
-
-    return r1_completed or override_active
-
-
-def _get_round2_state(team_id):
-    conn = get_db_connection()
-    cur = conn.cursor()
-
-    cur.execute(
-        "SELECT * FROM round_status WHERE team_id = ? AND round_id = 2",
-        (team_id,),
-    )
-    row = cur.fetchone()
-
-    cur.execute(
-        "SELECT value FROM app_state WHERE key = 'round2_active'"
-    )
-    override = cur.fetchone()
-
-    conn.close()
-
-    return {
-        "status": row["status"] if row else "locked",
-        "score": row["score"] if row else 0,
-        "submitted_at": row["submitted_at"] if row else None,
-        "active_override": bool(
-            override and str(override["value"]).lower() == "true"
-        ),
-    }
-
-
-def _get_challenge_rows(team_id):
-    conn = get_db_connection()
-    cur = conn.cursor()
-
-    cur.execute(
-        """
-        SELECT challenge_id, correct, points_awarded, attempt_no, ts_utc_ms
-        FROM submissions
-        WHERE team_id = ?
-          AND challenge_id IN ('C2.1', 'C2.2', 'C2.3', 'C2.4')
-        ORDER BY challenge_id, attempt_no
-        """,
-        (team_id,),
-    )
-
-    rows = cur.fetchall()
-    conn.close()
-    return rows
-
-
-def _evaluate_round2_answer(challenge_id, submitted_raw, expected):
-    submitted = " ".join(str(submitted_raw).strip().split())
-    answer = " ".join(str(expected.get("answer", "")).strip().split())
-    alt = " ".join(str(expected.get("alt_answer", "")).strip().split())
-    tolerance = float(expected.get("tolerance", 0))
-    answer_type = expected.get("type", "string")
-
-    if submitted.upper() == answer.upper():
-        return True
-
-    if alt and submitted.upper() == alt.upper():
-        return True
-
-    try:
-        if answer_type == "iso_time_and_code":
-            sub_parts = submitted.split()
-            exp_parts = answer.split()
-
-            if len(sub_parts) != 2 or len(exp_parts) != 2:
-                return False
-
-            sub_dt = parse_iso_utc(sub_parts[0])
-            exp_dt = parse_iso_utc(exp_parts[0])
-
-            return (
-                abs((sub_dt - exp_dt).total_seconds()) <= tolerance
-                and sub_parts[1].upper() == exp_parts[1].upper()
-            )
-
-        if answer_type == "frame_id_and_code":
-            sub_parts = submitted.split()
-            exp_parts = answer.split()
-
-            if len(sub_parts) != 2 or len(exp_parts) != 2:
-                return False
-
-            return (
-                sub_parts[0] == exp_parts[0]
-                and sub_parts[1].upper() == exp_parts[1].upper()
-            )
-
-        if answer_type == "iso_time":
-            sub_dt = parse_iso_utc(submitted)
-            exp_dt = parse_iso_utc(answer)
-
-            return abs((sub_dt - exp_dt).total_seconds()) <= tolerance
-
-        if answer_type == "numeric":
-            return abs(float(submitted) - float(answer)) <= tolerance
-
-        if answer_type == "string":
-            return submitted.upper() == answer.upper()
-
-    except (ValueError, TypeError, OverflowError):
-        return False
-
-    return False
-
-
-def _challenge_status(team_id):
-    rows = _get_challenge_rows(team_id)
-
-    result = {
-        cid: {
-            "solved": False,
-            "points": 0,
-            "attempts": 0,
-            "remaining_attempts": MAX_ATTEMPTS_PER_CHALLENGE,
-            "cooldown_remaining_s": 0,
-        }
-        for cid in CHALLENGE_IDS
-    }
-
-    now_ms = int(time.time() * 1000)
-
-    for row in rows:
-        cid = row["challenge_id"]
-
-        if cid not in result:
-            continue
-
-        result[cid]["attempts"] += 1
-
-        if row["correct"] == 1:
-            result[cid]["solved"] = True
-            result[cid]["points"] = row["points_awarded"]
-
-        result[cid]["remaining_attempts"] = max(
-            0,
-            MAX_ATTEMPTS_PER_CHALLENGE - result[cid]["attempts"],
-        )
-
-    for cid in CHALLENGE_IDS:
-        if result[cid]["solved"]:
-            continue
-
-        cid_rows = [r for r in rows if r["challenge_id"] == cid]
-
-        if len(cid_rows) >= MAX_ATTEMPTS_PER_CHALLENGE:
-            elapsed_s = (now_ms - cid_rows[-1]["ts_utc_ms"]) / 1000.0
-            result[cid]["cooldown_remaining_s"] = max(
-                0,
-                int(COOLDOWN_DURATION_S - elapsed_s),
-            )
-
-    return result
-
-
-# ---------------------------------------------------------------------
-# ROUND 2 PAGE
-# ---------------------------------------------------------------------
-
+# -----------------------------------------------------------------------------
+# HTML PAGE CONTROLLER
+# -----------------------------------------------------------------------------
 @router.get("/round2", response_class=HTMLResponse)
 async def round2_page(request: Request):
     team = get_current_team_from_request(request)
-
     if not team:
         return RedirectResponse(url="/login", status_code=302)
-
-    state = _get_round2_state(team["id"])
-    allowed = _round2_allowed(team["id"])
-
+        
     conn = get_db_connection()
     cur = conn.cursor()
-
+    
     cur.execute("SELECT * FROM rounds WHERE id = 2")
-    round_meta = cur.fetchone()
-
+    r2_meta = cur.fetchone()
+    
+    cur.execute("SELECT * FROM round_status WHERE team_id = ? AND round_id = 2", (team["id"],))
+    status_row = cur.fetchone()
+    
+    cur.execute("SELECT * FROM round_status WHERE team_id = ? AND round_id = 1", (team["id"],))
+    r1_status = cur.fetchone()
+    r1_completed = bool(r1_status and r1_status["status"] == "submitted")
+    
+    cur.execute("SELECT value FROM app_state WHERE key = 'round2_active'")
+    r2_override = cur.fetchone()
+    is_active = (r2_override and r2_override["value"] == "true") or r1_completed
+    
     conn.close()
-
-    status = _challenge_status(team["id"])
-
-    solved = {
-        cid: item["points"]
-        for cid, item in status.items()
-        if item["solved"]
-    }
-
-    return templates.TemplateResponse(
-        "round2.html",
-        {
-            "request": request,
-            "team": team,
-            "round_meta": round_meta,
-            "is_active": allowed,
-            "is_completed": state["status"] == "submitted",
-            "final_score": state["score"],
-            "solved": solved,
-            "challenges": PHASE_2_CHALLENGES,
-        },
-    )
+    
+    is_completed = bool(status_row and status_row["status"] == "submitted")
+    final_score = status_row["score"] if (status_row and is_completed) else 0
+    
+    return templates.TemplateResponse("round2.html", {
+        "request": request,
+        "team": team,
+        "round_meta": r2_meta,
+        "is_active": is_active,
+        "is_completed": is_completed,
+        "final_score": final_score
+    })
 
 
-# ---------------------------------------------------------------------
-# TEAM TELEMETRY
-# ---------------------------------------------------------------------
-
-@router.get("/api/round2/telemetry")
-async def round2_telemetry(request: Request):
+# -----------------------------------------------------------------------------
+# API CONTROLLERS
+# -----------------------------------------------------------------------------
+@router.get("/api/round2/dossiers")
+async def round2_get_dossiers(request: Request):
     team = get_current_team_from_request(request)
-
     if not team:
         raise HTTPException(status_code=401, detail="Authentication required.")
+        
+    # Return sanitized stations without revealing correct answers
+    sanitized = []
+    for s in READINESS_STATIONS:
+        sanitized.append({
+            "id": s["id"],
+            "subsystem": s["subsystem"],
+            "component": s["component"],
+            "telemetry_data": s["telemetry_data"],
+            "chart_label": s["chart_label"],
+            "strip_chart": s["strip_chart"],
+            "findings": s["findings"],
+            "options": s["options"]
+        })
+    return {"stations": sanitized, "total_stations": len(sanitized)}
 
-    if not _round2_allowed(team["id"]):
-        raise HTTPException(status_code=403, detail="Round 2 is locked.")
 
-    rows = _read_csv("beacon.csv", team["id"])
-
-    return {
-        "team_id": team["id"],
-        "frame_count": len(rows),
-        "telemetry": rows,
-    }
-
-
-# ---------------------------------------------------------------------
-# PLANNED MISSION SCHEDULE
-# ---------------------------------------------------------------------
-
-@router.get("/api/round2/schedule")
-async def round2_schedule(request: Request):
+@router.post("/api/round2/evaluate")
+async def round2_evaluate_calls(request: Request):
+    """
+    Submits flight calls for all 5 stations.
+    Awards 100 points per correct engineering decision (up to 500 points).
+    """
     team = get_current_team_from_request(request)
-
     if not team:
         raise HTTPException(status_code=401, detail="Authentication required.")
-
-    if not _round2_allowed(team["id"]):
-        raise HTTPException(status_code=403, detail="Round 2 is locked.")
-
-    rows = _read_csv("planned_schedule.csv", team["id"])
-
-    return {
-        "team_id": team["id"],
-        "events": rows,
-    }
-
-
-# ---------------------------------------------------------------------
-# ROUND 2 STATUS
-# ---------------------------------------------------------------------
-
-@router.get("/api/round2/status")
-async def round2_status(request: Request):
-    team = get_current_team_from_request(request)
-
-    if not team:
-        raise HTTPException(status_code=401, detail="Authentication required.")
-
-    return {
-        "team_id": team["id"],
-        "challenges": _challenge_status(team["id"]),
-    }
-
-
-# ---------------------------------------------------------------------
-# ROUND 2 SUBMISSION
-#
-# Kept separate from /api/submit so this new Round 2 experience does not
-# alter the existing global Round 4 challenge endpoint.
-# ---------------------------------------------------------------------
-
-@router.post("/api/round2/submit")
-async def round2_submit(request: Request):
-    team = get_current_team_from_request(request)
-
-    if not team:
-        raise HTTPException(status_code=401, detail="Authentication required.")
-
-    if not _round2_allowed(team["id"]):
-        raise HTTPException(status_code=403, detail="Round 2 is locked.")
-
-    body = await request.json()
-
-    challenge_id = str(body.get("challenge_id", "")).strip().upper()
-    answer_raw = str(body.get("answer", "")).strip()
-
-    if challenge_id not in CHALLENGE_MAP:
-        raise HTTPException(status_code=404, detail="Round 2 challenge not found.")
-
-    if not answer_raw:
-        raise HTTPException(status_code=400, detail="Answer cannot be empty.")
-
+        
+    try:
+        body = await request.json()
+        calls = body.get("calls", {}) # { "1": "B", "2": "C", ... }
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid payload format.")
+        
+    total_score = 0
+    results = {}
+    
+    for s in READINESS_STATIONS:
+        sid = str(s["id"])
+        submitted_call = (calls.get(sid) or "").strip().upper()
+        correct_call = s["correct_option"]
+        is_correct = (submitted_call == correct_call)
+        
+        if is_correct:
+            total_score += 100
+            
+        results[sid] = {
+            "subsystem": s["subsystem"],
+            "is_correct": is_correct,
+            "submitted": submitted_call,
+            "correct": correct_call,
+            "rationale": s["rationale"],
+            "points": 100 if is_correct else 0
+        }
+        
+    # Update round_status
     conn = get_db_connection()
     cur = conn.cursor()
-
-    cur.execute(
-        """
-        SELECT *
-        FROM submissions
-        WHERE team_id = ?
-          AND challenge_id = ?
-        ORDER BY ts_utc_ms DESC
-        """,
-        (team["id"], challenge_id),
-    )
-
-    attempts = cur.fetchall()
-
-    for row in attempts:
-        if row["correct"] == 1:
-            conn.close()
-            return {
-                "status": "already_solved",
-                "message": f"{challenge_id} is already solved.",
-                "points_awarded": row["points_awarded"],
-            }
-
-    now_ms = int(time.time() * 1000)
-    attempt_count = len(attempts)
-
-    if attempt_count >= MAX_ATTEMPTS_PER_CHALLENGE:
-        elapsed_s = (now_ms - attempts[0]["ts_utc_ms"]) / 1000.0
-
-        if elapsed_s < COOLDOWN_DURATION_S:
-            remaining = int(COOLDOWN_DURATION_S - elapsed_s)
-            conn.close()
-
-            return JSONResponse(
-                status_code=429,
-                content={
-                    "status": "cooldown",
-                    "message": (
-                        f"Maximum attempts reached. "
-                        f"Try again in {remaining}s."
-                    ),
-                    "cooldown_remaining_s": remaining,
-                },
-            )
-
-        attempt_count = 0
-
-    team_answers = _load_team_answers(team["id"])
-    expected = team_answers["challenges"].get(challenge_id)
-
-    if not expected:
-        conn.close()
-        raise HTTPException(
-            status_code=500,
-            detail=f"Answer key missing for {challenge_id}.",
-        )
-
-    correct = _evaluate_round2_answer(
-        challenge_id,
-        answer_raw,
-        expected,
-    )
-
-    attempt_no = attempt_count + 1
-    points_awarded = 0
-    time_bonus = 0
-    first_solver_bonus = 0
-
-    if correct:
-        base_points = CHALLENGE_MAP[challenge_id]["points"]
-
-        penalty_factor = max(
-            0.0,
-            1.0 - (attempt_count * WRONG_ATTEMPT_PENALTY_PCT),
-        )
-
-        points_awarded = int(base_points * penalty_factor)
-
-        elapsed_from_mission = max(
-            0.0,
-            (datetime.now(timezone.utc) - MISSION_EPOCH).total_seconds(),
-        )
-
-        decay_factor = max(
-            0.0,
-            1.0 - (
-                elapsed_from_mission /
-                TIME_BONUS_DECAY_WINDOW_S
-            ),
-        )
-
-        time_bonus = int(
-            base_points *
-            MAX_TIME_BONUS_PCT *
-            decay_factor
-        )
-
-        cur.execute(
-            """
-            SELECT COUNT(*) AS count
-            FROM submissions
-            WHERE challenge_id = ?
-              AND correct = 1
-            """,
-            (challenge_id,),
-        )
-
-        first_solver = cur.fetchone()["count"] == 0
-
-        if first_solver:
-            first_solver_bonus = int(
-                base_points * FIRST_SOLVER_BONUS_PCT
-            )
-
-        points_awarded += time_bonus + first_solver_bonus
-
-    cur.execute(
-        """
-        INSERT INTO submissions
-        (team_id, round_id, challenge_id, answer, correct,
-         points_awarded, ts_utc_ms, attempt_no)
-        VALUES (?, 4, ?, ?, ?, ?, ?, ?)
-        """,
-        (
-            team["id"],
-            challenge_id,
-            answer_raw,
-            1 if correct else 0,
-            points_awarded,
-            now_ms,
-            attempt_no,
-        ),
-    )
-
-    flag_unlocked = None
-
-    if correct:
-        solved_ids = {
-            row["challenge_id"]
-            for row in attempts
-            if row["correct"] == 1
-        }
-        solved_ids.add(challenge_id)
-
-        if all(cid in solved_ids for cid in CHALLENGE_IDS):
-            flag_unlocked = team_answers["flags"].get("PHASE_2")
-
-            if flag_unlocked:
-                cur.execute(
-                    """
-                    INSERT OR REPLACE INTO flags
-                    (team_id, phase, flag, released_at)
-                    VALUES (?, 'PHASE_2', ?, ?)
-                    """,
-                    (
-                        team["id"],
-                        flag_unlocked,
-                        datetime.now(timezone.utc).isoformat(),
-                    ),
-                )
-
-    conn.commit()
-    conn.close()
-
-    if correct:
-        return {
-            "status": "correct",
-            "message": f"Correct! +{points_awarded} points.",
-            "points_awarded": points_awarded,
-            "time_bonus": time_bonus,
-            "first_solver_bonus": first_solver_bonus,
-            "flag_unlocked": flag_unlocked,
-        }
-
-    return JSONResponse(
-        status_code=400,
-        content={
-            "status": "incorrect",
-            "message": (
-                f"Incorrect answer. "
-                f"{max(0, MAX_ATTEMPTS_PER_CHALLENGE - attempt_no)} "
-                f"attempts remaining."
-            ),
-            "remaining_attempts": max(
-                0,
-                MAX_ATTEMPTS_PER_CHALLENGE - attempt_no,
-            ),
-        },
-    )
-
-
-# ---------------------------------------------------------------------
-# COMPLETE ROUND 2
-# ---------------------------------------------------------------------
-
-@router.post("/api/round2/complete")
-async def complete_round2(request: Request):
-    team = get_current_team_from_request(request)
-
-    if not team:
-        raise HTTPException(status_code=401, detail="Authentication required.")
-
-    if not _round2_allowed(team["id"]):
-        raise HTTPException(status_code=403, detail="Round 2 is locked.")
-
-    conn = get_db_connection()
-    cur = conn.cursor()
-
-    placeholders = ",".join("?" for _ in CHALLENGE_IDS)
-
-    cur.execute(
-        f"""
-        SELECT challenge_id, MAX(points_awarded) AS points
-        FROM submissions
-        WHERE team_id = ?
-          AND challenge_id IN ({placeholders})
-          AND correct = 1
-        GROUP BY challenge_id
-        """,
-        [team["id"], *CHALLENGE_IDS],
-    )
-
-    solved_rows = cur.fetchall()
-
-    solved = {
-        row["challenge_id"]: row["points"]
-        for row in solved_rows
-    }
-
-    missing = [
-        cid for cid in CHALLENGE_IDS
-        if cid not in solved
-    ]
-
-    if missing:
-        conn.close()
-
-        return {
-            "status": "incomplete",
-            "missing": missing,
-            "message": (
-                "Solve all four telemetry investigations "
-                "before completing Round 2."
-            ),
-        }
-
-    total_score = sum(solved.values())
     now_iso = datetime.now(timezone.utc).isoformat()
-
-    cur.execute(
-        """
-        INSERT OR REPLACE INTO round_status
-        (team_id, round_id, status, score, unlocked_at, submitted_at)
-        VALUES (
-            ?, 2, 'submitted', ?,
-            COALESCE(
-                (
-                    SELECT unlocked_at
-                    FROM round_status
-                    WHERE team_id = ? AND round_id = 2
-                ),
-                ?
-            ),
-            ?
-        )
-        """,
-        (
-            team["id"],
-            total_score,
-            team["id"],
-            now_iso,
-            now_iso,
-        ),
-    )
-
-    # Preserve the existing Round 2 -> Round 3 progression behaviour.
-    cur.execute(
-        """
-        INSERT OR REPLACE INTO round_status
-        (team_id, round_id, status, score, unlocked_at)
-        VALUES (?, 3, 'active', 0, ?)
-        """,
-        (team["id"], now_iso),
-    )
-
-    cur.execute(
-        """
-        INSERT INTO events (kind, detail, ts_utc_ms)
-        VALUES (?, ?, ?)
-        """,
-        (
-            "ROUND2_COMPLETED",
-            (
-                f"Team {team['id']} completed Telemetry Investigation "
-                f"with {total_score} points."
-            ),
-            int(datetime.now(timezone.utc).timestamp() * 1000),
-        ),
-    )
-
+    now_ms = int(datetime.now(timezone.utc).timestamp() * 1000)
+    
+    cur.execute("""
+    INSERT OR REPLACE INTO round_status (team_id, round_id, status, score, submitted_at)
+    VALUES (?, 2, 'submitted', ?, ?)
+    """, (team["id"], total_score, now_iso))
+    
+    # Auto-unlock Round 3
+    cur.execute("""
+    INSERT OR REPLACE INTO round_status (team_id, round_id, status, score, unlocked_at)
+    VALUES (?, 3, 'active', 0, ?)
+    """, (team["id"], now_iso))
+    
+    cur.execute("""
+    INSERT INTO events (kind, detail, ts_utc_ms)
+    VALUES ('ROUND2_COMPLETED', ?, ?)
+    """, (f"Team {team['id']} completed Flight Readiness Review with {total_score}/500 PTS", now_ms))
+    
     conn.commit()
     conn.close()
-
+    
     return {
         "status": "completed",
-        "score": total_score,
-        "solved": solved,
-        "message": (
-            f"Telemetry Investigation complete. "
-            f"Score: {total_score} points."
-        ),
-    }
-
-
-# ---------------------------------------------------------------------
-# LEGACY COMPATIBILITY
-# ---------------------------------------------------------------------
-
-@router.get("/api/round2/dossiers")
-async def legacy_round2_dossiers(request: Request):
-    team = get_current_team_from_request(request)
-
-    if not team:
-        raise HTTPException(status_code=401, detail="Authentication required.")
-
-    return {
-        "stations": [],
-        "total_stations": 0,
-        "message": (
-            "Round 2 now uses the generated telemetry investigation."
-        ),
+        "total_score": total_score,
+        "results": results,
+        "message": f"Flight Readiness Review logged. Station score: {total_score} PTS."
     }
