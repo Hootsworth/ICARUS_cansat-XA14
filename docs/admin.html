@@ -8,36 +8,64 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./css/style.css">
+    <style>
+        .badge-sec-tab {
+            background: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            font-weight: 700;
+        }
+        .badge-sec-blur {
+            background: #fffbeb;
+            color: #92400e;
+            border: 1px solid #fde68a;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            font-weight: 700;
+        }
+        .badge-sec-full {
+            background: #fdf2f8;
+            color: #9d174d;
+            border: 1px solid #fbcfe8;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            font-weight: 700;
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar">
-        <a href="./index.html" class="nav-brand">
+        <a href="./admin.html" class="nav-brand">
             <div style="width: 24px; height: 24px; border: 2px solid var(--text-main); display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-weight: 800; font-size: 0.75rem;">
                 I
             </div>
             <div>
                 <div class="brand-title">ICARUS / OPERATIONS</div>
-                <div class="brand-subtitle">Telemetry Analysis Challenge</div>
+                <div class="brand-subtitle">Flight Director Master Control</div>
             </div>
         </a>
         <div style="display: flex; align-items: center; gap: 1rem;">
             <div class="nav-badge mono" id="live-utc-clock">--:--:-- UTC</div>
-            <div class="nav-badge mono" id="mission-countdown" style="border-color: #525252; color: var(--text-main);">T-00:00:00</div>
+            <div class="nav-badge mono" id="mission-countdown" style="border-color: #000000; color: var(--text-main);">T-00:00:00</div>
             <ul class="nav-links">
-                <li><a href="./index.html" class="nav-link">Dashboard</a></li>
-                <li><a href="./scoreboard.html" class="nav-link">Scoreboard</a></li>
+                <li><a href="./index.html" class="nav-link" target="_blank">Student Portal &nearr;</a></li>
             </ul>
         </div>
     </nav>
 
-    <!-- ADMIN LOGIN GATE (Shown when NOT authenticated) -->
+    <!-- ADMIN LOGIN GATE -->
     <div id="admin-login-container" class="container" style="max-width: 440px; padding-top: 5rem;">
         <div class="card" style="padding: 2.5rem; border: 1px solid var(--border-muted);">
             <div style="margin-bottom: 2rem;">
                 <div class="eyebrow">[RESTRICTED ACCESS]</div>
                 <h2 style="font-size: 1.4rem; color: #000000; margin-top: 0.3rem;">Flight Director Authentication</h2>
                 <p style="color: var(--text-muted); font-size: 0.82rem; margin-top: 0.25rem;">
-                    Enter master flight director authorization credentials.
+                    Enter master authorization credentials to unlock flight operations and anti-cheat telemetry.
                 </p>
             </div>
 
@@ -54,21 +82,24 @@
             </form>
 
             <div style="margin-top: 1.5rem; text-align: center;">
-                <a href="./index.html" class="mono" style="font-size: 0.78rem; color: var(--text-dim);">&larr; Return to Team Portal</a>
+                <a href="./index.html" class="mono" style="font-size: 0.78rem; color: var(--text-dim);">&larr; Return to Student Portal</a>
             </div>
         </div>
     </div>
 
-    <!-- ADMIN CONSOLE (Shown ONLY when authenticated) -->
-    <div id="admin-console-container" class="container" style="display: none; max-width: 1100px; padding-top: 2rem;">
+    <!-- ADMIN CONSOLE -->
+    <div id="admin-console-container" class="container" style="display: none; max-width: 1150px; padding-top: 2rem; padding-bottom: 5rem;">
         <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; border-bottom: 1px solid var(--border-muted); padding-bottom: 1rem;">
             <div>
-                <div class="eyebrow">[OPERATIONS OVERSIGHT]</div>
-                <h1 style="font-size: 1.8rem; margin: 0.2rem 0; color: #000000;">Flight Director Master Console</h1>
+                <div class="eyebrow">[MISSION CONTROL]</div>
+                <h1 style="font-size: 1.8rem; margin: 0.2rem 0; color: #000000;">Flight Director Operations Console</h1>
+                <p style="color: var(--text-muted); font-size: 0.84rem; margin: 0;">
+                    Remote round dispatcher, anti-cheat surveillance feed, and private master scoring.
+                </p>
             </div>
             <div style="display: flex; gap: 0.75rem; align-items: center;">
                 <span class="badge badge-active" style="padding: 0.35rem 0.8rem;">
-                    ADMIN PRIVILEGES ACTIVE
+                    FLIGHT DIRECTOR ACTIVE
                 </span>
                 <button onclick="window.IcarusEngine.logoutAdmin()" class="btn btn-secondary" style="font-size: 0.72rem; padding: 0.35rem 0.8rem;">
                     Lock Console ✕
@@ -76,122 +107,162 @@
             </div>
         </div>
 
-        <!-- REMOTE REALTIME TIMER & BROADCAST CONTROL (MULTI-COMPUTER SYNC) -->
-        <div class="card" style="margin-bottom: 2.5rem; border-left: 3px solid #000000;">
+        <!-- STORY ROUND SWITCHER & TIMER DISPATCH -->
+        <div class="card" style="margin-bottom: 2.5rem; border-left: 4px solid #000000;">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.25rem;">
                 <div>
-                    <div class="eyebrow">[SHARED DATABASE / REALTIME DISPATCH]</div>
-                    <h2 style="font-size: 1.3rem; margin: 0.2rem 0; color: #000000;">Remote Flight Timer & Hall Broadcast Control</h2>
+                    <div class="eyebrow">[SYNCHRONIZED DISPATCH]</div>
+                    <h2 style="font-size: 1.3rem; margin: 0.2rem 0; color: #000000;">Mission Stage & Timer Controller</h2>
                     <p style="color: var(--text-muted); font-size: 0.82rem;">
-                        Control competition rounds, countdown clocks, and emergency announcements on all 11 team workstations remotely in real time.
+                        Switch stages remotely for all student laptops and broadcast synchronized timers.
                     </p>
                 </div>
                 <div style="display: flex; align-items: center; gap: 0.75rem;">
-                    <span id="sync-status-badge" class="badge badge-active mono" style="font-size: 0.72rem;">
-                        ● REALTIME SYNC READY
+                    <span id="current-global-round-badge" class="badge badge-active mono" style="font-size: 0.75rem; background: #000; color: #fff;">
+                        ACTIVE: STAGE 1
                     </span>
                     <button id="btn-toggle-cfg" type="button" class="btn btn-secondary" style="font-size: 0.72rem; padding: 0.35rem 0.75rem;">
-                        ⚙ Firebase Setup
+                        ⚙ Firebase Config
                     </button>
                 </div>
             </div>
 
-            <!-- Firebase Config Sub-panel (Collapsible) -->
+            <!-- Firebase Config Box -->
             <div id="firebase-cfg-box" style="display: none; background: #fafafa; border: 1px solid var(--border-muted); padding: 1.25rem; margin-bottom: 1.5rem;">
-                <div class="eyebrow" style="margin-bottom: 0.5rem;">Firebase Project Configuration (Firestore Shared Database)</div>
+                <div class="eyebrow" style="margin-bottom: 0.5rem;">Firebase Project Configuration (Firestore Sync)</div>
                 <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 0.75rem;">
-                    Paste your Firebase web project configuration object below.
+                    Configure Firebase keys for multi-laptop instant synchronisation.
                 </p>
-                <textarea id="firebase-cfg-input" class="form-control mono" rows="5" style="font-size: 0.75rem; margin-bottom: 0.75rem;" placeholder='{\n  "apiKey": "...",\n  "authDomain": "...",\n  "projectId": "...",\n  "storageBucket": "..."\n}'></textarea>
+                <textarea id="firebase-cfg-input" class="form-control mono" rows="4" style="font-size: 0.75rem; margin-bottom: 0.75rem;" placeholder='{\n  "apiKey": "...",\n  "authDomain": "...",\n  "projectId": "..."\n}'></textarea>
                 <div style="display: flex; gap: 0.5rem;">
                     <button id="btn-save-cfg" type="button" class="btn btn-primary" style="font-size: 0.75rem; padding: 0.4rem 1rem;">Save & Reconnect</button>
-                    <button id="btn-clear-cfg" type="button" class="btn btn-secondary" style="font-size: 0.75rem; padding: 0.4rem 1rem;">Reset to Default</button>
+                    <button id="btn-clear-cfg" type="button" class="btn btn-secondary" style="font-size: 0.75rem; padding: 0.4rem 1rem;">Reset Default</button>
                 </div>
             </div>
 
-            <!-- Quick Presets -->
-            <div style="margin-bottom: 1.25rem;">
-                <div class="eyebrow" style="margin-bottom: 0.5rem;">Quick Launch Presets (Instant Dispatch to All Laptops)</div>
-                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                    <button class="btn btn-secondary" onclick="triggerRemoteTimer(1, 15, 'ROUND 1: MISSION BRIEFING')" style="font-size: 0.78rem;">
-                        Start Round 1 (15m)
+            <!-- Quick Stage Transition Buttons -->
+            <div style="margin-bottom: 1.5rem;">
+                <div class="eyebrow" style="margin-bottom: 0.5rem;">Direct Mission Stage Switcher (Switches All Connected Stations)</div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.75rem;">
+                    <button class="btn btn-secondary" onclick="switchMissionStage(1, 15, 'ROUND 1: LAUNCH PLANNING')" style="text-align: left; padding: 0.75rem;">
+                        <div style="font-weight: 700; color: #000;">Stage 1: Planning</div>
+                        <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;">Launch Prep Quiz (15m)</div>
                     </button>
-                    <button class="btn btn-secondary" onclick="triggerRemoteTimer(2, 20, 'ROUND 2: FLIGHT READINESS')" style="font-size: 0.78rem;">
-                        Start Round 2 (20m)
+                    <button class="btn btn-secondary" onclick="switchMissionStage(2, 10, 'ROUND 2: THE LAUNCH')" style="text-align: left; padding: 0.75rem;">
+                        <div style="font-weight: 700; color: #000;">Stage 2: Launch</div>
+                        <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;">8-Bit Space Arcade (10m)</div>
                     </button>
-                    <button class="btn btn-secondary" onclick="triggerRemoteTimer(3, 20, 'ROUND 3: CANSAT DROP SIM')" style="font-size: 0.78rem;">
-                        Start Round 3 (20m)
+                    <button class="btn btn-secondary" onclick="switchMissionStage(3, 25, 'ROUND 3: TELEMETRY ANALYSIS')" style="text-align: left; padding: 0.75rem;">
+                        <div style="font-weight: 700; color: #000;">Stage 3: Telemetry</div>
+                        <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;">Python Crash IDE (25m)</div>
                     </button>
-                    <button class="btn btn-secondary" onclick="triggerRemoteTimer(4, 60, 'ROUND 4: FORENSICS & RECOVERY')" style="font-size: 0.78rem;">
-                        Start Round 4 (60m)
-                    </button>
-                    <button class="btn btn-danger" onclick="pauseRemoteTimer()" style="font-size: 0.78rem; margin-left: auto;">
-                        Pause Timer
-                    </button>
-                    <button class="btn btn-secondary" onclick="resetRemoteTimer()" style="font-size: 0.78rem;">
-                        Reset
+                    <button class="btn btn-secondary" onclick="switchMissionStage(4, 20, 'ROUND 4: ROOT-CAUSE INVESTIGATION')" style="text-align: left; padding: 0.75rem;">
+                        <div style="font-weight: 700; color: #000;">Stage 4: Forensics</div>
+                        <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;">Root-Cause Findings (20m)</div>
                     </button>
                 </div>
             </div>
 
-            <!-- Custom Dispatch & Broadcast Row -->
+            <!-- Custom Controls & Timer -->
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; border-top: 1px solid var(--border-hairline); padding-top: 1.25rem;">
-                <!-- Custom Timer Dispatch -->
                 <div>
-                    <div class="eyebrow" style="margin-bottom: 0.5rem;">Custom Synchronized Timer</div>
-                    <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
-                        <select id="remote-round-select" class="form-control mono" style="width: 110px; font-size: 0.78rem;">
-                            <option value="1">Round 1</option>
-                            <option value="2">Round 2</option>
-                            <option value="3">Round 3</option>
-                            <option value="4">Round 4</option>
-                        </select>
-                        <input id="remote-mins-input" type="number" class="form-control mono" value="20" min="1" max="180" style="width: 80px; font-size: 0.78rem;" placeholder="Mins">
-                        <input id="remote-title-input" type="text" class="form-control" placeholder="Optional custom title" style="flex: 1; font-size: 0.78rem;">
-                    </div>
-                    <button type="button" class="btn btn-primary" onclick="dispatchCustomTimer()" style="width: 100%; font-size: 0.78rem; padding: 0.5rem;">
-                        Transmit Synchronized Timer Command &rarr;
-                    </button>
-                </div>
-
-                <!-- Emergency Broadcast -->
-                <div>
-                    <div class="eyebrow" style="margin-bottom: 0.5rem;">Broadcast Hall Announcement (Flashes on All Screens)</div>
-                    <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
-                        <input id="broadcast-msg-input" type="text" class="form-control" placeholder="e.g. 5 minutes remaining! Submit all station reports." style="flex: 1; font-size: 0.78rem;">
-                        <button type="button" class="btn btn-primary" onclick="dispatchBroadcast()" style="font-size: 0.78rem; padding: 0.5rem 1rem;">
-                            Broadcast
+                    <div class="eyebrow" style="margin-bottom: 0.5rem;">Timer Controls</div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="btn btn-danger" onclick="pauseRemoteTimer()" style="font-size: 0.78rem;">
+                            Pause Timer
+                        </button>
+                        <button class="btn btn-secondary" onclick="resetRemoteTimer()" style="font-size: 0.78rem;">
+                            Reset Timer
                         </button>
                     </div>
-                    <button type="button" class="btn btn-secondary" onclick="clearBroadcast()" style="width: 100%; font-size: 0.75rem; padding: 0.4rem;">
-                        Clear Active Announcement Banner
-                    </button>
+                </div>
+
+                <div>
+                    <div class="eyebrow" style="margin-bottom: 0.5rem;">Broadcast Announcement to All Screens</div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <input id="broadcast-msg-input" type="text" class="form-control" placeholder="e.g. 5 minutes remaining! Wrap up script analysis." style="flex: 1; font-size: 0.78rem;">
+                        <button type="button" class="btn btn-primary" onclick="dispatchBroadcast()" style="font-size: 0.78rem; padding: 0.5rem 1rem;">
+                            Send
+                        </button>
+                    </div>
+                    <div style="margin-top: 0.4rem;">
+                        <a href="javascript:void(0)" onclick="clearBroadcast()" class="mono" style="font-size: 0.72rem; color: var(--text-dim);">[Clear Active Broadcast]</a>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- MASTER UNIFIED STANDINGS (INCLUDES SECRET ROUND 3 SCORES) -->
-        <div class="card" style="padding: 0; margin-bottom: 2.5rem; overflow-x: auto;">
+        <!-- ANTI-CHEAT REAL-TIME SURVEILLANCE FEED -->
+        <div class="card" style="margin-bottom: 2.5rem; padding: 0; overflow: hidden; border: 1px solid #000000;">
+            <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-muted); display: flex; justify-content: space-between; align-items: center; background: #ffffff;">
+                <div>
+                    <div class="eyebrow" style="color: #991b1b;">[SURVEILLANCE & INTEGRITY]</div>
+                    <h2 style="font-size: 1.2rem; margin-top: 0.2rem; color: #000000;">Anti-Cheat Surveillance Log</h2>
+                    <p style="color: var(--text-muted); font-size: 0.8rem; margin: 0;">
+                        Live record of window defocusses, browser tab switches, and fullscreen escapes during Round 1.
+                    </p>
+                </div>
+                <div style="display: flex; gap: 0.75rem; align-items: center;">
+                    <span id="security-violation-count" class="badge mono" style="background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; font-weight: 700;">
+                        0 VIOLATIONS
+                    </span>
+                    <button class="btn btn-secondary" onclick="clearSecurityFeed()" style="font-size: 0.72rem; padding: 0.35rem 0.75rem;">
+                        Clear Log
+                    </button>
+                    <button class="btn btn-secondary" onclick="renderSecurityFeed()" style="font-size: 0.72rem; padding: 0.35rem 0.75rem;">
+                        ↻ Refresh
+                    </button>
+                </div>
+            </div>
+
+            <div style="max-height: 280px; overflow-y: auto;">
+                <table class="scoreboard-table" style="margin: 0;">
+                    <thead>
+                        <tr>
+                            <th style="width: 170px;">Timestamp</th>
+                            <th>Station / Team</th>
+                            <th style="width: 160px;">Event Type</th>
+                            <th>Detail / Context</th>
+                        </tr>
+                    </thead>
+                    <tbody id="security-table-body">
+                        <tr>
+                            <td colspan="4" style="text-align: center; color: var(--text-dim); padding: 2rem;">
+                                No anti-cheat incidents logged. Station environments secure.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- PRIVATE MASTER SCOREBOARD -->
+        <div class="card" style="padding: 0; margin-bottom: 2.5rem; overflow-x: auto; border: 1px solid var(--border-muted);">
             <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-muted); display: flex; justify-content: space-between; align-items: center;">
                 <div>
-                    <div class="eyebrow">[ADMIN REVEAL]</div>
-                    <h2 style="font-size: 1.2rem; margin-top: 0.2rem; color: #000000;">Master 4-Round Standings (Includes Secret Scoring)</h2>
+                    <div class="eyebrow">[STRICTLY PRIVATE]</div>
+                    <h2 style="font-size: 1.2rem; margin-top: 0.2rem; color: #000000;">Master 4-Round Private Scoreboard</h2>
+                    <p style="color: var(--text-muted); font-size: 0.8rem; margin: 0;">
+                        Restricted to Flight Director. Not visible on student workstations.
+                    </p>
                 </div>
-                <span class="badge badge-active">SECRET AUDIT</span>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button class="btn btn-secondary" onclick="exportScoreboardCSV()" style="font-size: 0.72rem; padding: 0.35rem 0.75rem;">
+                        Export CSV &darr;
+                    </button>
+                </div>
             </div>
 
             <table class="scoreboard-table">
                 <thead>
                     <tr>
                         <th style="width: 50px; text-align: center;">Rank</th>
-                        <th>Callsign</th>
-                        <th style="color: var(--text-main);">Grand Total</th>
-                        <th>Public Total</th>
-                        <th>R1: Briefing</th>
-                        <th>R2: Readiness</th>
-                        <th style="border-left: 1px solid var(--border-muted); border-right: 1px solid var(--border-muted);">R3: Drop Sim (Secret)</th>
-                        <th>R4: Forensics</th>
-                        <th>Credits</th>
+                        <th>Station & Callsign</th>
+                        <th>R1: Planning<br><span style="font-size: 0.7rem; font-weight: 400; color: var(--text-dim);">Max 100 PTS</span></th>
+                        <th>R2: Launch (Raw / Rank)<br><span style="font-size: 0.7rem; font-weight: 400; color: var(--text-dim);">Top 5: 5,4,3,2,1 PTS</span></th>
+                        <th>R3: Telemetry<br><span style="font-size: 0.7rem; font-weight: 400; color: var(--text-dim);">Max 50 PTS</span></th>
+                        <th>R4: Forensics<br><span style="font-size: 0.7rem; font-weight: 400; color: var(--text-dim);">Max 120 PTS</span></th>
+                        <th style="background: #fafafa; font-weight: 800; color: #000;">Grand Total</th>
                     </tr>
                 </thead>
                 <tbody id="admin-table-body">
@@ -217,7 +288,9 @@
         } else {
             loginContainer.style.display = "none";
             consoleContainer.style.display = "block";
+            updateGlobalRoundDisplay();
             renderAdminStandings();
+            renderSecurityFeed();
         }
     }
 
@@ -235,45 +308,146 @@
         }
     }
 
+    function updateGlobalRoundDisplay() {
+        const r = window.IcarusEngine.getGlobalRound();
+        const b = document.getElementById("current-global-round-badge");
+        if (b) {
+            const titles = ["", "STAGE 1: PLANNING", "STAGE 2: LAUNCH", "STAGE 3: TELEMETRY", "STAGE 4: FORENSICS"];
+            b.textContent = `ACTIVE: ${titles[r] || 'STAGE ' + r}`;
+        }
+    }
+
+    async function switchMissionStage(stageNum, minutes, title) {
+        window.IcarusEngine.setGlobalRound(stageNum);
+        updateGlobalRoundDisplay();
+        await triggerRemoteTimer(stageNum, minutes, title);
+    }
+
     function renderAdminStandings() {
         const teams = window.IcarusEngine.getAllTeamsOverview();
-        teams.sort((a, b) => b.grand_total - a.grand_total);
-
         const tbody = document.getElementById("admin-table-body");
         tbody.innerHTML = "";
 
         teams.forEach((item, index) => {
             const tr = document.createElement("tr");
+
+            // R1 string
+            const r1Str = item.r1 && item.r1.status === 'submitted'
+                ? `<span style="font-weight:700; color:var(--text-main);">${item.r1_pts} PTS</span> <span style="font-size:0.7rem; color:var(--text-dim);">(✓ Submitted)</span>`
+                : `<span style="color:var(--text-dim);">PENDING</span>`;
+
+            // R2 string
+            let r2Str = `<span style="color:var(--text-dim);">--</span>`;
+            if (item.r2 && item.r2.rawScore > 0) {
+                const rankBadge = item.r2_pts > 0 
+                    ? `<span class="badge" style="background:#000; color:#fff; font-size:0.7rem; margin-left:4px;">+${item.r2_pts} PTS</span>`
+                    : `<span style="font-size:0.7rem; color:var(--text-dim);">+0 pts</span>`;
+                r2Str = `<strong>${item.r2_raw}</strong> score ${rankBadge}`;
+            }
+
+            // R3 string
+            const r3Str = item.r3 && item.r3.status === 'submitted'
+                ? `<span style="font-weight:700; color:var(--text-main);">${item.r3_pts} PTS</span>`
+                : `<span style="color:var(--text-dim);">--</span>`;
+
+            // R4 string
+            const r4Str = item.r4 && item.r4.status === 'submitted'
+                ? `<span style="font-weight:700; color:var(--text-main);">${item.r4_pts} PTS</span>`
+                : `<span style="color:var(--text-dim);">--</span>`;
+
             tr.innerHTML = `
                 <td style="text-align: center; font-weight: 700;" class="mono">${index + 1}</td>
                 <td>
                     <div style="font-weight: 700; color: var(--text-main);">${item.team.name}</div>
                     <div class="mono" style="font-size: 0.72rem; color: var(--text-dim);">STATION ${item.team.id} | CODE: ${item.team.code}</div>
                 </td>
-                <td class="mono" style="font-size: 1.15rem; font-weight: 800; color: var(--text-main);">
+                <td class="mono">${r1Str}</td>
+                <td class="mono">${r2Str}</td>
+                <td class="mono">${r3Str}</td>
+                <td class="mono">${r4Str}</td>
+                <td class="mono" style="font-size: 1.15rem; font-weight: 800; background: #fafafa; color: var(--text-main);">
                     ${item.grand_total} PTS
-                </td>
-                <td class="mono" style="color: var(--text-muted);">
-                    ${item.public_total} PTS
-                </td>
-                <td class="mono">
-                    ${item.r1 && item.r1.status === 'submitted' ? '<span style="color:var(--text-main); font-weight:600;">PASS (+100)</span>' : '<span style="color:var(--text-dim);">PENDING</span>'}
-                </td>
-                <td class="mono">
-                    ${item.r2 && item.r2.status === 'submitted' ? `<span style="color:var(--text-main); font-weight:600;">+${item.r2.score}</span>` : '<span style="color:var(--text-dim);">--</span>'}
-                </td>
-                <td class="mono" style="border-left: 1px solid var(--border-hairline); border-right: 1px solid var(--border-hairline); background: #fafafa;">
-                    ${item.r3 && item.r3.status === 'submitted' ? `<strong style="color:var(--text-main); font-size:1rem;">+${item.r3.score} PTS</strong><div style="font-size:0.7rem; color:var(--text-dim);">✓ HMAC VERIFIED</div>` : '<span style="color:var(--text-dim);">--</span>'}
-                </td>
-                <td class="mono">
-                    ${item.r4_pts > 0 ? `<span style="font-weight:600; color:var(--text-main);">+${item.r4_pts}</span> <span style="font-size:0.72rem; color:var(--text-dim);">(${item.r4_solves} solves)</span>` : '<span style="color:var(--text-dim);">0</span>'}
-                </td>
-                <td class="mono" style="font-weight: 700; color: var(--text-main);">
-                    ${item.team.credits}
                 </td>
             `;
             tbody.appendChild(tr);
         });
+    }
+
+    function renderSecurityFeed() {
+        const events = window.IcarusEngine.getSecurityEvents();
+        const tbody = document.getElementById("security-table-body");
+        const countBadge = document.getElementById("security-violation-count");
+
+        if (countBadge) {
+            countBadge.textContent = `${events.length} VIOLATIONS LOGGED`;
+            countBadge.style.background = events.length > 0 ? "#fef2f2" : "#f4f4f5";
+            countBadge.style.color = events.length > 0 ? "#991b1b" : "#71717a";
+            countBadge.style.borderColor = events.length > 0 ? "#fecaca" : "#e4e4e7";
+        }
+
+        if (events.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="4" style="text-align: center; color: var(--text-dim); padding: 2rem;">
+                        No anti-cheat incidents logged. Station environments secure.
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        tbody.innerHTML = "";
+        events.forEach(evt => {
+            const tr = document.createElement("tr");
+
+            let badgeClass = "badge-sec-tab";
+            let label = evt.eventType;
+            if (evt.eventType === "TAB_SWITCH") {
+                badgeClass = "badge-sec-tab";
+                label = "TAB SWITCH";
+            } else if (evt.eventType === "WINDOW_BLUR") {
+                badgeClass = "badge-sec-blur";
+                label = "WINDOW BLUR";
+            } else if (evt.eventType === "FULLSCREEN_EXIT") {
+                badgeClass = "badge-sec-full";
+                label = "FULLSCREEN EXIT";
+            }
+
+            tr.innerHTML = `
+                <td class="mono" style="font-size: 0.72rem; color: var(--text-dim);">${evt.timestamp || "--"}</td>
+                <td>
+                    <strong style="color: #000;">${evt.teamName}</strong>
+                    <div class="mono" style="font-size: 0.7rem; color: var(--text-muted);">Station ${evt.teamId} [Round ${evt.round || 1}]</div>
+                </td>
+                <td><span class="${badgeClass}">${label}</span></td>
+                <td style="font-size: 0.8rem; color: #444;">${evt.detail || "Suspicious navigation detected"}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function clearSecurityFeed() {
+        if (confirm("Clear all anti-cheat violation logs?")) {
+            window.IcarusEngine.clearSecurityEvents();
+            renderSecurityFeed();
+        }
+    }
+
+    function exportScoreboardCSV() {
+        const teams = window.IcarusEngine.getAllTeamsOverview();
+        let csv = "Rank,Station ID,Team Name,Round 1 Quiz Pts,Round 2 Raw Score,Round 2 Rank Pts,Round 3 Telemetry Pts,Round 4 Forensics Pts,Grand Total Pts\n";
+        teams.forEach((t, idx) => {
+            csv += `${idx + 1},${t.team.id},"${t.team.name}",${t.r1_pts},${t.r2_raw},${t.r2_pts},${t.r3_pts},${t.r4_pts},${t.grand_total}\n`;
+        });
+
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `icarus_master_scores_${Date.now()}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
     }
 
     async function triggerRemoteTimer(roundNum, minutes, title) {
@@ -290,7 +464,6 @@
             const countdownEl = document.getElementById("mission-countdown");
             if (countdownEl) countdownEl.textContent = `T-${minutes}:00 [${title}]`;
         }
-        flashNotice(`Timer started: ${title} (${minutes}m)`);
     }
 
     async function pauseRemoteTimer() {
@@ -299,7 +472,6 @@
         } else {
             localStorage.removeItem("ICARUS_REMOTE_TIMER");
         }
-        flashNotice("Remote competition timer paused.");
     }
 
     async function resetRemoteTimer() {
@@ -309,20 +481,7 @@
             } else {
                 localStorage.removeItem("ICARUS_REMOTE_TIMER");
             }
-            flashNotice("Remote timer reset.");
         }
-    }
-
-    async function dispatchCustomTimer() {
-        const roundSelect = document.getElementById("remote-round-select");
-        const minsInput = document.getElementById("remote-mins-input");
-        const titleInput = document.getElementById("remote-title-input");
-
-        const roundNum = parseInt(roundSelect.value);
-        const mins = parseFloat(minsInput.value) || 20;
-        const title = titleInput.value.trim() || `ROUND ${roundNum}: LIVE SESSION`;
-
-        await triggerRemoteTimer(roundNum, mins, title);
     }
 
     async function dispatchBroadcast() {
@@ -333,31 +492,14 @@
         if (window.IcarusCommander && window.IcarusCommander.broadcast) {
             await window.IcarusCommander.broadcast(msg);
         } else {
-            alert(`[BROADCAST SIMULATION]: ${msg}`);
+            alert(`[BROADCAST]: ${msg}`);
         }
-        flashNotice("Broadcast transmitted to all 11 stations!");
         msgInput.value = "";
     }
 
     async function clearBroadcast() {
         if (window.IcarusCommander && window.IcarusCommander.clearBroadcast) {
             await window.IcarusCommander.clearBroadcast();
-        }
-        flashNotice("Active announcement cleared.");
-    }
-
-    function flashNotice(msg) {
-        const badge = document.getElementById("sync-status-badge");
-        if (badge) {
-            const orig = badge.textContent;
-            badge.textContent = `✓ ${msg}`;
-            badge.style.background = "#000000";
-            badge.style.color = "#ffffff";
-            setTimeout(() => {
-                badge.textContent = orig;
-                badge.style.background = "";
-                badge.style.color = "";
-            }, 3000);
         }
     }
 
@@ -366,8 +508,10 @@
         setInterval(() => {
             if (window.IcarusEngine.isAdminAuthenticated()) {
                 renderAdminStandings();
+                renderSecurityFeed();
+                updateGlobalRoundDisplay();
             }
-        }, 5000);
+        }, 3000);
 
         const btnToggle = document.getElementById("btn-toggle-cfg");
         const cfgBox = document.getElementById("firebase-cfg-box");

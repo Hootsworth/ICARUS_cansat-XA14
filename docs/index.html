@@ -8,15 +8,17 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./css/style.css">
+    <!-- WebAssembly Python Engine (Pyodide) -->
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.26.1/full/pyodide.js" defer></script>
     <style>
     .auth-tab {
         flex: 1;
         text-align: center;
-        padding: 0.75rem 1rem;
-        font-family: var(--font-mono);
-        font-size: 0.85rem;
-        font-weight: 700;
+        padding: 0.75rem;
         cursor: pointer;
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+        font-weight: 700;
         border-bottom: 2px solid transparent;
         color: var(--text-muted);
         transition: all 0.15s ease;
@@ -25,11 +27,90 @@
         color: #000000;
         border-bottom-color: #000000;
     }
+    .quiz-card {
+        background: #ffffff;
+        border: 1px solid var(--border-muted);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    .quiz-opt {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--border-muted);
+        margin-bottom: 0.5rem;
+        cursor: pointer;
+        background: #ffffff;
+        transition: all 0.15s ease;
+        font-size: 0.85rem;
+    }
+    .quiz-opt:hover {
+        border-color: #000000;
+        background: #fbfbfb;
+    }
+    .quiz-opt input[type="radio"] {
+        margin-top: 0.2rem;
+    }
+    .ide-container {
+        border: 1px solid var(--border-muted);
+        background: #ffffff;
+    }
+    .ide-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.6rem 1rem;
+        background: #f4f4f5;
+        border-bottom: 1px solid var(--border-muted);
+        font-family: var(--font-mono);
+        font-size: 0.78rem;
+    }
+    .ide-textarea {
+        width: 100%;
+        height: 280px;
+        padding: 1rem;
+        font-family: var(--font-mono);
+        font-size: 0.82rem;
+        line-height: 1.5;
+        border: none;
+        outline: none;
+        resize: vertical;
+        background: #ffffff;
+        color: #09090b;
+    }
+    .ide-terminal {
+        background: #09090b;
+        color: #f4f4f5;
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+        line-height: 1.6;
+        padding: 1rem;
+        height: 160px;
+        overflow-y: auto;
+        white-space: pre-wrap;
+        border-top: 1px solid var(--border-muted);
+    }
+    .anti-cheat-alert {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #000000;
+        color: #ffffff;
+        border: 1px solid #ef4444;
+        padding: 1rem 1.25rem;
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+        z-index: 9999;
+        display: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
     </style>
 </head>
 <body>
+    <!-- Top Minimal Navigation Bar -->
     <nav class="navbar">
-        <a href="./index.html" class="nav-brand">
+        <div class="nav-brand">
             <div style="width: 24px; height: 24px; border: 2px solid var(--text-main); display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-weight: 800; font-size: 0.75rem;">
                 I
             </div>
@@ -37,254 +118,489 @@
                 <div class="brand-title">ICARUS / OPERATIONS</div>
                 <div class="brand-subtitle">Telemetry Analysis Challenge</div>
             </div>
-        </a>
+        </div>
         <div style="display: flex; align-items: center; gap: 1rem;">
             <div class="nav-badge mono" id="live-utc-clock">--:--:-- UTC</div>
-            <div class="nav-badge mono" id="mission-countdown" style="border-color: #525252; color: var(--text-main);">T-00:00:00</div>
-            <ul class="nav-links">
-                <li><a href="./index.html" class="nav-link active">Dashboard</a></li>
-                <li class="authed-only" style="display:none;"><a href="./round1.html" class="nav-link">Round 1</a></li>
-                <li class="authed-only" style="display:none;"><a href="./round2.html" class="nav-link">Round 2</a></li>
-                <li class="authed-only" style="display:none;"><a href="./round3.html" class="nav-link">Round 3</a></li>
-                <li class="authed-only" style="display:none;"><a href="./round4.html" class="nav-link">Round 4</a></li>
-                <li><a href="./scoreboard.html" class="nav-link">Scoreboard</a></li>
-                <li class="authed-only" style="display:none;"><a href="javascript:void(0)" onclick="window.IcarusEngine.logout()" class="nav-link" style="border-bottom: 1px solid #737373;">Logout</a></li>
-            </ul>
+            <div class="nav-badge mono authed-only" id="mission-countdown" style="display: none; border-color: #525252; color: var(--text-main);">T-00:00:00</div>
+            <div class="authed-only mono" id="top-station-badge" style="display: none; font-size: 0.8rem; font-weight: 700; padding: 0.25rem 0.6rem; border: 1px solid var(--border-muted);">
+                STATION --
+            </div>
+            <button class="authed-only btn btn-secondary" id="top-logout-btn" style="display: none; font-size: 0.75rem; padding: 0.35rem 0.85rem;" onclick="handleUserLogout()">
+                Logout
+            </button>
         </div>
     </nav>
 
-    <!-- SECTION 1: AUTHENTICATION / REGISTRATION GATE (Shown when NOT logged in) -->
-    <div id="auth-gate-container" class="container" style="max-width: 460px; padding-top: 3.5rem;">
-        <div class="card" style="padding: 2.5rem; border: 1px solid var(--border-muted);">
-            <div style="margin-bottom: 1.75rem;">
-                <div class="eyebrow">[STATION ENTRY GATE]</div>
-                <h2 style="font-size: 1.5rem; color: #000000; margin-top: 0.3rem;">ICARUS Flight Operations</h2>
-                <p style="color: var(--text-muted); font-size: 0.82rem; margin-top: 0.25rem;">Authenticate workstation or register team credentials</p>
-            </div>
-
-            <div id="auth-error-box" class="alert alert-warning" style="display: none; padding: 0.75rem 1rem; font-size: 0.82rem; margin-bottom: 1.25rem;"></div>
-
-            <!-- Tab Switcher -->
-            <div style="display: flex; border-bottom: 1px solid var(--border-hairline); margin-bottom: 1.5rem;">
-                <div id="tab-login-btn" class="auth-tab active" onclick="switchAuthTab('login')">Station Login</div>
-                <div id="tab-register-btn" class="auth-tab" onclick="switchAuthTab('register')">Register Team</div>
-            </div>
-
-            <!-- LOGIN FORM -->
-            <form id="form-station-login" onsubmit="handleLoginSubmit(event)">
-                <div class="form-group">
-                    <label class="form-label">Team Name, Callsign, or Station Number (1-11)</label>
-                    <input type="text" id="login-callsign" class="form-control" placeholder="e.g. 1 or Team Icarus Alpha" required autofocus>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Station Password</label>
-                    <input type="password" id="login-password" class="form-control" placeholder="••••••••" required>
-                </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem; margin-top: 0.5rem;">
-                    Authenticate Station &rarr;
-                </button>
-            </form>
-
-            <!-- REGISTER FORM -->
-            <form id="form-station-register" onsubmit="handleRegisterSubmit(event)" style="display: none;">
-                <div class="form-group">
-                    <label class="form-label">Assigned Station Number (1 to 11)</label>
-                    <input type="number" id="reg-team-id" class="form-control" min="1" max="11" placeholder="e.g. 1" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Team Name / Callsign</label>
-                    <input type="text" id="reg-team-name" class="form-control" placeholder="e.g. Orion Flight Group" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Station Password</label>
-                    <input type="password" id="reg-password" class="form-control" placeholder="Create password" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Event Join Code</label>
-                    <input type="text" id="reg-join-code" class="form-control mono" placeholder="RVU-ORBIT-2027" required style="text-transform: uppercase;">
-                </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem; margin-top: 0.5rem;">
-                    Register Station &rarr;
-                </button>
-            </form>
-
-            <!-- Divider -->
-            <div style="display: flex; align-items: center; margin: 1.75rem 0 1.25rem; gap: 0.75rem;">
-                <div style="flex: 1; height: 1px; background: var(--border-muted);"></div>
-                <span class="mono" style="font-size: 0.72rem; color: var(--text-dim); text-transform: uppercase;">or instant entry</span>
-                <div style="flex: 1; height: 1px; background: var(--border-muted);"></div>
-            </div>
-
-            <!-- Anonymous Station Entry Button -->
-            <div style="display: flex; gap: 0.5rem;">
-                <select id="quick-station-select" class="form-control mono" style="flex: 1; font-size: 0.78rem; padding: 0.45rem;">
-                    <option value="1">Station 01 (Icarus Alpha)</option>
-                    <option value="2">Station 02 (Oreos)</option>
-                    <option value="3">Station 03 (Apex Flight)</option>
-                    <option value="4">Station 04 (Polaris)</option>
-                    <option value="5">Station 05 (Zenith)</option>
-                    <option value="6">Station 06 (Vanguard)</option>
-                    <option value="7">Station 07 (Horizon)</option>
-                    <option value="8">Station 08 (StratoCom)</option>
-                    <option value="9">Station 09 (Nova Telemetry)</option>
-                    <option value="10">Station 10 (Astra Recovery)</option>
-                    <option value="11">Station 11 (Celestia)</option>
-                </select>
-                <button type="button" onclick="handleQuickEntry()" class="btn btn-secondary" style="font-size: 0.78rem; padding: 0.45rem 1rem;">
-                    Enter Station &rarr;
-                </button>
-            </div>
-            <div style="font-size: 0.7rem; color: var(--text-dim); margin-top: 0.4rem; text-align: center;">
-                Select your assigned workstation number to enter directly.
-            </div>
-        </div>
+    <!-- Anti-Cheat Overlay Alert -->
+    <div id="anti-cheat-banner" class="anti-cheat-alert">
+        <span style="color: #ef4444; font-weight: 800;">[ANTI-CHEAT DETECTED]</span>
+        <div id="anti-cheat-text" style="margin-top: 0.35rem; font-size: 0.75rem;">Window switch recorded. Logged to Flight Director.</div>
     </div>
 
-    <!-- SECTION 2: AUTHENTICATED DASHBOARD (Shown ONLY when logged in) -->
-    <div id="dashboard-container" class="container" style="display: none; padding-top: 1.5rem;">
-        <!-- Top Station Context Header -->
-        <div class="card" style="margin-bottom: 2rem; border-left: 3px solid #000000;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem;">
-                <div>
-                    <div class="eyebrow">[ACTIVE FLIGHT WORKSTATION]</div>
-                    <h1 id="dash-team-name" style="font-size: 1.8rem; margin: 0.2rem 0; color: #000000;">Station Flight Ops</h1>
-                    <p style="color: var(--text-muted); font-size: 0.85rem;">
-                        4-Stage CanSat Telemetry & Atmospheric Flight Operations Challenge.
-                    </p>
+    <!-- MAIN APP CONTAINER -->
+    <div id="app-viewport" class="container" style="max-width: 900px; padding-top: 2rem; padding-bottom: 4rem;">
+        
+        <!-- SECTION 0: AUTHENTICATION GATE (Shown ONLY when not logged in) -->
+        <div id="auth-gate-box" style="max-width: 440px; margin: 3rem auto;">
+            <div class="card" style="padding: 2.5rem; border: 1px solid var(--border-muted);">
+                <div style="margin-bottom: 1.75rem;">
+                    <div class="eyebrow">[STATION ENTRY GATE]</div>
+                    <h2 style="font-size: 1.5rem; color: #000000; margin-top: 0.3rem;">ICARUS Flight Operations</h2>
+                    <p style="color: var(--text-muted); font-size: 0.82rem; margin-top: 0.25rem;">Enter workstation credentials or register station</p>
                 </div>
-                <div style="text-align: right;">
-                    <div class="eyebrow">Operating Station</div>
-                    <div id="dash-team-id-badge" class="mono" style="font-weight: 700; color: #000000; font-size: 1.1rem; margin-top: 0.2rem;">
-                        STATION 01
+
+                <div id="auth-error-box" class="alert alert-warning" style="display: none; padding: 0.75rem 1rem; font-size: 0.82rem; margin-bottom: 1.25rem;"></div>
+
+                <div style="display: flex; border-bottom: 1px solid var(--border-hairline); margin-bottom: 1.5rem;">
+                    <div id="tab-login-btn" class="auth-tab active" onclick="switchAuthTab('login')">Station Login</div>
+                    <div id="tab-register-btn" class="auth-tab" onclick="switchAuthTab('register')">Register Team</div>
+                </div>
+
+                <!-- LOGIN FORM -->
+                <form id="form-station-login" onsubmit="handleLoginSubmit(event)">
+                    <div class="form-group">
+                        <label class="form-label">Team Name, Callsign, or Station (1-11)</label>
+                        <input type="text" id="login-callsign" class="form-control" placeholder="e.g. 1 or Team Icarus Alpha" required autofocus>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Station Password</label>
+                        <input type="password" id="login-password" class="form-control" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem; margin-top: 0.5rem;">
+                        Authenticate Station &rarr;
+                    </button>
+                </form>
+
+                <!-- REGISTER FORM -->
+                <form id="form-station-register" onsubmit="handleRegisterSubmit(event)" style="display: none;">
+                    <div class="form-group">
+                        <label class="form-label">Assigned Workstation (1 to 11)</label>
+                        <input type="number" id="reg-team-id" class="form-control" min="1" max="11" placeholder="e.g. 1" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Team Name / Callsign</label>
+                        <input type="text" id="reg-team-name" class="form-control" placeholder="e.g. Team Icarus Alpha" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Create Password</label>
+                        <input type="password" id="reg-password" class="form-control" placeholder="Create password" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Event Join Code</label>
+                        <input type="text" id="reg-join-code" class="form-control mono" placeholder="RVU-ORBIT-2027" required style="text-transform: uppercase;">
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem; margin-top: 0.5rem;">
+                        Register Station &rarr;
+                    </button>
+                </form>
+
+                <div style="display: flex; align-items: center; margin: 1.75rem 0 1.25rem; gap: 0.75rem;">
+                    <div style="flex: 1; height: 1px; background: var(--border-muted);"></div>
+                    <span class="mono" style="font-size: 0.72rem; color: var(--text-dim); text-transform: uppercase;">or instant entry</span>
+                    <div style="flex: 1; height: 1px; background: var(--border-muted);"></div>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem;">
+                    <select id="quick-station-select" class="form-control mono" style="flex: 1; font-size: 0.78rem; padding: 0.45rem;">
+                        <option value="1">Station 01 (Icarus Alpha)</option>
+                        <option value="2">Station 02 (Oreos)</option>
+                        <option value="3">Station 03 (Apex Flight)</option>
+                        <option value="4">Station 04 (Polaris)</option>
+                        <option value="5">Station 05 (Zenith)</option>
+                        <option value="6">Station 06 (Vanguard)</option>
+                        <option value="7">Station 07 (Horizon)</option>
+                        <option value="8">Station 08 (StratoCom)</option>
+                        <option value="9">Station 09 (Nova Telemetry)</option>
+                        <option value="10">Station 10 (Astra Recovery)</option>
+                        <option value="11">Station 11 (Celestia)</option>
+                    </select>
+                    <button type="button" onclick="handleQuickEntry()" class="btn btn-secondary" style="font-size: 0.78rem; padding: 0.45rem 1rem;">
+                        Enter &rarr;
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 1: ROUND 1 - PLANNING A LAUNCH (QUIZ + FULLSCREEN LOCK) -->
+        <div id="stage-r1" style="display: none;">
+            <div class="card" style="border-left: 3px solid #000000; margin-bottom: 2rem;">
+                <div class="eyebrow">[ROUND 01 / MISSION PREPARATION]</div>
+                <h1 style="font-size: 1.6rem; color: #000000; margin: 0.3rem 0;">Phase 1: Planning a Launch</h1>
+                <p style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.5;">
+                    Verify pre-flight engineering fundamentals: Python scripting, sensor power limits, and parachute deployment logic.
+                </p>
+            </div>
+
+            <!-- Pre-Start Fullscreen Gate -->
+            <div id="r1-prestart-box" class="card" style="text-align: center; padding: 3rem 2rem;">
+                <div class="mono" style="font-size: 1.8rem; margin-bottom: 0.5rem;">[SECURITY BRIEFING]</div>
+                <h2 style="font-size: 1.3rem; margin-bottom: 0.5rem; color: #000000;">Launch Planning Examination</h2>
+                <p style="color: var(--text-muted); max-width: 540px; margin: 0 auto 1.5rem; font-size: 0.85rem; line-height: 1.6;">
+                    To maintain strict competition integrity, this round operates in <strong>Enforced Fullscreen Mode</strong>.
+                    Any window switch, tab change, or screen minimization is logged in real-time to the Flight Director's anti-cheat monitor.
+                </p>
+                <button type="button" class="btn btn-primary" onclick="startRound1WithFullscreen()" style="padding: 0.85rem 2.5rem; font-size: 0.95rem;">
+                    Enter Fullscreen & Begin Planning Quiz &rarr;
+                </button>
+            </div>
+
+            <!-- Active Quiz Form (Shown after starting) -->
+            <form id="r1-quiz-form" style="display: none;" onsubmit="handleRound1Submit(event)">
+                <div class="alert alert-info" style="margin-bottom: 1.5rem; font-size: 0.8rem;">
+                    ● Fullscreen Anti-Cheat Active. Do not switch tabs or exit fullscreen until your quiz is committed.
+                </div>
+
+                <!-- Q1 -->
+                <div class="quiz-card">
+                    <div class="eyebrow">[PYTHON BASICS / 01]</div>
+                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">Which Python statement correctly opens a flight telemetry CSV for reading and ensures the file is safely closed?</div>
+                    <label class="quiz-opt"><input type="radio" name="q1" value="A" required> <span><code>f = open('flight.csv', 'r'); f.close()</code></span></label>
+                    <label class="quiz-opt"><input type="radio" name="q1" value="B" required> <span><code>with open('flight.csv', 'r') as f:</code></span></label>
+                    <label class="quiz-opt"><input type="radio" name="q1" value="C" required> <span><code>import csv; csv.load('flight.csv')</code></span></label>
+                    <label class="quiz-opt"><input type="radio" name="q1" value="D" required> <span><code>read_file('flight.csv', mode='read')</code></span></label>
+                </div>
+
+                <!-- Q2 -->
+                <div class="quiz-card">
+                    <div class="eyebrow">[ELECTRONICS & OHM'S LAW / 02]</div>
+                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">A 3.3V flight computer bus powers a digital sensor module drawing 100mA (0.1A). What is the effective circuit load resistance?</div>
+                    <label class="quiz-opt"><input type="radio" name="q2" value="A" required> <span>330 &Omega;</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q2" value="B" required> <span>3.3 &Omega;</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q2" value="C" required> <span>33 &Omega; (since R = 3.3V / 0.1A)</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q2" value="D" required> <span>0.33 &Omega;</span></label>
+                </div>
+
+                <!-- Q3 -->
+                <div class="quiz-card">
+                    <div class="eyebrow">[POWER BUDGET / 03]</div>
+                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">Your CanSat payload is equipped with a 500 mAh single-cell LiPo battery. If total average continuous current draw during flight is 125 mA, what is the maximum expected runtime?</div>
+                    <label class="quiz-opt"><input type="radio" name="q3" value="A" required> <span>2.5 hours</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q3" value="B" required> <span>4.0 hours (500 mAh / 125 mA = 4 hours)</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q3" value="C" required> <span>6.2 hours</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q3" value="D" required> <span>1.25 hours</span></label>
+                </div>
+
+                <!-- Q4 -->
+                <div class="quiz-card">
+                    <div class="eyebrow">[FLIGHT LOGIC / 04]</div>
+                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">In your onboard descent loop, which conditional statement properly triggers the recovery parachute only after the CanSat has begun falling and drops below 400 meters AGL?</div>
+                    <label class="quiz-opt"><input type="radio" name="q4" value="A" required> <span><code>if altitude < 400 and descent_rate > 0: deploy_chute()</code></span></label>
+                    <label class="quiz-opt"><input type="radio" name="q4" value="B" required> <span><code>if altitude > 400 or descent_rate < 0: deploy_chute()</code></span></label>
+                    <label class="quiz-opt"><input type="radio" name="q4" value="C" required> <span><code>while altitude == 400: deploy_chute()</code></span></label>
+                    <label class="quiz-opt"><input type="radio" name="q4" value="D" required> <span><code>if descent_rate == 0: deploy_chute()</code></span></label>
+                </div>
+
+                <!-- Q5 -->
+                <div class="quiz-card">
+                    <div class="eyebrow">[INSTRUMENTATION / 05]</div>
+                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">Which sensor component is specifically responsible for measuring the 3-axis rotational velocity and angular roll rate of the rocket?</div>
+                    <label class="quiz-opt"><input type="radio" name="q5" value="A" required> <span>Barometric pressure transducer (BMP280)</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q5" value="B" required> <span>Linear optical encoder</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q5" value="C" required> <span>Thermistor bridge</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q5" value="D" required> <span>3-Axis Gyroscope / IMU</span></label>
+                </div>
+
+                <!-- Q6 -->
+                <div class="quiz-card">
+                    <div class="eyebrow">[CIRCUIT DESIGN / 06]</div>
+                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">What hazard occurs if a 5.0V analog sensor is wired directly to an ESP32 / STM32 microcontroller pin with a maximum voltage rating of 3.3V without a voltage divider?</div>
+                    <label class="quiz-opt"><input type="radio" name="q6" value="A" required> <span>The sensor will read half of its true measurement</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q6" value="B" required> <span>Over-voltage injection causes internal clamping diode breakdown and permanent MCU destruction</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q6" value="C" required> <span>The battery voltage automatically drops to 1.8V</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q6" value="D" required> <span>No effect; all modern microcontrollers step down 5V natively</span></label>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.95rem; font-size: 0.95rem;">
+                    Submit Launch Planning Verification &rarr;
+                </button>
+            </form>
+        </div>
+
+        <!-- SECTION 2: ROUND 2 - THE LAUNCH (8-BIT SPACE SHOOTER) -->
+        <div id="stage-r2" style="display: none;">
+            <div class="card" style="border-left: 3px solid #000000; margin-bottom: 2rem;">
+                <div class="eyebrow">[ROUND 02 / FLIGHT EXECUTION]</div>
+                <h1 style="font-size: 1.6rem; color: #000000; margin: 0.3rem 0;">Phase 2: The Launch (Atmospheric Ascent)</h1>
+                <p style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.5;">
+                    Pilot your rocket through atmospheric debris and orbital clutter. Top 5 teams by score will be awarded bonus points (1st: 5 pts, 2nd: 4 pts, 3rd: 3 pts, 4th: 2 pts, 5th: 1 pt).
+                </p>
+            </div>
+
+            <!-- Arcade Cabinet Box -->
+            <div class="card" style="padding: 1.5rem; text-align: center;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid var(--border-hairline); padding-bottom: 0.75rem;">
+                    <span class="mono" style="font-size: 0.82rem; font-weight: 700;">CONTROLS: [ARROW KEYS / WASD] Steer &bull; [SPACE] Fire Dual Cannons</span>
+                    <span class="nav-badge mono" id="r2-score-tag">SCORE: 0</span>
+                </div>
+
+                <div style="position: relative; width: 100%; max-width: 800px; margin: 0 auto; border: 2px solid #000000; background: #ffffff;">
+                    <canvas id="shooter-canvas" width="800" height="480" style="display: block; width: 100%; height: auto;"></canvas>
+
+                    <!-- Pre-launch Screen Overlay -->
+                    <div id="shooter-start-overlay" style="position: absolute; inset: 0; background: rgba(255, 255, 255, 0.96); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem;">
+                        <div class="mono" style="font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; letter-spacing: 2px;">ICARUS-1 ASCENT</div>
+                        <p style="color: var(--text-muted); max-width: 480px; font-size: 0.85rem; line-height: 1.6; margin-bottom: 1.5rem;">
+                            Ascend through atmospheric turbulence. Dodge or shoot debris (+15 to +35 pts) and collect energy cells (+50 pts). Flight duration: 75 seconds.
+                        </p>
+                        <button type="button" class="btn btn-primary" onclick="launchShooterGame()" style="padding: 0.85rem 2.5rem; font-size: 0.95rem;">
+                            Ignite Main Engines & Launch &rarr;
+                        </button>
+                    </div>
+
+                    <!-- Dramatic Crash Terminal Overlay -->
+                    <div id="shooter-crash-overlay" style="position: absolute; inset: 0; background: #ffffff; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 2.5rem; text-align: center;">
+                        <div class="mono" style="color: #ef4444; font-size: 1.8rem; font-weight: 800; margin-bottom: 0.5rem;">[CRITICAL FLIGHT ALARM]</div>
+                        <h2 style="font-size: 1.3rem; margin-bottom: 0.75rem; color: #000000;">Main Engine Anomaly & Telemetry Blackout</h2>
+                        <div class="mono" style="background: #fafafa; border: 1px solid var(--border-muted); padding: 1rem 1.5rem; max-width: 520px; text-align: left; font-size: 0.78rem; line-height: 1.6; margin-bottom: 1.5rem;">
+                            [T+34.5s]: BUS VOLTAGE SAG DETECTED (2.45V)<br>
+                            [T+42.0s]: MCU BROWNOUT RESET CYCLE - RECOVERY PARACHUTE SQUIB OFFLINE<br>
+                            [T+61.2s]: TERMINAL GROUND IMPACT AT ECHO-7 (-22.4G)<br>
+                            [STATUS]: Rocket destroyed on impact. Telemetry blackbox retrieved.
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="commitRound2Shooter()" style="padding: 0.8rem 2rem;">
+                            Acknowledge Crash & Archive Flight Record &rarr;
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- 4-Round Unified Progression Grid -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; margin-bottom: 2.5rem;">
-            <!-- Round 1 -->
-            <div class="status-card" id="card-r1">
-                <div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-                        <span class="eyebrow">[ROUND 01]</span>
-                        <span id="badge-r1" class="badge badge-active">ACTIVE</span>
+        <!-- SECTION 3: ROUND 3 - TELEMETRY ANALYSIS (POST-CRASH PYTHON IDE) -->
+        <div id="stage-r3" style="display: none;">
+            <div class="card" style="border-left: 3px solid #000000; margin-bottom: 2rem;">
+                <div class="eyebrow">[ROUND 03 / CRASH FORENSICS]</div>
+                <h1 style="font-size: 1.6rem; color: #000000; margin: 0.3rem 0;">Phase 3: Telemetry Analysis & Diagnostics</h1>
+                <p style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.5;">
+                    The rocket crashed during ascent. The search and rescue team retrieved the onboard flash memory blackbox. Analyze the raw sensor telemetry using the in-browser Python IDE below or download the dataset.
+                </p>
+            </div>
+
+            <!-- Download Resources Bar -->
+            <div style="display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+                <a href="./assets/flight_telemetry_crash.csv" download="flight_telemetry_crash.csv" class="btn btn-primary" style="font-size: 0.8rem; padding: 0.5rem 1.25rem;">
+                    ⬇ Download Raw Telemetry CSV
+                </a>
+                <a href="https://drive.google.com" target="_blank" rel="noopener" class="btn btn-secondary" style="font-size: 0.8rem; padding: 0.5rem 1.25rem;">
+                    Google Drive Mirror ↗
+                </a>
+                <label class="btn btn-secondary" style="font-size: 0.8rem; padding: 0.5rem 1.25rem; cursor: pointer; margin: 0;">
+                    📂 Upload Python Script
+                    <input type="file" id="r3-file-input" accept=".py,.txt" style="display: none;" onchange="handleScriptUpload(event)">
+                </label>
+            </div>
+
+            <!-- In-Browser VS Code Style Python Editor -->
+            <div class="ide-container">
+                <div class="ide-header">
+                    <div>
+                        <strong>diagnostics.py</strong> <span style="color: var(--text-dim); margin-left: 0.5rem;">[flight_telemetry_crash.csv pre-mounted]</span>
                     </div>
-                    <h3 style="font-size: 1.05rem; margin-bottom: 0.4rem;">Mission Briefing</h3>
-                    <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 1rem;">
-                        Proctor-supervised physical decryption puzzle. Enter the mission authorization code to unlock flight ops.
-                    </p>
+                    <div id="py-engine-status" style="font-size: 0.72rem; color: var(--text-muted);">
+                        ● Ready to execute
+                    </div>
                 </div>
-                <div>
-                    <div id="score-r1" class="mono" style="font-size: 0.85rem; color: var(--text-main); font-weight: 700; margin-bottom: 0.5rem; display: none;">
-                        +100 PTS AWARDED
-                    </div>
-                    <a href="./round1.html" class="btn btn-primary" style="width: 100%; font-size: 0.75rem;">
-                        Enter Briefing Code &rarr;
-                    </a>
+
+                <textarea id="r3-code-editor" class="ide-textarea" spellcheck="false"># ICARUS Flight Operations - Telemetry Blackbox Diagnostics
+# Inspect flight_telemetry_crash.csv to isolate the crash root cause.
+
+import csv
+
+with open('flight_telemetry_crash.csv', 'r') as f:
+    reader = csv.DictReader(f)
+    packets = list(reader)
+
+print(f"[✓] Retrieved {len(packets)} telemetry frames from crash blackbox.\n")
+
+# Find Apogee (Maximum Altitude) and critical electrical voltage drop
+max_alt = 0.0
+min_batt = 5.0
+anomaly_onset_ms = None
+
+for p in packets:
+    t = int(p['timestamp_ms'])
+    alt = float(p['altitude_m'])
+    batt = float(p['battery_v'])
+    
+    if alt > max_alt:
+        max_alt = alt
+    if batt < min_batt and batt > 0:
+        min_batt = batt
+    if batt < 3.0 and anomaly_onset_ms is None and batt > 0:
+        anomaly_onset_ms = t
+
+print(f"Apogee (Max Altitude): {max_alt} m")
+print(f"Critical Voltage Sag: {min_batt} V (Onset at t = {anomaly_onset_ms} ms)")
+print(f"Impact Status: {packets[-1]['status_flags']}")
+</textarea>
+
+                <div style="padding: 0.6rem 1rem; background: #fafafa; border-top: 1px solid var(--border-muted); display: flex; justify-content: space-between; align-items: center;">
+                    <button type="button" class="btn btn-primary" onclick="executePythonCode()" style="font-size: 0.8rem; padding: 0.45rem 1.4rem;">
+                        ▶ Run Python Code
+                    </button>
+                    <span class="mono" style="font-size: 0.72rem; color: var(--text-dim);">Live in-browser WebAssembly execution</span>
+                </div>
+
+                <div id="r3-terminal-output" class="ide-terminal">
+[READY] Press 'Run Python Code' to inspect telemetry stream...
                 </div>
             </div>
 
-            <!-- Round 2 -->
-            <div class="status-card" id="card-r2">
-                <div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-                        <span class="eyebrow">[ROUND 02]</span>
-                        <span id="badge-r2" class="badge">STANDBY</span>
-                    </div>
-                    <h3 style="font-size: 1.05rem; margin-bottom: 0.4rem;">Flight Readiness Review</h3>
-                    <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 1rem;">
-                        5 engineering inspection stations: EPS battery sag, recovery door servo, GNSS HDOP, barometer QNH, and LoRa link.
-                    </p>
-                </div>
-                <div>
-                    <div id="score-r2" class="mono" style="font-size: 0.85rem; color: var(--text-main); font-weight: 700; margin-bottom: 0.5rem; display: none;">
-                        +0 PTS AWARDED
-                    </div>
-                    <a href="./round2.html" id="btn-link-r2" class="btn btn-secondary" style="width: 100%; font-size: 0.75rem;">
-                        Inspect Subsystems &rarr;
-                    </a>
-                </div>
+            <div style="margin-top: 2rem; text-align: center;">
+                <button type="button" class="btn btn-primary" onclick="submitRound3Analysis()" style="padding: 0.85rem 3rem; font-size: 0.95rem;">
+                    Submit Telemetry Analysis Findings &rarr;
+                </button>
+            </div>
+        </div>
+
+        <!-- SECTION 4: ROUND 4 - FINAL QUIZ / ROOT CAUSE INVESTIGATION -->
+        <div id="stage-r4" style="display: none;">
+            <div class="card" style="border-left: 3px solid #000000; margin-bottom: 2rem;">
+                <div class="eyebrow">[ROUND 04 / INVESTIGATION BOARD]</div>
+                <h1 style="font-size: 1.6rem; color: #000000; margin: 0.3rem 0;">Phase 4: Root-Cause Investigation</h1>
+                <p style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.5;">
+                    Based on the telemetry blackbox data you decoded in Round 3, answer the official investigation board questions to conclude why the CanSat rocket crashed.
+                </p>
             </div>
 
-            <!-- Round 3 -->
-            <div class="status-card" id="card-r3">
-                <div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-                        <span class="eyebrow">[ROUND 03]</span>
-                        <span id="badge-r3" class="badge">STANDBY</span>
-                    </div>
-                    <h3 style="font-size: 1.05rem; margin-bottom: 0.4rem;">CanSat Parachute Drop Simulator</h3>
-                    <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 1rem;">
-                        Atmospheric drop from 1,000m AGL. Parachute deployment timing, aerodynamic fin steering, and acoustic recovery beacon activation.
-                    </p>
+            <form id="r4-quiz-form" onsubmit="handleRound4Submit(event)">
+                <!-- Q1 -->
+                <div class="quiz-card">
+                    <div class="eyebrow">[ANOMALY ONSET / 01]</div>
+                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">At what timestamp in the flight record did the electrical bus voltage plunge below safe operational limits (&lt; 3.0V)?</div>
+                    <label class="quiz-opt"><input type="radio" name="q1" value="A" required> <span>t = 15,000 ms (Apogee peak)</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q1" value="B" required> <span>t = 34,500 ms (Onset of transmitter current surge)</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q1" value="C" required> <span>t = 5,000 ms (Initial boost phase)</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q1" value="D" required> <span>t = 61,200 ms (Ground impact)</span></label>
                 </div>
-                <div>
-                    <div id="score-r3" class="mono" style="font-size: 0.8rem; color: var(--text-main); font-weight: 600; margin-bottom: 0.4rem; display: none;">
-                        TELEMETRY SEALED (SECRET)
-                    </div>
-                    <a href="./round3.html" id="btn-link-r3" class="btn btn-secondary" style="width: 100%; font-size: 0.75rem;">
-                        Initiate Drop &rarr;
-                    </a>
-                </div>
-            </div>
 
-            <!-- Round 4 -->
-            <div class="status-card" id="card-r4">
-                <div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-                        <span class="eyebrow">[ROUND 04]</span>
-                        <span id="badge-r4" class="badge">STANDBY</span>
-                    </div>
-                    <h3 style="font-size: 1.05rem; margin-bottom: 0.4rem;">Telemetry Forensics</h3>
-                    <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 1rem;">
-                        Deep telemetry data forensics, anomaly classification, CRC bit-flip recovery, and live emergency runbook execution.
-                    </p>
+                <!-- Q2 -->
+                <div class="quiz-card">
+                    <div class="eyebrow">[INITIAL FAILURE SUBSYSTEM / 02]</div>
+                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">Which subsystem suffered the primary root-cause failure that initiated the cascading flight failure?</div>
+                    <label class="quiz-opt"><input type="radio" name="q2" value="A" required> <span>Electrical Power System (EPS battery voltage sag under transmit burst)</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q2" value="B" required> <span>Atmospheric Barometer transducer rupture</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q2" value="C" required> <span>Parachute mechanical canopy fabric tearing</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q2" value="D" required> <span>GPS constellation loss of lock</span></label>
                 </div>
-                <div>
-                    <div id="score-r4" class="mono" style="font-size: 0.85rem; color: var(--text-main); font-weight: 700; margin-bottom: 0.5rem; display: none;">
-                        +0 PTS
-                    </div>
-                    <a href="./round4.html" id="btn-link-r4" class="btn btn-secondary" style="width: 100%; font-size: 0.75rem;">
-                        Open Forensics Console &rarr;
-                    </a>
+
+                <!-- Q3 -->
+                <div class="quiz-card">
+                    <div class="eyebrow">[PEAK ALTITUDE / 03]</div>
+                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">What was the true maximum altitude (Apogee) achieved by the vehicle before descending?</div>
+                    <label class="quiz-opt"><input type="radio" name="q3" value="A" required> <span>1,215 meters AGL</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q3" value="B" required> <span>580 meters AGL</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q3" value="C" required> <span>2,400 meters AGL</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q3" value="D" required> <span>320 meters AGL</span></label>
+                </div>
+
+                <!-- Q4 -->
+                <div class="quiz-card">
+                    <div class="eyebrow">[RECOVERY FAILURE CAUSE / 04]</div>
+                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">Why did the main recovery parachute fail to deploy at the programmed 400m AGL threshold?</div>
+                    <label class="quiz-opt"><input type="radio" name="q4" value="A" required> <span>MCU brownout reset during bus sag prevented the parachute squib ejection command from executing</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q4" value="B" required> <span>The parachute ejection spring snapped from excessive acceleration</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q4" value="C" required> <span>The CanSat was descending too slowly to trigger the airspeed threshold</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q4" value="D" required> <span>The parachute successfully deployed but was detached by crosswinds</span></label>
+                </div>
+
+                <!-- Q5 -->
+                <div class="quiz-card">
+                    <div class="eyebrow">[IMPACT KINEMATICS / 05]</div>
+                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">What was the peak deceleration shock (G-force) recorded upon ground impact at t = 61,200 ms?</div>
+                    <label class="quiz-opt"><input type="radio" name="q5" value="A" required> <span>-1.0 G</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q5" value="B" required> <span>-5.4 G</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q5" value="C" required> <span>-22.4 G</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q5" value="D" required> <span>-88.0 G</span></label>
+                </div>
+
+                <!-- Q6 -->
+                <div class="quiz-card">
+                    <div class="eyebrow">[OFFICIAL CLASSIFICATION / 06]</div>
+                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">What is the final Flight Director anomaly classification for this mission incident?</div>
+                    <label class="quiz-opt"><input type="radio" name="q6" value="A" required> <span>CLASS-A: Primary EPS Voltage Collapse causing Recovery Actuation Failure</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q6" value="B" required> <span>CLASS-B: Structural Aerodynamic Disintegration</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q6" value="C" required> <span>CLASS-C: Ground Station Command Telemetry Loss</span></label>
+                    <label class="quiz-opt"><input type="radio" name="q6" value="D" required> <span>CLASS-D: Sensor Calibration Scale Error</span></label>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.95rem; font-size: 0.95rem;">
+                    Submit Root-Cause Investigation & Conclude Mission &rarr;
+                </button>
+            </form>
+        </div>
+
+        <!-- SECTION 5: WAITING CARD (Shown between completed rounds) -->
+        <div id="stage-waiting" class="card" style="display: none; text-align: center; padding: 4rem 2rem;">
+            <div class="mono" style="font-size: 2.2rem; margin-bottom: 0.5rem;" id="waiting-icon">✓</div>
+            <h2 id="waiting-title" style="color: #000000; margin-bottom: 0.5rem; font-size: 1.4rem;">Well Done! Phase Completed</h2>
+            <p id="waiting-subtitle" style="color: var(--text-muted); max-width: 520px; margin: 0 auto 2rem; font-size: 0.88rem; line-height: 1.6;">
+                Your telemetry and solutions have been logged. Waiting for the Flight Director to initiate the next phase...
+            </p>
+            <div style="display: inline-block; border: 1px solid var(--border-muted); padding: 1.25rem 2.5rem; margin-bottom: 1.5rem;">
+                <div class="eyebrow" style="margin-bottom: 0.35rem;">MISSION STATUS</div>
+                <div class="mono" id="waiting-status-badge" style="font-size: 1.1rem; font-weight: 700; color: #000000;">
+                    STANDBY FOR NEXT PHASE
                 </div>
             </div>
         </div>
 
-        <!-- Quick Access Banner -->
-        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-            <a href="./scoreboard.html" class="btn btn-secondary" style="flex: 1; text-align: center; padding: 1rem;">
-                <div class="eyebrow">Projector View</div>
-                <div style="font-weight: 700; font-size: 1rem; color: var(--text-main);">Public Scoreboard &rarr;</div>
-            </a>
+        <!-- SECTION 6: MISSION CONCLUDED (Shown when all 4 rounds are finished) -->
+        <div id="stage-concluded" class="card" style="display: none; text-align: center; padding: 4.5rem 2rem;">
+            <div class="mono" style="font-size: 2.5rem; margin-bottom: 0.75rem;">[MISSION COMPLETE]</div>
+            <h2 style="color: #000000; margin-bottom: 0.5rem; font-size: 1.5rem;">Flight Operations & Forensics Concluded</h2>
+            <p style="color: var(--text-muted); max-width: 540px; margin: 0 auto 2rem; font-size: 0.88rem; line-height: 1.6;">
+                All 4 phases (Launch Planning, Flight Execution, Telemetry Diagnostics, and Root-Cause Investigation) have been certified.
+                Final official standings and awards will be unveiled by the Flight Director.
+            </p>
+            <div style="display: inline-block; border: 1px solid var(--border-muted); padding: 1.25rem 3rem;">
+                <div class="eyebrow" style="margin-bottom: 0.35rem;">INVESTIGATION LEDGER</div>
+                <div class="mono" style="font-size: 1.15rem; font-weight: 700; color: #000000;">
+                    ARCHIVED & SEALED
+                </div>
+            </div>
         </div>
+
     </div>
 
-    <script src="./js/app.js"></script>
-    <script src="./js/firebase_config.js"></script>
-    <script src="./js/firebase_sync.js"></script>
+    <!-- Scripts -->
     <script src="./js/github_pages_state.js"></script>
+    <script src="./js/space_shooter.js"></script>
+    <script src="./js/python_runner.js"></script>
     <script>
-    function switchAuthTab(tab) {
-        const tabLogin = document.getElementById("tab-login-btn");
-        const tabReg = document.getElementById("tab-register-btn");
-        const formLogin = document.getElementById("form-station-login");
-        const formReg = document.getElementById("form-station-register");
-        const errBox = document.getElementById("auth-error-box");
-        errBox.style.display = "none";
+    let activeShooterGame = null;
+    let pythonRunnerInstance = null;
+    let isAntiCheatActive = false;
 
-        if (tab === "login") {
-            tabLogin.className = "auth-tab active";
-            tabReg.className = "auth-tab";
-            formLogin.style.display = "block";
-            formReg.style.display = "none";
+    // -------------------------------------------------------------------------
+    // Top Bar & Auth
+    // -------------------------------------------------------------------------
+    function updateTopBar() {
+        const user = window.IcarusEngine.getAuthUser();
+        const topBadge = document.getElementById("top-station-badge");
+        const topLogout = document.getElementById("top-logout-btn");
+        const authedElements = document.querySelectorAll(".authed-only");
+
+        if (user) {
+            topBadge.textContent = `STATION ${user.teamId} : ${user.teamName}`;
+            authedElements.forEach(el => el.style.display = "block");
         } else {
-            tabLogin.className = "auth-tab";
-            tabReg.className = "auth-tab active";
-            formLogin.style.display = "none";
-            formReg.style.display = "block";
+            authedElements.forEach(el => el.style.display = "none");
         }
+    }
+
+    function handleUserLogout() {
+        if (document.fullscreenElement) {
+            document.exitFullscreen().catch(() => {});
+        }
+        window.IcarusEngine.logout();
+    }
+
+    function switchAuthTab(tab) {
+        document.getElementById("tab-login-btn").className = tab === "login" ? "auth-tab active" : "auth-tab";
+        document.getElementById("tab-register-btn").className = tab === "register" ? "auth-tab active" : "auth-tab";
+        document.getElementById("form-station-login").style.display = tab === "login" ? "block" : "none";
+        document.getElementById("form-station-register").style.display = tab === "register" ? "block" : "none";
+        document.getElementById("auth-error-box").style.display = "none";
     }
 
     function handleLoginSubmit(e) {
@@ -294,123 +610,292 @@
         const res = window.IcarusEngine.login(callsign, pass);
 
         if (res.success) {
-            checkAuthAndRender();
+            renderCurrentStage();
         } else {
-            showAuthError(res.message);
+            const err = document.getElementById("auth-error-box");
+            err.style.display = "block";
+            err.textContent = res.message;
         }
     }
 
     function handleRegisterSubmit(e) {
         e.preventDefault();
         const tid = document.getElementById("reg-team-id").value;
-        const name = document.getElementById("reg-team-name").value;
+        const tname = document.getElementById("reg-team-name").value;
         const pass = document.getElementById("reg-password").value;
         const code = document.getElementById("reg-join-code").value;
+        const res = window.IcarusEngine.register(tid, tname, pass, code);
 
-        const res = window.IcarusEngine.register(tid, name, pass, code);
         if (res.success) {
-            checkAuthAndRender();
+            renderCurrentStage();
         } else {
-            showAuthError(res.message);
+            const err = document.getElementById("auth-error-box");
+            err.style.display = "block";
+            err.textContent = res.message;
         }
     }
 
     function handleQuickEntry() {
-        const tid = document.getElementById("quick-station-select").value;
-        const team = window.IcarusEngine.getTeamData(tid);
-        window.IcarusEngine.setAuthUser(tid, team.name);
-        checkAuthAndRender();
+        const sel = document.getElementById("quick-station-select").value;
+        const res = window.IcarusEngine.login(sel, "icarus123");
+        if (res.success) {
+            renderCurrentStage();
+        }
     }
 
-    function showAuthError(msg) {
-        const errBox = document.getElementById("auth-error-box");
-        errBox.style.display = "block";
-        errBox.textContent = msg;
+    // -------------------------------------------------------------------------
+    // Main Stage Dispatcher
+    // -------------------------------------------------------------------------
+    function hideAllStages() {
+        document.getElementById("auth-gate-box").style.display = "none";
+        document.getElementById("stage-r1").style.display = "none";
+        document.getElementById("stage-r2").style.display = "none";
+        document.getElementById("stage-r3").style.display = "none";
+        document.getElementById("stage-r4").style.display = "none";
+        document.getElementById("stage-waiting").style.display = "none";
+        document.getElementById("stage-concluded").style.display = "none";
     }
 
-    function checkAuthAndRender() {
+    function renderCurrentStage() {
+        updateTopBar();
+        hideAllStages();
+
         const user = window.IcarusEngine.getAuthUser();
-        const authGate = document.getElementById("auth-gate-container");
-        const dash = document.getElementById("dashboard-container");
-        const authedLinks = document.querySelectorAll(".authed-only");
-
         if (!user) {
-            // Show login gate, hide dashboard
-            authGate.style.display = "block";
-            dash.style.display = "none";
-            authedLinks.forEach(el => el.style.display = "none");
-        } else {
-            // Show dashboard, hide login gate
-            authGate.style.display = "none";
-            dash.style.display = "block";
-            authedLinks.forEach(el => el.style.display = "inline");
+            document.getElementById("auth-gate-box").style.display = "block";
+            return;
+        }
 
-            const team = window.IcarusEngine.getTeamData(user.teamId);
-            document.getElementById("dash-team-name").textContent = team.name;
-            document.getElementById("dash-team-id-badge").textContent = `STATION ${team.id.toString().padStart(2, '0')}`;
+        const globalRound = window.IcarusEngine.getGlobalRound();
+        const team = window.IcarusEngine.getTeamData(user.teamId);
 
-            // R1
-            const badgeR1 = document.getElementById("badge-r1");
-            const scoreR1 = document.getElementById("score-r1");
+        // Check if all rounds concluded
+        if (team.r4 && team.r4.status === "submitted") {
+            document.getElementById("stage-concluded").style.display = "block";
+            return;
+        }
+
+        // Branch by active global round
+        if (globalRound === 1) {
             if (team.r1 && team.r1.status === "submitted") {
-                badgeR1.textContent = "PASS (+100)";
-                badgeR1.className = "badge badge-active";
-                scoreR1.style.display = "block";
+                showWaitingScreen("Well Done! Round 1 Complete", "Launch Planning verified. Standby for the Flight Director to initiate Round 2: The Launch...", "ROUND 1 VERIFIED");
+            } else {
+                document.getElementById("stage-r1").style.display = "block";
             }
-
-            // R2
-            const badgeR2 = document.getElementById("badge-r2");
-            const scoreR2 = document.getElementById("score-r2");
-            const btnR2 = document.getElementById("btn-link-r2");
+        } else if (globalRound === 2) {
             if (team.r2 && team.r2.status === "submitted") {
-                badgeR2.textContent = "COMPLETED";
-                badgeR2.className = "badge badge-active";
-                scoreR2.textContent = `+${team.r2.score} PTS AWARDED`;
-                scoreR2.style.display = "block";
-                btnR2.className = "btn btn-secondary";
-                btnR2.textContent = "Review Stations →";
-            } else if (team.r2 && team.r2.status === "active") {
-                badgeR2.textContent = "ACTIVE";
-                badgeR2.className = "badge badge-active";
-                btnR2.className = "btn btn-primary";
+                showWaitingScreen("Flight Terminated: Telemetry Lost", "Your CanSat rocket experienced an in-flight anomaly and crashed. Telemetry blackbox retrieved. Standby for Round 3: Telemetry Analysis...", "ROUND 2 RECORDED");
+            } else {
+                document.getElementById("stage-r2").style.display = "block";
+                initShooterCanvas();
             }
-
-            // R3
-            const badgeR3 = document.getElementById("badge-r3");
-            const scoreR3 = document.getElementById("score-r3");
-            const btnR3 = document.getElementById("btn-link-r3");
+        } else if (globalRound === 3) {
             if (team.r3 && team.r3.status === "submitted") {
-                badgeR3.textContent = "SEALED";
-                badgeR3.className = "badge badge-active";
-                scoreR3.style.display = "block";
-                btnR3.className = "btn btn-secondary";
-                btnR3.textContent = "View Flight Log →";
-            } else if (team.r3 && team.r3.status === "active") {
-                badgeR3.textContent = "ACTIVE";
-                badgeR3.className = "badge badge-active";
-                btnR3.className = "btn btn-primary";
+                showWaitingScreen("Well Done! Telemetry Analysis Logged", "Your crash blackbox analysis script has been certified (+50 PTS). Standby for Round 4: Root Cause Investigation...", "ROUND 3 CERTIFIED");
+            } else {
+                document.getElementById("stage-r3").style.display = "block";
+                initPythonIDE();
             }
-
-            // R4
-            const badgeR4 = document.getElementById("badge-r4");
-            const scoreR4 = document.getElementById("score-r4");
-            const btnR4 = document.getElementById("btn-link-r4");
+        } else if (globalRound === 4) {
             if (team.r4 && team.r4.status === "submitted") {
-                badgeR4.textContent = "ACTIVE";
-                badgeR4.className = "badge badge-active";
-                scoreR4.textContent = `+${team.r4.score} PTS`;
-                scoreR4.style.display = "block";
-                btnR4.className = "btn btn-primary";
-            } else if (team.r4 && team.r4.status === "active") {
-                badgeR4.textContent = "ACTIVE";
-                badgeR4.className = "badge badge-active";
-                btnR4.className = "btn btn-primary";
+                document.getElementById("stage-concluded").style.display = "block";
+            } else {
+                document.getElementById("stage-r4").style.display = "block";
             }
         }
     }
 
+    function showWaitingScreen(title, subtitle, badgeText) {
+        document.getElementById("stage-waiting").style.display = "block";
+        document.getElementById("waiting-title").textContent = title;
+        document.getElementById("waiting-subtitle").textContent = subtitle;
+        document.getElementById("waiting-status-badge").textContent = badgeText;
+    }
+
+    // -------------------------------------------------------------------------
+    // Round 1: Fullscreen Lock & Anti-Cheat
+    // -------------------------------------------------------------------------
+    function startRound1WithFullscreen() {
+        const elem = document.documentElement;
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen().catch(() => {});
+        } else if (elem.webkitRequestFullscreen) {
+            elem.webkitRequestFullscreen();
+        }
+
+        document.getElementById("r1-prestart-box").style.display = "none";
+        document.getElementById("r1-quiz-form").style.display = "block";
+
+        activateAntiCheatListeners();
+    }
+
+    function triggerAntiCheatAlert(msg, type) {
+        const user = window.IcarusEngine.getAuthUser();
+        if (user) {
+            window.IcarusEngine.logSecurityEvent(user.teamId, type, msg);
+        }
+
+        const banner = document.getElementById("anti-cheat-banner");
+        const txt = document.getElementById("anti-cheat-text");
+        if (banner && txt) {
+            txt.textContent = `${msg} [Logged to Flight Director]`;
+            banner.style.display = "block";
+            setTimeout(() => { banner.style.display = "none"; }, 4000);
+        }
+    }
+
+    function activateAntiCheatListeners() {
+        if (isAntiCheatActive) return;
+        isAntiCheatActive = true;
+
+        document.addEventListener("visibilitychange", () => {
+            if (document.hidden && isAntiCheatActive) {
+                triggerAntiCheatAlert("Tab switch detected.", "TAB_SWITCH");
+            }
+        });
+
+        window.addEventListener("blur", () => {
+            if (isAntiCheatActive) {
+                triggerAntiCheatAlert("Window unfocused / switched.", "WINDOW_BLUR");
+            }
+        });
+
+        document.addEventListener("fullscreenchange", () => {
+            if (!document.fullscreenElement && isAntiCheatActive) {
+                triggerAntiCheatAlert("Fullscreen exited during exam.", "FULLSCREEN_EXIT");
+            }
+        });
+    }
+
+    function handleRound1Submit(e) {
+        e.preventDefault();
+        isAntiCheatActive = false;
+        if (document.fullscreenElement) {
+            document.exitFullscreen().catch(() => {});
+        }
+
+        const formData = new FormData(e.target);
+        const answers = {};
+        for (const [k, v] of formData.entries()) {
+            answers[k] = v;
+        }
+
+        const res = window.IcarusEngine.submitRound1Quiz(answers);
+        alert(res.message);
+        renderCurrentStage();
+    }
+
+    // -------------------------------------------------------------------------
+    // Round 2: 8-Bit Retro Space Shooter
+    // -------------------------------------------------------------------------
+    function initShooterCanvas() {
+        if (!activeShooterGame) {
+            activeShooterGame = new window.SpaceShooterGame("shooter-canvas", {
+                onScoreUpdate: (score) => {
+                    document.getElementById("r2-score-tag").textContent = `SCORE: ${score}`;
+                },
+                onGameOver: (result) => {
+                    document.getElementById("shooter-crash-overlay").style.display = "flex";
+                }
+            });
+        }
+    }
+
+    function launchShooterGame() {
+        document.getElementById("shooter-start-overlay").style.display = "none";
+        if (activeShooterGame) {
+            activeShooterGame.start();
+        }
+    }
+
+    function commitRound2Shooter() {
+        const score = activeShooterGame ? activeShooterGame.score : 0;
+        window.IcarusEngine.submitRound2ShooterScore(score);
+        if (activeShooterGame) {
+            activeShooterGame.destroy();
+            activeShooterGame = null;
+        }
+        renderCurrentStage();
+    }
+
+    // -------------------------------------------------------------------------
+    // Round 3: Telemetry Analysis & Python IDE
+    // -------------------------------------------------------------------------
+    function initPythonIDE() {
+        if (!pythonRunnerInstance) {
+            pythonRunnerInstance = new window.TelemetryPythonRunner("r3-code-editor", "r3-terminal-output", "py-engine-status");
+        }
+    }
+
+    function executePythonCode() {
+        const code = document.getElementById("r3-code-editor").value;
+        if (pythonRunnerInstance) {
+            pythonRunnerInstance.runCode(code);
+        }
+    }
+
+    function handleScriptUpload(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (evt) => {
+                document.getElementById("r3-code-editor").value = evt.target.result;
+                if (pythonRunnerInstance) {
+                    pythonRunnerInstance.appendOutput(`[UPLOADED] Loaded script: ${file.name}`);
+                }
+            };
+            reader.readAsText(file);
+        }
+    }
+
+    function submitRound3Analysis() {
+        const code = document.getElementById("r3-code-editor").value;
+        const res = window.IcarusEngine.submitRound3Analysis(code);
+        alert(res.message);
+        renderCurrentStage();
+    }
+
+    // -------------------------------------------------------------------------
+    // Round 4: Root Cause Investigation Quiz
+    // -------------------------------------------------------------------------
+    function handleRound4Submit(e) {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const answers = {};
+        for (const [k, v] of formData.entries()) {
+            answers[k] = v;
+        }
+
+        const res = window.IcarusEngine.submitRound4Quiz(answers);
+        alert(res.message);
+        renderCurrentStage();
+    }
+
+    // -------------------------------------------------------------------------
+    // Live Clock & Periodic State Polling
+    // -------------------------------------------------------------------------
+    function updateLiveClock() {
+        const now = new Date();
+        const utcStr = now.toISOString().substring(11, 19) + " UTC";
+        const clock = document.getElementById("live-utc-clock");
+        if (clock) clock.textContent = utcStr;
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
-        checkAuthAndRender();
+        renderCurrentStage();
+        setInterval(updateLiveClock, 1000);
+        updateLiveClock();
+
+        // Check if admin advanced global round remotely every 4s
+        setInterval(() => {
+            const user = window.IcarusEngine.getAuthUser();
+            if (user) {
+                const currentStageEl = document.querySelector("#app-viewport > div[style*='display: block']");
+                if (currentStageEl && currentStageEl.id === "stage-waiting") {
+                    renderCurrentStage();
+                }
+            }
+        }, 4000);
     });
     </script>
 </body>
