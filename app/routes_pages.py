@@ -138,7 +138,7 @@ async def dashboard_page(request: Request):
     credits = cur.fetchone()["credits"]
     
     # Fetch all challenges
-    cur.execute("SELECT * FROM challenges WHERE round_id IN (2, 4) ORDER BY order_num ASC")
+    cur.execute("SELECT * FROM challenges ORDER BY order_num ASC")
     challenges = [dict(c) for c in cur.fetchall()]
     
     # Fetch team solves
@@ -159,18 +159,22 @@ async def dashboard_page(request: Request):
     
     conn.close()
     
-    # Round 4 retains only its live finale. Round 2 owns the telemetry investigation.
+    # Organize challenges by phase (Round 4)
     phases = {
-        "FINALE": {"title": "Phase 4: Live Contingency Finale", "desc": "Real-time state machine anomaly recovery using the flight runbook.", "challenges": []}
+        "PHASE_1": {"title": "Phase 1: Signal Acquisition", "desc": "Decode 30-min raw dump, compute drift, detect gap & tick wrap.", "challenges": []},
+        "PHASE_2": {"title": "Phase 2: Downlink Investigation", "desc": "Analyze 24h beacon & spend credits on 10-min passes to detect faults F1..F4.", "challenges": []},
+        "PHASE_3": {"title": "Phase 3: Fault Isolation", "desc": "Cascade ordering, OBC reboot timestamp, bit recovery, voltage calculation.", "challenges": []},
+        "BONUS": {"title": "Bonus Track: Spoofed Telecommands", "desc": "Verify uplink HMACs using split keys to isolate forged and replayed commands.", "challenges": []},
+        "FINALE": {"title": "Phase 4: Live Contingency Finale", "desc": "Real-time state machine anomaly recovery using flight runbook.", "challenges": []}
     }
-
+    
     for ch in challenges:
         ch["is_solved"] = (ch["id"] in solves)
         ch["points_awarded"] = solves[ch["id"]]["points_awarded"] if ch["is_solved"] else 0
-        if ch["round_id"] == 4 and ch["phase"] in phases:
+        if ch["phase"] in phases:
             phases[ch["phase"]]["challenges"].append(ch)
             
-    round4_score = sum(s["points_awarded"] for s in solves.values() if any(ch["id"] == s["challenge_id"] and ch["round_id"] == 4 for ch in challenges))
+    round4_score = sum(s["points_awarded"] for s in solves.values())
     
     # Establish defaults for each round
     rounds_summary = {}
@@ -234,13 +238,6 @@ async def challenge_detail_page(request: Request, challenge_id: str):
         conn.close()
         raise HTTPException(status_code=404, detail="Challenge not found.")
         
-    if ch["round_id"] == 2 and ch["phase"] in ("PHASE_2", "PHASE_3"):
-        required_phase = "PHASE_1" if ch["phase"] == "PHASE_2" else "PHASE_2"
-        cur.execute("SELECT 1 FROM flags WHERE team_id = ? AND phase = ?", (team["id"], required_phase))
-        if not cur.fetchone():
-            conn.close()
-            return RedirectResponse(url="/round2", status_code=302)
-
     cur.execute("SELECT * FROM submissions WHERE team_id = ? AND challenge_id = ? ORDER BY ts_utc_ms DESC", (team["id"], ch["id"]))
     submissions = [dict(s) for s in cur.fetchall()]
     
@@ -284,16 +281,12 @@ async def packages_page(request: Request):
     cur = conn.cursor()
     cur.execute("SELECT * FROM flags WHERE team_id = ?", (team["id"],))
     flags = {f["phase"]: f["flag"] for f in cur.fetchall()}
-    cur.execute("SELECT status FROM round_status WHERE team_id = ? AND round_id = 1", (team["id"],))
-    r1_row = cur.fetchone()
-    r1_completed = bool(r1_row and r1_row["status"] == "submitted")
     conn.close()
     
     return templates.TemplateResponse("packages.html", {
         "request": request,
         "team": team,
-        "flags": flags,
-        "r1_completed": r1_completed
+        "flags": flags
     })
 
 @pages_router.get("/download/package/{team_id}/{phase_filename}")
@@ -305,25 +298,6 @@ async def download_phase_package(request: Request, team_id: int, phase_filename:
     if team and team["id"] != team_id and not is_admin(request):
         raise HTTPException(status_code=403, detail="Access denied to another team's package.")
         
-    # Evidence packages are staged by Round 2 phase.
-    if phase_filename.endswith("_phase1.zip"):
-        conn = get_db_connection()
-        cur = conn.cursor()
-        cur.execute("SELECT 1 FROM round_status WHERE team_id = ? AND round_id = 1 AND status = 'submitted'", (team_id,))
-        unlocked = cur.fetchone()
-        conn.close()
-        if not unlocked and not is_admin(request):
-            raise HTTPException(status_code=403, detail="Round 2 is sealed until Round 1 is verified.")
-    elif phase_filename.endswith("_phase2.zip") or phase_filename.endswith("_phase3.zip"):
-        conn = get_db_connection()
-        cur = conn.cursor()
-        required_phase = "PHASE_1" if phase_filename.endswith("_phase2.zip") else "PHASE_2"
-        cur.execute("SELECT 1 FROM flags WHERE team_id = ? AND phase = ?", (team_id, required_phase))
-        unlocked = cur.fetchone()
-        conn.close()
-        if not unlocked and not is_admin(request):
-            raise HTTPException(status_code=403, detail="This telemetry package is still sealed.")
-
     pkg_path = os.path.join(TEAMS_DATA_DIR, f"team_{team_id:02d}", "packages", phase_filename)
     if not os.path.exists(pkg_path):
         raise HTTPException(status_code=404, detail="Package file not found.")
