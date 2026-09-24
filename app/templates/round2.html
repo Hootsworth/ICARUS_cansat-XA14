@@ -581,7 +581,7 @@ async function submitChallenge(challengeId) {
 
     try {
 
-        const response = await fetch("/api/submit", {
+        const response = await fetch("/api/round2/submit", {
 
             method: "POST",
 
@@ -602,12 +602,23 @@ async function submitChallenge(challengeId) {
             data.message ||
             "Submission processed.";
 
-        if (data.status === "correct") {
+        if (data.status === "correct" || data.status === "already_solved") {
 
-            result.textContent =
-                `✓ Correct! +${data.points_awarded} points`;
+            if (data.status === "correct") {
+                result.textContent =
+                    `✓ Correct! +${data.points_awarded} points`;
+            } else {
+                result.textContent =
+                    `✓ Already solved. +${data.points_awarded} points`;
+            }
 
             input.disabled = true;
+            loadRound2Status();
+
+        } else if (data.status === "cooldown") {
+
+            result.textContent =
+                data.message || "Cooldown active.";
 
         }
 
@@ -621,8 +632,48 @@ async function submitChallenge(challengeId) {
 
 
 /* ---------------------------------------------------------
+   ROUND 2 STATUS
+--------------------------------------------------------- */
+
+async function loadRound2Status() {
+
+    try {
+
+        const response = await fetch("/api/round2/status");
+
+        if (!response.ok) {
+            return;
+        }
+
+        const data = await response.json();
+
+        Object.entries(data.challenges || {}).forEach(([id, state]) => {
+
+            const input = document.getElementById("answer-" + id);
+            const result = document.getElementById("result-" + id);
+
+            if (state.solved && input) {
+                input.disabled = true;
+
+                if (result && !result.textContent) {
+                    result.textContent =
+                        `✓ Solved. +${state.points} points`;
+                }
+            }
+
+        });
+
+    } catch (error) {
+        console.error("Unable to load Round 2 status.", error);
+    }
+}
+
+
+/* ---------------------------------------------------------
    COMPLETE ROUND
 --------------------------------------------------------- */
+
+
 
 async function completeRound2() {
 
@@ -671,6 +722,7 @@ async function completeRound2() {
 loadCredits();
 loadTelemetry();
 loadSchedule();
+loadRound2Status();
 
 </script>
 
