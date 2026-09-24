@@ -408,7 +408,25 @@ async def admin_page(request: Request):
     # 5. Fetch Recent Submissions
     cur.execute("SELECT * FROM submissions ORDER BY ts_utc_ms DESC LIMIT 30")
     recent_subs = [dict(s) for s in cur.fetchall()]
+
+    # Round 2 anomaly submissions ledger
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS round2_anomaly_submissions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            team_id INTEGER NOT NULL,
+            submitted_timestamp TEXT NOT NULL,
+            submitted_subsystem TEXT NOT NULL,
+            description TEXT NOT NULL,
+            matched_anomaly INTEGER,
+            correct INTEGER NOT NULL,
+            points_awarded INTEGER NOT NULL,
+            ts_utc_ms INTEGER NOT NULL
+        )
+    """)
+    cur.execute("SELECT * FROM round2_anomaly_submissions ORDER BY ts_utc_ms DESC LIMIT 100")
+    round2_anomaly_submissions = [dict(s) for s in cur.fetchall()]
     
+    conn.commit()
     conn.close()
     
     return templates.TemplateResponse("admin.html", {
@@ -418,7 +436,8 @@ async def admin_page(request: Request):
         "app_state": app_state,
         "recent_subs": recent_subs,
         "game_sessions": game_sessions,
-        "recent_events": recent_events
+        "recent_events": recent_events,
+        "round2_anomaly_submissions": round2_anomaly_submissions
     })
 
 @pages_router.post("/admin/login", response_class=HTMLResponse)

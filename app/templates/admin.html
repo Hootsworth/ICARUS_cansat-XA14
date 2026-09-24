@@ -123,7 +123,7 @@
 
     <!-- Round 2 State -->
     <div class="status-card" style="padding: 1.25rem;">
-        <div class="status-label">Round 2: Rapid Quiz</div>
+        <div class="status-label">Round 2: Telemetry Investigation</div>
         <div class="status-value mono" style="font-size: 1rem; margin: 0.4rem 0;">
             {{ 'ACTIVE' if app_state.round2_active == 'true' else 'LOCKED' }}
         </div>
@@ -172,6 +172,37 @@
                 {{ 'Unfreeze' if app_state.scoreboard_frozen == 'true' else 'Freeze' }}
             </button>
         </form>
+    </div>
+</div>
+
+<!-- ROUND 2 STAGE RELEASE CONTROL -->
+<div class="card" style="margin-bottom:2.5rem;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+        <div>
+            <div class="eyebrow">[ROUND 2 / STAGE RELEASE]</div>
+            <h2 style="font-size:1.2rem; margin-top:.2rem;">Telemetry Investigation Stage Control</h2>
+        </div>
+        <span class="badge">FLIGHT DIRECTOR</span>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+        <div class="status-card" style="padding:1rem;">
+            <div class="status-label">Stage 2 · Ground Station Log</div>
+            <div class="status-value mono" style="margin:.4rem 0;">{{ 'RELEASED' if app_state.get('round2_stage2_active','false') == 'true' else 'LOCKED' }}</div>
+            <form action="/admin/action" method="POST">
+                <input type="hidden" name="action" value="toggle_round">
+                <input type="hidden" name="val" value="round2_stage2_active">
+                <button type="submit" class="btn btn-secondary" style="width:100%; font-size:.72rem;">Toggle Stage 2</button>
+            </form>
+        </div>
+        <div class="status-card" style="padding:1rem;">
+            <div class="status-label">Stage 3 · Configuration</div>
+            <div class="status-value mono" style="margin:.4rem 0;">{{ 'RELEASED' if app_state.get('round2_stage3_active','false') == 'true' else 'LOCKED' }}</div>
+            <form action="/admin/action" method="POST">
+                <input type="hidden" name="action" value="toggle_round">
+                <input type="hidden" name="val" value="round2_stage3_active">
+                <button type="submit" class="btn btn-secondary" style="width:100%; font-size:.72rem;">Toggle Stage 3</button>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -304,6 +335,38 @@
                     </td>
                 </tr>
                 {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ROUND 2 ANOMALY SUBMISSIONS LEDGER -->
+<div class="card" style="padding:0; margin-bottom:2.5rem;">
+    <div style="padding:1.25rem 1.5rem; border-bottom:1px solid var(--border-muted);">
+        <div class="eyebrow">[ROUND 2 / ANOMALY REPORTS]</div>
+        <h2 style="font-size:1.2rem; margin-top:.2rem;">Round 2 Submission Ledger</h2>
+    </div>
+    <div style="overflow-x:auto; max-height:420px; overflow-y:auto;">
+        <table class="scoreboard-table">
+            <thead>
+                <tr>
+                    <th>ID</th><th>Team</th><th>Timestamp</th><th>Subsystem</th><th>Description</th><th>Result</th><th>Points</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for sub in round2_anomaly_submissions %}
+                <tr>
+                    <td class="mono">#{{ sub.id }}</td>
+                    <td class="mono">Team {{ sub.team_id }}</td>
+                    <td class="mono">{{ sub.submitted_timestamp }}</td>
+                    <td>{{ sub.submitted_subsystem }}</td>
+                    <td style="max-width:360px;">{{ sub.description }}</td>
+                    <td class="mono">{{ 'CORRECT' if sub.correct == 1 else 'WRONG' }}</td>
+                    <td class="mono">{{ '+' if sub.points_awarded > 0 else '' }}{{ sub.points_awarded }}</td>
+                </tr>
+            {% else %}
+                <tr><td colspan="7" style="text-align:center; padding:2rem; color:var(--text-dim);">No Round 2 anomaly submissions yet.</td></tr>
+            {% endfor %}
             </tbody>
         </table>
     </div>

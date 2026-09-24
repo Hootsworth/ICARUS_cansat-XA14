@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+numpy
+pandas
+pyzipper
+jinja2
+cryptography
+python-multipart

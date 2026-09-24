@@ -1,73 +1,132 @@
 {% extends "base.html" %}
 
-{% block title %}Round 2: Flight Readiness Review | ICARUS{% endblock %}
+{% block title %}Round 2: Telemetry Investigation | ICARUS{% endblock %}
 
 {% block content %}
-<div style="max-width: 960px; margin: 2rem auto; padding: 0;">
-    <!-- Round Header -->
-    <div class="card" style="margin-bottom: 2rem; border-left: 3px solid #000000;">
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem;">
+<div style="max-width: 1250px; margin: 1.5rem auto;">
+    <div class="card" style="margin-bottom: 1.25rem; border-left: 3px solid #000;">
+        <div style="display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap; align-items:flex-end;">
             <div>
-                <div class="eyebrow">[ROUND 02 / ENGINEERING REVIEW]</div>
-                <h1 style="font-size: 1.6rem; margin: 0.3rem 0; color: #000000;">Mission Go / No-Go: Flight Readiness Review</h1>
-                <p style="color: var(--text-muted); font-size: 0.85rem;">
-                    Analyze pre-flight telemetry across 5 engineering stations. Make the correct aerospace operations call for each subsystem.
+                <div class="eyebrow">[ROUND 02 / TELEMETRY FORENSICS]</div>
+                <h1 style="font-size:1.6rem; margin:.3rem 0;">CanSat Anomaly Investigation</h1>
+                <p style="color:var(--text-muted); font-size:.86rem; max-width:760px; margin:0;">
+                    Investigate your assigned flight data, identify anomalies, and report the first affected packet time, subsystem, and evidence.
+                    Python runs locally in this page. Your code is not submitted.
                 </p>
             </div>
-            <div style="text-align: right;">
+            <div style="text-align:right;">
                 <div class="eyebrow">Operating Station</div>
-                <div class="mono" style="font-weight: 700; color: #000000; font-size: 1rem;">Team {{ team.id }}: {{ team.name }}</div>
+                <div class="mono" style="font-weight:700;">Team {{ team.id }}: {{ team.name }}</div>
             </div>
         </div>
     </div>
 
-    {% if not is_active and not is_completed %}
-    <!-- Locked State -->
-    <div class="card" style="text-align: center; padding: 4rem 2rem;">
-        <div class="mono" style="font-size: 2rem; margin-bottom: 1rem;">[LOCKED]</div>
-        <h2 style="color: #000000; margin-bottom: 0.5rem; font-size: 1.3rem;">Round 2 is Currently Locked</h2>
-        <p style="color: var(--text-muted); max-width: 480px; margin: 0 auto 2rem; font-size: 0.85rem;">
-            You must verify your station's Launch Authorisation Code in Round 1 before the Flight Readiness Review unlocks.
-        </p>
+    {% if not is_active %}
+    <div class="card" style="text-align:center; padding:4rem 2rem;">
+        <div class="mono" style="font-size:2rem;">[LOCKED]</div>
+        <h2 style="margin:.8rem 0 .4rem;">Round 2 is currently locked</h2>
+        <p style="color:var(--text-muted);">Complete Round 1 or wait for the Flight Director to release Round 2.</p>
         <a href="/dashboard" class="btn btn-primary">Return to Dashboard</a>
     </div>
-
     {% elif is_completed %}
-    <!-- Completed State -->
-    <div class="card" style="text-align: center; padding: 4rem 2rem;">
-        <div class="mono" style="font-size: 2rem; margin-bottom: 1rem;">[VERIFIED]</div>
-        <h2 style="color: #000000; margin-bottom: 0.5rem; font-size: 1.3rem;">Flight Readiness Review Certified</h2>
-        <p style="color: var(--text-muted); margin-bottom: 2rem; font-size: 0.85rem;">
-            Your engineering decisions have been validated by the Flight Director.
-        </p>
-        <div style="display: inline-block; border: 1px solid var(--border-muted); padding: 1.5rem 3rem; margin-bottom: 2rem;">
-            <div class="eyebrow" style="margin-bottom: 0.5rem;">Readiness Score</div>
-            <div class="mono" style="font-size: 2.8rem; font-weight: 800; color: #000000;">{{ final_score }} <span style="font-size: 1rem; color: var(--text-dim);">/ 500 PTS</span></div>
-        </div>
-        <div>
-            <a href="/dashboard" class="btn btn-primary">Proceed to Round 3 &rarr;</a>
-        </div>
+    <div class="card" style="text-align:center; padding:4rem 2rem;">
+        <div class="mono" style="font-size:2rem;">[COMPLETE]</div>
+        <h2 style="margin:.8rem 0 .4rem;">Round 2 Investigation Complete</h2>
+        <div class="mono" style="font-size:2.5rem; font-weight:800; margin:1rem 0;">{{ final_score }} PTS</div>
+        <a href="/dashboard" class="btn btn-primary">Proceed to Dashboard</a>
     </div>
-
     {% else %}
-    <!-- Active Readiness Review Stations -->
-    <div id="readiness-stations-container">
-        <div class="card" style="text-align: center; padding: 2rem;" id="loading-box">
-            <div class="mono">Loading Pre-Flight Telemetry Dossiers...</div>
-        </div>
-    </div>
 
-    <!-- Submit Section -->
-    <div class="card" style="margin-top: 2rem; text-align: center; padding: 2rem; display: none;" id="submit-card">
-        <div class="eyebrow" style="margin-bottom: 0.5rem;">Certification Sign-Off</div>
-        <h3 style="color: #000000; margin-bottom: 1rem;">Ready to Transmit Flight Decisions?</h3>
-        <p style="color: var(--text-muted); font-size: 0.85rem; max-width: 500px; margin: 0 auto 1.5rem;">
-            Ensure your team has reviewed all 5 subsystem telemetry profiles. Submitting will commit your flight readiness ledger.
-        </p>
-        <button id="btn-submit-review" onclick="submitReadinessReview()" class="btn btn-primary" style="padding: 0.8rem 2.5rem;">
-            Commit Flight Operations Decisions
-        </button>
-        <div id="review-feedback" class="mono" style="font-size: 0.85rem; margin-top: 1rem; display: none;"></div>
+    <div style="display:grid; grid-template-columns:minmax(0,1.2fr) minmax(320px,.8fr); gap:1rem; align-items:start;">
+        <div>
+            <div class="card" style="margin-bottom:1rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                    <div>
+                        <div class="eyebrow">STAGE 1</div>
+                        <h2 style="font-size:1.15rem; margin:.2rem 0;">Mission Brief + Telemetry</h2>
+                    </div>
+                    <button class="btn btn-secondary" onclick="loadStage1()">Reload Dataset</button>
+                </div>
+                <div id="brief" style="white-space:pre-wrap; max-height:250px; overflow:auto; border:1px solid var(--border-muted); padding:1rem; font-size:.82rem; margin-bottom:1rem; background:#fafafa;">Loading mission brief...</div>
+                <div style="display:flex; gap:.5rem; flex-wrap:wrap; align-items:center;">
+                    <span id="dataset-status" class="badge">Loading telemetry...</span>
+                    <button class="btn btn-secondary" onclick="downloadOwnCsv()">Open My Telemetry CSV</button>
+                </div>
+            </div>
+
+            <div class="card" style="margin-bottom:1rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:.75rem;">
+                    <div>
+                        <div class="eyebrow">IN-BROWSER PYTHON WORKSPACE</div>
+                        <h2 style="font-size:1.15rem; margin:.2rem 0;">Telemetry Analysis Terminal</h2>
+                    </div>
+                    <span id="python-status" class="badge">Starting Python...</span>
+                </div>
+                <div style="display:grid; grid-template-columns:1fr auto; gap:.5rem;">
+                    <textarea id="python-input" class="form-control mono" rows="10" spellcheck="false">print(df.head())
+print(df.columns.tolist())
+print(df.describe())</textarea>
+                    <div style="display:flex; flex-direction:column; gap:.4rem;">
+                        <button class="btn btn-primary" onclick="runPython()">Run</button>
+                        <button class="btn btn-secondary" onclick="resetPython()">Reset</button>
+                    </div>
+                </div>
+                <pre id="python-output" class="mono" style="margin:1rem 0 0; min-height:150px; max-height:420px; overflow:auto; background:#111; color:#eee; padding:1rem; white-space:pre-wrap;">Loading Pyodide...</pre>
+                <div style="font-size:.72rem; color:var(--text-dim); margin-top:.5rem;">Available after startup: <code>df</code>, <code>pd</code>, <code>np</code>, <code>csv_text</code>.</div>
+            </div>
+
+            <div class="card">
+                <div class="eyebrow">RELEASED STAGES</div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:.75rem;">
+                    <div style="border:1px solid var(--border-muted); padding:1rem;">
+                        <strong>Stage 2</strong>
+                        {% if stage2_active %}
+                        <p style="font-size:.8rem; color:var(--text-muted);">Ground-station log released.</p>
+                        <button class="btn btn-secondary" onclick="loadLaterStage(2)">Load groundstation.log</button>
+                        {% else %}
+                        <p style="font-size:.8rem; color:var(--text-dim);">Not released by Flight Director.</p>
+                        {% endif %}
+                    </div>
+                    <div style="border:1px solid var(--border-muted); padding:1rem;">
+                        <strong>Stage 3</strong>
+                        {% if stage3_active %}
+                        <p style="font-size:.8rem; color:var(--text-muted);">Configuration released.</p>
+                        <button class="btn btn-secondary" onclick="loadLaterStage(3)">Load config.json</button>
+                        {% else %}
+                        <p style="font-size:.8rem; color:var(--text-dim);">Not released by Flight Director.</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <pre id="stage-output" class="mono" style="display:none; margin-top:1rem; max-height:300px; overflow:auto; white-space:pre-wrap; background:#fafafa; border:1px solid var(--border-muted); padding:1rem;"></pre>
+            </div>
+        </div>
+
+        <div>
+            <div class="card" style="margin-bottom:1rem; position:sticky; top:1rem;">
+                <div class="eyebrow">ANOMALY REPORT</div>
+                <h2 style="font-size:1.15rem; margin:.2rem 0 .5rem;">Submit Finding</h2>
+                <p style="font-size:.78rem; color:var(--text-muted);">Correct finding: <strong>+10</strong>. Wrong finding: <strong>-5</strong>. Timestamp is accepted within ±1 second.</p>
+                <label class="form-label">First affected packet timestamp (UTC)</label>
+                <input id="anomaly-time" class="form-control mono" placeholder="2026-05-06T07:17:12.500Z">
+                <label class="form-label" style="margin-top:.75rem;">Affected parameter / subsystem</label>
+                <input id="anomaly-subsystem" class="form-control" placeholder="e.g. battery, IMU, GPS, telemetry link">
+                <label class="form-label" style="margin-top:.75rem;">Issue / anomaly description</label>
+                <textarea id="anomaly-description" class="form-control" rows="5" placeholder="Explain the evidence that supports your finding."></textarea>
+                <button id="submit-anomaly" class="btn btn-primary" style="width:100%; margin-top:1rem;" onclick="submitAnomaly()">Submit Finding</button>
+                <div id="submit-feedback" class="mono" style="display:none; margin-top:.75rem; font-size:.8rem;"></div>
+            </div>
+
+            <div class="card">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <div class="eyebrow">LIVE LEDGER</div>
+                        <h2 style="font-size:1.05rem; margin:.2rem 0;">Your Reports</h2>
+                    </div>
+                    <div class="mono" style="font-weight:800;"><span id="score">{{ final_score }}</span> PTS</div>
+                </div>
+                <div id="submission-list" style="margin-top:1rem;"></div>
+            </div>
+        </div>
     </div>
     {% endif %}
 </div>
@@ -75,137 +134,119 @@
 
 {% block extra_scripts %}
 {% if is_active and not is_completed %}
+<script src="https://cdn.jsdelivr.net/pyodide/v0.27.2/full/pyodide.js"></script>
 <script>
-let stationsData = [];
-const userCalls = {};
+let telemetryCsv = "";
+let pyodide = null;
 
-async function loadDossiers() {
+async function loadStage1() {
+    const res = await fetch('/api/round2/stage1');
+    if (!res.ok) { document.getElementById('dataset-status').textContent = 'Dataset unavailable'; return; }
+    const data = await res.json();
+    telemetryCsv = data.telemetry_csv;
+    document.getElementById('brief').textContent = data.mission_brief;
+    document.getElementById('dataset-status').textContent = `Team {{ team.id }} dataset loaded · ${telemetryCsv.split('\n').length - 1} rows`;
+    if (pyodide) await bootstrapPython();
+}
+
+function downloadOwnCsv() {
+    const blob = new Blob([telemetryCsv], {type:'text/csv'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'telemetry.csv'; a.click();
+    URL.revokeObjectURL(url);
+}
+
+async function bootstrapPython() {
+    document.getElementById('python-status').textContent = 'Preparing pandas...';
+    pyodide.globals.set('csv_text', telemetryCsv);
+    await pyodide.loadPackage(['pandas', 'numpy']);
+    await pyodide.runPythonAsync(`import pandas as pd\nimport numpy as np\nimport io\ndf = pd.read_csv(io.StringIO(csv_text))`);
+    document.getElementById('python-status').textContent = 'Python READY';
+    document.getElementById('python-output').textContent = 'Python workspace ready. Run your analysis.';
+}
+
+async function startPython() {
     try {
-        const res = await fetch("/api/round2/dossiers");
-        const data = await res.json();
-        stationsData = data.stations || [];
-        renderStations();
+        pyodide = await loadPyodide();
+        await bootstrapPython();
     } catch (e) {
-        document.getElementById("loading-box").innerText = "Failed to load telemetry dossiers.";
+        document.getElementById('python-status').textContent = 'Python failed to load';
+        document.getElementById('python-output').textContent = String(e);
     }
 }
 
-function renderStations() {
-    const container = document.getElementById("readiness-stations-container");
-    container.innerHTML = "";
-    
-    stationsData.forEach((st, idx) => {
-        const card = document.createElement("div");
-        card.className = "card";
-        card.style.marginBottom = "2rem";
-        
-        let telemRows = "";
-        for (const [k, v] of Object.entries(st.telemetry_data)) {
-            telemRows += `<tr><td style="color:#71717a; width:40%;">${k}</td><td class="mono" style="color:var(--text-main); font-weight:600;">${v}</td></tr>`;
-        }
-        
-        let chartRows = st.strip_chart.map(line => `<div>${line}</div>`).join("");
-        
-        let optionsHtml = "";
-        st.options.forEach(opt => {
-            optionsHtml += `
-            <label style="display:flex; align-items:flex-start; gap:0.75rem; padding:0.75rem 1rem; border:1px solid var(--border-muted); margin-bottom:0.5rem; cursor:pointer; background:#ffffff; transition:border-color 0.15s ease;">
-                <input type="radio" name="station_${st.id}" value="${opt.id}" onchange="selectCall(${st.id}, '${opt.id}')" style="margin-top:0.25rem;">
-                <div style="font-size:0.85rem; color:var(--text-main);">
-                    <strong class="mono">[${opt.id}]</strong> ${opt.text}
-                </div>
-            </label>
-            `;
-        });
-        
-        card.innerHTML = `
-        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-muted); padding-bottom:0.75rem; margin-bottom:1.25rem;">
-            <div>
-                <span class="eyebrow">[STATION 0${st.id} / 05]</span>
-                <h3 style="font-size:1.15rem; color:var(--text-main); margin-top:0.2rem;">${st.subsystem}</h3>
-                <div class="mono" style="font-size:0.8rem; color:var(--text-dim);">${st.component}</div>
-            </div>
-            <span class="badge" id="badge_station_${st.id}">PENDING</span>
-        </div>
+async function runPython() {
+    if (!pyodide) return;
+    const code = document.getElementById('python-input').value;
+    const wrapped = `import io, contextlib\n_out = io.StringIO()\nwith contextlib.redirect_stdout(_out):\n    exec(${JSON.stringify(code)}, globals())\nprint(_out.getvalue(), end='')`;
+    try {
+        await pyodide.runPythonAsync(wrapped);
+        document.getElementById('python-output').textContent = pyodide.runPython('_out.getvalue()');
+    } catch (e) {
+        document.getElementById('python-output').textContent = String(e);
+    }
+}
 
-        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:1.5rem; margin-bottom:1.5rem;">
-            <!-- Telemetry Parameters -->
-            <div>
-                <div class="eyebrow" style="margin-bottom:0.5rem;">LIVE SENSOR READINGS</div>
-                <table class="scoreboard-table" style="font-size:0.8rem;">
-                    <tbody>${telemRows}</tbody>
-                </table>
-            </div>
+function resetPython() {
+    document.getElementById('python-input').value = 'print(df.head())\nprint(df.columns.tolist())';
+    document.getElementById('python-output').textContent = '';
+}
 
-            <!-- Strip Chart / Plot -->
-            <div>
-                <div class="eyebrow" style="margin-bottom:0.5rem;">${st.chart_label}</div>
-                <div class="mono" style="background:#fafafa; border:1px solid var(--border-hairline); padding:0.75rem; font-size:0.75rem; line-height:1.6; color:#3f3f46; white-space:pre-wrap;">
-                    ${chartRows}
-                </div>
-            </div>
-        </div>
+async function loadLaterStage(stage) {
+    const res = await fetch(`/api/round2/stage/${stage}`);
+    const box = document.getElementById('stage-output');
+    box.style.display = 'block';
+    if (!res.ok) { box.textContent = (await res.json()).detail || 'Stage unavailable'; return; }
+    const data = await res.json();
+    box.textContent = `--- ${data.filename} ---\n${data.content}`;
+}
 
-        <!-- Engineering Findings -->
-        <div style="border-left:2px solid #000000; padding:0.5rem 1rem; margin-bottom:1.5rem; background:#f4f4f5;">
-            <div class="eyebrow">Operations Note</div>
-            <div style="font-size:0.85rem; color:var(--text-main); margin-top:0.25rem;">${st.findings}</div>
-        </div>
-
-        <!-- Decision Options -->
-        <div>
-            <div class="eyebrow" style="margin-bottom:0.75rem;">SELECT FLIGHT DIRECTOR CALL</div>
-            ${optionsHtml}
-        </div>
-        `;
-        
-        container.appendChild(card);
+async function submitAnomaly() {
+    const payload = {
+        timestamp: document.getElementById('anomaly-time').value.trim(),
+        subsystem: document.getElementById('anomaly-subsystem').value.trim(),
+        description: document.getElementById('anomaly-description').value.trim()
+    };
+    const feedback = document.getElementById('submit-feedback');
+    if (!payload.timestamp || !payload.subsystem || !payload.description) return;
+    const res = await fetch('/api/round2/submit-anomaly', {
+        method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)
     });
-    
-    document.getElementById("submit-card").style.display = "block";
-}
-
-function selectCall(stationId, optId) {
-    userCalls[stationId] = optId;
-    const badge = document.getElementById(`badge_station_${stationId}`);
-    if (badge) {
-        badge.innerText = `SELECTED: [${optId}]`;
-        badge.className = "badge badge-active";
+    const data = await res.json();
+    feedback.style.display = 'block';
+    feedback.textContent = res.ok ? `${data.status.toUpperCase()} · ${data.points_awarded > 0 ? '+' : ''}${data.points_awarded} points` : (data.detail || 'Submission failed');
+    if (res.ok) {
+        document.getElementById('score').textContent = data.score;
+        document.getElementById('anomaly-time').value = '';
+        document.getElementById('anomaly-subsystem').value = '';
+        document.getElementById('anomaly-description').value = '';
+        await loadSubmissions();
+        if (data.completed) window.location.reload();
     }
 }
 
-async function submitReadinessReview() {
-    if (Object.keys(userCalls).length < 5) {
-        alert("Please make a flight call for all 5 stations before committing.");
-        return;
-    }
-    
-    const btn = document.getElementById("btn-submit-review");
-    const fb = document.getElementById("review-feedback");
-    btn.disabled = true;
-    btn.innerText = "Transmitting Ledger...";
-    fb.style.display = "none";
-    
-    try {
-        const res = await fetch("/api/round2/evaluate", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ calls: userCalls })
-        });
-        const data = await res.json();
-        
-        fb.style.display = "block";
-        fb.innerText = `✓ ${data.message}`;
-        setTimeout(() => window.location.reload(), 1400);
-    } catch (e) {
-        fb.style.display = "block";
-        fb.innerText = "Network error submitting decisions.";
-        btn.disabled = false;
-        btn.innerText = "Commit Flight Operations Decisions";
-    }
+async function loadSubmissions() {
+    const res = await fetch('/api/round2/submissions');
+    if (!res.ok) return;
+    const data = await res.json();
+    const box = document.getElementById('submission-list');
+    if (!data.submissions.length) { box.innerHTML = '<div style="color:var(--text-dim); font-size:.8rem;">No reports yet.</div>'; return; }
+    box.innerHTML = data.submissions.map((s,i) => `<div style="border-top:1px solid var(--border-hairline); padding:.65rem 0; font-size:.76rem;">
+        <div class="mono">#${i+1} · ${s.submitted_timestamp} · ${escapeHtml(s.submitted_subsystem)}</div>
+        <div style="color:var(--text-muted); margin-top:.2rem;">${escapeHtml(s.description)}</div>
+        <div class="mono" style="margin-top:.2rem;">${s.correct ? 'CORRECT · +' : 'WRONG · '}${s.points_awarded} PTS</div>
+    </div>`).join('');
 }
+function escapeHtml(s) { return String(s).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
 
-document.addEventListener("DOMContentLoaded", loadDossiers);
+document.addEventListener('visibilitychange', () => {
+    fetch('/api/round2/focus-event', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({kind: document.hidden ? 'ROUND2_TAB_HIDDEN' : 'ROUND2_TAB_VISIBLE'})}).catch(()=>{});
+});
+window.addEventListener('blur', () => fetch('/api/round2/focus-event', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'ROUND2_WINDOW_BLUR'})}).catch(()=>{}));
+
+loadStage1();
+loadSubmissions();
+startPython();
 </script>
 {% endif %}
 {% endblock %}
