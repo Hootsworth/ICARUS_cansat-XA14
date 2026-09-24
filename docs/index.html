@@ -22,15 +22,15 @@
         transition: all 0.15s ease;
     }
     .auth-tab.active {
-        color: #ffffff;
-        border-bottom-color: #ffffff;
+        color: #000000;
+        border-bottom-color: #000000;
     }
     </style>
 </head>
 <body>
     <nav class="navbar">
         <a href="./index.html" class="nav-brand">
-            <div style="width: 24px; height: 24px; border: 2px solid #ffffff; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-weight: 800; font-size: 0.75rem;">
+            <div style="width: 24px; height: 24px; border: 2px solid var(--text-main); display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-weight: 800; font-size: 0.75rem;">
                 I
             </div>
             <div>
@@ -40,9 +40,9 @@
         </a>
         <div style="display: flex; align-items: center; gap: 1rem;">
             <div class="nav-badge mono" id="live-utc-clock">--:--:-- UTC</div>
-            <div class="nav-badge mono" id="mission-countdown" style="border-color: #525252; color: #ffffff;">T-00:00:00</div>
+            <div class="nav-badge mono" id="mission-countdown" style="border-color: #525252; color: var(--text-main);">T-00:00:00</div>
             <ul class="nav-links">
-                <li><a href="./index.html" class="nav-link" style="color:#ffffff;">Dashboard</a></li>
+                <li><a href="./index.html" class="nav-link active">Dashboard</a></li>
                 <li class="authed-only" style="display:none;"><a href="./round1.html" class="nav-link">Round 1</a></li>
                 <li class="authed-only" style="display:none;"><a href="./round2.html" class="nav-link">Round 2</a></li>
                 <li class="authed-only" style="display:none;"><a href="./round3.html" class="nav-link">Round 3</a></li>
@@ -58,7 +58,7 @@
         <div class="card" style="padding: 2.5rem; border: 1px solid var(--border-muted);">
             <div style="margin-bottom: 1.75rem;">
                 <div class="eyebrow">[STATION ENTRY GATE]</div>
-                <h2 style="font-size: 1.5rem; color: #ffffff; margin-top: 0.3rem;">ICARUS Flight Operations</h2>
+                <h2 style="font-size: 1.5rem; color: #000000; margin-top: 0.3rem;">ICARUS Flight Operations</h2>
                 <p style="color: var(--text-muted); font-size: 0.82rem; margin-top: 0.25rem;">Authenticate workstation or register team credentials</p>
             </div>
 
@@ -143,18 +143,18 @@
     <!-- SECTION 2: AUTHENTICATED DASHBOARD (Shown ONLY when logged in) -->
     <div id="dashboard-container" class="container" style="display: none; padding-top: 1.5rem;">
         <!-- Top Station Context Header -->
-        <div class="card" style="margin-bottom: 2rem; border-left: 3px solid #ffffff;">
+        <div class="card" style="margin-bottom: 2rem; border-left: 3px solid #000000;">
             <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem;">
                 <div>
                     <div class="eyebrow">[ACTIVE FLIGHT WORKSTATION]</div>
-                    <h1 id="dash-team-name" style="font-size: 1.8rem; margin: 0.2rem 0; color: #ffffff;">Station Flight Ops</h1>
+                    <h1 id="dash-team-name" style="font-size: 1.8rem; margin: 0.2rem 0; color: #000000;">Station Flight Ops</h1>
                     <p style="color: var(--text-muted); font-size: 0.85rem;">
                         4-Stage CanSat Telemetry & Atmospheric Flight Operations Challenge.
                     </p>
                 </div>
                 <div style="text-align: right;">
                     <div class="eyebrow">Operating Station</div>
-                    <div id="dash-team-id-badge" class="mono" style="font-weight: 700; color: #ffffff; font-size: 1.1rem; margin-top: 0.2rem;">
+                    <div id="dash-team-id-badge" class="mono" style="font-weight: 700; color: #000000; font-size: 1.1rem; margin-top: 0.2rem;">
                         STATION 01
                     </div>
                 </div>
@@ -176,7 +176,7 @@
                     </p>
                 </div>
                 <div>
-                    <div id="score-r1" class="mono" style="font-size: 0.85rem; color: #ffffff; font-weight: 700; margin-bottom: 0.5rem; display: none;">
+                    <div id="score-r1" class="mono" style="font-size: 0.85rem; color: var(--text-main); font-weight: 700; margin-bottom: 0.5rem; display: none;">
                         +100 PTS AWARDED
                     </div>
                     <a href="./round1.html" class="btn btn-primary" style="width: 100%; font-size: 0.75rem;">
@@ -198,7 +198,7 @@
                     </p>
                 </div>
                 <div>
-                    <div id="score-r2" class="mono" style="font-size: 0.85rem; color: #ffffff; font-weight: 700; margin-bottom: 0.5rem; display: none;">
+                    <div id="score-r2" class="mono" style="font-size: 0.85rem; color: var(--text-main); font-weight: 700; margin-bottom: 0.5rem; display: none;">
                         +0 PTS AWARDED
                     </div>
                     <a href="./round2.html" id="btn-link-r2" class="btn btn-secondary" style="width: 100%; font-size: 0.75rem;">
@@ -220,7 +220,7 @@
                     </p>
                 </div>
                 <div>
-                    <div id="score-r3" class="mono" style="font-size: 0.8rem; color: #ffffff; font-weight: 600; margin-bottom: 0.4rem; display: none;">
+                    <div id="score-r3" class="mono" style="font-size: 0.8rem; color: var(--text-main); font-weight: 600; margin-bottom: 0.4rem; display: none;">
                         TELEMETRY SEALED (SECRET)
                     </div>
                     <a href="./round3.html" id="btn-link-r3" class="btn btn-secondary" style="width: 100%; font-size: 0.75rem;">
@@ -242,7 +242,7 @@
                     </p>
                 </div>
                 <div>
-                    <div id="score-r4" class="mono" style="font-size: 0.85rem; color: #ffffff; font-weight: 700; margin-bottom: 0.5rem; display: none;">
+                    <div id="score-r4" class="mono" style="font-size: 0.85rem; color: var(--text-main); font-weight: 700; margin-bottom: 0.5rem; display: none;">
                         +0 PTS
                     </div>
                     <a href="./round4.html" id="btn-link-r4" class="btn btn-secondary" style="width: 100%; font-size: 0.75rem;">
@@ -256,7 +256,7 @@
         <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
             <a href="./scoreboard.html" class="btn btn-secondary" style="flex: 1; text-align: center; padding: 1rem;">
                 <div class="eyebrow">Projector View</div>
-                <div style="font-weight: 700; font-size: 1rem; color: #ffffff;">Public Scoreboard &rarr;</div>
+                <div style="font-weight: 700; font-size: 1rem; color: var(--text-main);">Public Scoreboard &rarr;</div>
             </a>
         </div>
     </div>

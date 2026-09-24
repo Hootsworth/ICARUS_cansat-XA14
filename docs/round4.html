@@ -12,7 +12,7 @@
 <body>
     <nav class="navbar">
         <a href="./index.html" class="nav-brand">
-            <div style="width: 24px; height: 24px; border: 2px solid #ffffff; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-weight: 800; font-size: 0.75rem;">
+            <div style="width: 24px; height: 24px; border: 2px solid var(--text-main); display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-weight: 800; font-size: 0.75rem;">
                 I
             </div>
             <div>
@@ -22,13 +22,13 @@
         </a>
         <div style="display: flex; align-items: center; gap: 1rem;">
             <div class="nav-badge mono" id="live-utc-clock">--:--:-- UTC</div>
-            <div class="nav-badge mono" id="mission-countdown" style="border-color: #525252; color: #ffffff;">T-00:00:00</div>
+            <div class="nav-badge mono" id="mission-countdown" style="border-color: #525252; color: var(--text-main);">T-00:00:00</div>
             <ul class="nav-links">
                 <li><a href="./index.html" class="nav-link">Dashboard</a></li>
                 <li><a href="./round1.html" class="nav-link">Round 1</a></li>
                 <li><a href="./round2.html" class="nav-link">Round 2</a></li>
                 <li><a href="./round3.html" class="nav-link">Round 3</a></li>
-                <li><a href="./round4.html" class="nav-link" style="color:#ffffff;">Round 4</a></li>
+                <li><a href="./round4.html" class="nav-link active">Round 4</a></li>
                 <li><a href="./scoreboard.html" class="nav-link">Scoreboard</a></li>
                 <li><a href="javascript:void(0)" onclick="window.IcarusEngine.logout()" class="nav-link" style="border-bottom: 1px solid #737373;">Logout</a></li>
             </ul>
@@ -36,18 +36,18 @@
     </nav>
 
     <div class="container" style="max-width: 900px; padding-top: 2rem;">
-        <div class="card" style="border-left: 3px solid #ffffff; margin-bottom: 2rem;">
+        <div class="card" style="border-left: 3px solid #000000; margin-bottom: 2rem;">
             <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem;">
                 <div>
                     <div class="eyebrow">[ROUND 04 / DATA FORENSICS & RECOVERY]</div>
-                    <h1 style="font-size: 1.6rem; color: #ffffff; margin: 0.3rem 0;">Telemetry Forensics Challenge Console</h1>
+                    <h1 style="font-size: 1.6rem; color: #000000; margin: 0.3rem 0;">Telemetry Forensics Challenge Console</h1>
                     <p style="color: var(--text-muted); font-size: 0.85rem;">
                         Decode binary frame archives, calculate clock drift, isolate onboard cascading anomalies, and unlock phase flags.
                     </p>
                 </div>
                 <div style="text-align: right;">
                     <div class="eyebrow">Round 4 Score</div>
-                    <div id="r4-score-display" class="mono" style="font-size: 1.4rem; font-weight: 700; color: #ffffff;">0 PTS</div>
+                    <div id="r4-score-display" class="mono" style="font-size: 1.4rem; font-weight: 700; color: #000000;">0 PTS</div>
                 </div>
             </div>
         </div>
@@ -62,7 +62,7 @@
                     <span class="eyebrow">[CHALLENGE C1.1 / PHASE 1]</span>
                     <span class="badge badge-active">100 PTS</span>
                 </div>
-                <h3 style="color:#ffffff; font-size:1.1rem; margin-bottom:0.4rem;">Clock Drift Rate & Reference Epoch</h3>
+                <h3 style="color:#000000; font-size:1.1rem; margin-bottom:0.4rem;">Clock Drift Rate & Reference Epoch</h3>
                 <p style="color:var(--text-muted); font-size:0.82rem; line-height:1.5; margin-bottom:1rem;">
                     Analyze the 30-minute sample dump. Calculate the linear oscillator clock drift rate in parts-per-million (ppm).
                 </p>
@@ -78,7 +78,7 @@
                     <span class="eyebrow">[CHALLENGE C2.1 / PHASE 2]</span>
                     <span class="badge badge-active">200 PTS</span>
                 </div>
-                <h3 style="color:#ffffff; font-size:1.1rem; margin-bottom:0.4rem;">EPS-07 Anomaly Onset Timestamp</h3>
+                <h3 style="color:#000000; font-size:1.1rem; margin-bottom:0.4rem;">EPS-07 Anomaly Onset Timestamp</h3>
                 <p style="color:var(--text-muted); font-size:0.82rem; line-height:1.5; margin-bottom:1rem;">
                     Inspect the 24-hour beacon telemetry. Identify the exact UTC onset timestamp of the Electrical Power System shunt regulator anomaly.
                 </p>
@@ -94,7 +94,7 @@
                     <span class="eyebrow">[CHALLENGE C3.3 / PHASE 3]</span>
                     <span class="badge badge-active">250 PTS</span>
                 </div>
-                <h3 style="color:#ffffff; font-size:1.1rem; margin-bottom:0.4rem;">Single Event Upset: Corrupted Frame Bit-Flip Recovery</h3>
+                <h3 style="color:#000000; font-size:1.1rem; margin-bottom:0.4rem;">Single Event Upset: Corrupted Frame Bit-Flip Recovery</h3>
                 <p style="color:var(--text-muted); font-size:0.82rem; line-height:1.5; margin-bottom:1rem;">
                     Frame #41209 failed CRC-16 checksum due to a cosmic ray single-event upset. Identify the flipped bit index and recovered battery cell voltage.
                 </p>
@@ -107,7 +107,7 @@
 
         <div style="margin-top: 2rem; display: flex; justify-content: space-between; align-items: center;">
             <a href="./index.html" class="mono" style="font-size: 0.8rem; color: var(--text-muted);">&larr; Return to Dashboard</a>
-            <a href="./scoreboard.html" class="mono" style="font-size: 0.8rem; color: #ffffff;">View Official Scoreboard &rarr;</a>
+            <a href="./scoreboard.html" class="mono" style="font-size: 0.8rem; color: #000000;">View Official Scoreboard &rarr;</a>
         </div>
     </div>
 

@@ -1,28 +1,29 @@
 /* ==========================================================================
    ICARUS FLIGHT OPERATIONS DESIGN SYSTEM
-   Theme: Minimalist Flat Black & White Editorial
+   Theme: Minimalist Flat White Background & Black Text / Components
+   Editorial High-Contrast Swiss Typography
    ========================================================================== */
 
 :root {
-  --bg-primary: #000000;
-  --bg-secondary: #0a0a0a;
-  --bg-card: #0d0d0d;
-  --bg-card-hover: #141414;
-  --bg-subtle: #171717;
+  --bg-primary: #ffffff;
+  --bg-secondary: #fbfbfb;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f4f4f5;
+  --bg-subtle: #f4f4f5;
   
-  --border-hairline: #1f1f1f;
-  --border-muted: #2e2e2e;
-  --border-strong: #525252;
-  --border-active: #ffffff;
+  --border-hairline: #e4e4e7;
+  --border-muted: #d4d4d8;
+  --border-strong: #71717a;
+  --border-active: #000000;
   
-  --text-main: #ffffff;
-  --text-muted: #a3a3a3;
-  --text-dim: #737373;
-  --text-inverse: #000000;
+  --text-main: #09090b;
+  --text-muted: #52525b;
+  --text-dim: #71717a;
+  --text-inverse: #ffffff;
   
-  --accent-white: #ffffff;
-  --accent-gray: #d4d4d4;
-  --accent-subtle: #404040;
+  --accent-white: #000000;
+  --accent-gray: #3f3f46;
+  --accent-subtle: #f4f4f5;
   
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', 'SF Mono', 'Menlo', 'Courier New', monospace;
@@ -52,7 +53,7 @@ body {
 h1, h2, h3, h4, .font-heading {
   font-weight: 700;
   letter-spacing: -0.03em;
-  color: #ffffff;
+  color: #000000;
 }
 
 .mono {
@@ -65,6 +66,7 @@ h1, h2, h3, h4, .font-heading {
   text-transform: uppercase;
   color: var(--text-dim);
   font-family: var(--font-mono);
+  font-weight: 600;
 }
 
 /* Layout Container */
@@ -80,8 +82,8 @@ h1, h2, h3, h4, .font-heading {
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  background: var(--bg-primary);
-  border-bottom: 1px solid var(--border-muted);
+  background: #ffffff;
+  border-bottom: 1px solid var(--border-hairline);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -92,7 +94,7 @@ h1, h2, h3, h4, .font-heading {
   align-items: center;
   gap: 1rem;
   text-decoration: none;
-  color: #ffffff;
+  color: #000000;
 }
 
 .brand-title {
@@ -100,7 +102,7 @@ h1, h2, h3, h4, .font-heading {
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #ffffff;
+  color: #000000;
 }
 
 .brand-subtitle {
@@ -127,10 +129,11 @@ h1, h2, h3, h4, .font-heading {
   text-transform: uppercase;
   transition: color 0.15s ease;
   padding: 0.35rem 0;
+  font-weight: 600;
 }
 
 .nav-link:hover {
-  color: #ffffff;
+  color: #000000;
 }
 
 .nav-badge {
@@ -138,9 +141,10 @@ h1, h2, h3, h4, .font-heading {
   font-size: 0.75rem;
   padding: 0.25rem 0.6rem;
   border: 1px solid var(--border-muted);
-  background: transparent;
-  color: var(--text-main);
+  background: var(--bg-subtle);
+  color: #000000;
   letter-spacing: 0.05em;
+  font-weight: 600;
 }
 
 /* Cards & Surfaces */
@@ -149,6 +153,7 @@ h1, h2, h3, h4, .font-heading {
   border: 1px solid var(--border-hairline);
   padding: 1.5rem;
   margin-bottom: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .card:hover, .status-card:hover {
@@ -168,13 +173,14 @@ h1, h2, h3, h4, .font-heading {
   letter-spacing: 0.12em;
   color: var(--text-dim);
   margin-bottom: 0.4rem;
+  font-weight: 600;
 }
 
 .status-value {
   font-size: 1.5rem;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: -0.02em;
-  color: #ffffff;
+  color: #000000;
 }
 
 /* Top Dashboard Metric Grid */
@@ -195,21 +201,23 @@ h1, h2, h3, h4, .font-heading {
   text-transform: uppercase;
   padding: 0.2rem 0.5rem;
   border: 1px solid var(--border-muted);
-  background: transparent;
+  background: var(--bg-subtle);
   color: var(--text-muted);
+  font-weight: 600;
 }
 
 .badge-active {
-  border-color: #ffffff;
-  color: #000000;
-  background: #ffffff;
+  border-color: #000000;
+  color: #ffffff;
+  background: #000000;
   font-weight: 700;
 }
 
 .badge-success {
-  border-color: #ffffff;
-  color: #ffffff;
-  font-weight: 600;
+  border-color: #000000;
+  color: #000000;
+  background: #f4f4f5;
+  font-weight: 700;
 }
 
 /* Buttons */
@@ -221,7 +229,7 @@ h1, h2, h3, h4, .font-heading {
   font-size: 0.8rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  font-weight: 600;
+  font-weight: 700;
   padding: 0.65rem 1.25rem;
   cursor: pointer;
   text-decoration: none;
@@ -231,42 +239,44 @@ h1, h2, h3, h4, .font-heading {
 }
 
 .btn-primary {
-  background: #ffffff;
-  color: #000000;
-  border-color: #ffffff;
+  background: #000000;
+  color: #ffffff;
+  border-color: #000000;
 }
 
 .btn-primary:hover {
-  background: #e5e5e5;
-  border-color: #e5e5e5;
+  background: #27272a;
+  border-color: #27272a;
+  color: #ffffff;
 }
 
 .btn-secondary {
-  background: transparent;
-  color: #ffffff;
+  background: #ffffff;
+  color: #000000;
   border-color: var(--border-muted);
 }
 
 .btn-secondary:hover {
-  border-color: #ffffff;
+  border-color: #000000;
   background: var(--bg-subtle);
+  color: #000000;
 }
 
 .btn-danger {
-  background: transparent;
-  color: #ffffff;
-  border-color: #737373;
+  background: #ffffff;
+  color: #000000;
+  border-color: #000000;
 }
 
 .btn-danger:hover {
-  background: #ffffff;
-  color: #000000;
+  background: #000000;
+  color: #ffffff;
 }
 
 .btn-success {
-  background: #ffffff;
-  color: #000000;
-  border-color: #ffffff;
+  background: #000000;
+  color: #ffffff;
+  border-color: #000000;
 }
 
 /* Minimalist Tables */
@@ -284,8 +294,9 @@ h1, h2, h3, h4, .font-heading {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--text-dim);
-  border-bottom: 2px solid var(--border-muted);
-  background: transparent;
+  border-bottom: 2px solid var(--border-hairline);
+  background: #fbfbfb;
+  font-weight: 700;
 }
 
 .scoreboard-table td {
@@ -309,13 +320,14 @@ h1, h2, h3, h4, .font-heading {
   line-height: 26px;
   text-align: center;
   border: 1px solid var(--border-muted);
-  color: #ffffff;
+  color: #000000;
+  background: #f4f4f5;
 }
 
 .rank-1 {
-  background: #ffffff;
-  color: #000000;
-  border-color: #ffffff;
+  background: #000000;
+  color: #ffffff;
+  border-color: #000000;
 }
 
 /* Forms and Inputs */
@@ -331,14 +343,15 @@ h1, h2, h3, h4, .font-heading {
   text-transform: uppercase;
   color: var(--text-muted);
   margin-bottom: 0.4rem;
+  font-weight: 600;
 }
 
 .form-control {
   width: 100%;
   padding: 0.75rem 0.9rem;
-  background: #000000;
+  background: #ffffff;
   border: 1px solid var(--border-muted);
-  color: #ffffff;
+  color: #000000;
   font-family: var(--font-mono);
   font-size: 0.9rem;
   border-radius: var(--radius-xs);
@@ -347,26 +360,27 @@ h1, h2, h3, h4, .font-heading {
 }
 
 .form-control:focus {
-  border-color: #ffffff;
+  border-color: #000000;
 }
 
 /* Alerts and Notices */
 .alert {
   padding: 1rem 1.25rem;
-  border: 1px solid var(--border-muted);
-  background: var(--bg-card);
+  border: 1px solid var(--border-hairline);
+  background: #fbfbfb;
   display: flex;
   align-items: flex-start;
   gap: 1rem;
   margin-bottom: 1.5rem;
+  color: var(--text-main);
 }
 
 .alert-warning {
-  border-left: 3px solid #ffffff;
+  border-left: 3px solid #000000;
 }
 
 .alert-info {
-  border-left: 3px solid #a3a3a3;
+  border-left: 3px solid #71717a;
 }
 
 /* Challenge Grid (Round 4) */
@@ -378,7 +392,7 @@ h1, h2, h3, h4, .font-heading {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  border-bottom: 1px solid var(--border-muted);
+  border-bottom: 1px solid var(--border-hairline);
   padding-bottom: 0.75rem;
   margin-bottom: 1.25rem;
 }
@@ -386,7 +400,7 @@ h1, h2, h3, h4, .font-heading {
 .phase-title {
   font-size: 1.25rem;
   letter-spacing: -0.02em;
-  color: #ffffff;
+  color: #000000;
 }
 
 .challenge-grid {
@@ -403,15 +417,16 @@ h1, h2, h3, h4, .font-heading {
   flex-direction: column;
   justify-content: space-between;
   transition: all 0.15s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
 }
 
 .challenge-card:hover {
-  border-color: #ffffff;
+  border-color: #000000;
   background: var(--bg-card-hover);
 }
 
 .challenge-card.solved {
-  border-left: 3px solid #ffffff;
+  border-left: 3px solid #000000;
 }
 
 .card-top {
@@ -432,14 +447,14 @@ h1, h2, h3, h4, .font-heading {
   font-family: var(--font-mono);
   font-size: 0.75rem;
   font-weight: 700;
-  color: #ffffff;
+  color: #000000;
 }
 
 .challenge-title {
   font-size: 1rem;
   font-weight: 600;
   margin-bottom: 0.4rem;
-  color: #ffffff;
+  color: #000000;
 }
 
 .challenge-desc {
@@ -451,26 +466,90 @@ h1, h2, h3, h4, .font-heading {
 
 /* Interactive Mini-Game Controls */
 .game-btn {
-  background: #000000;
+  background: #ffffff;
   border: 1px solid var(--border-muted);
-  color: #ffffff;
+  color: #000000;
   padding: 0.8rem 1.2rem;
   border-radius: var(--radius-xs);
   font-family: var(--font-mono);
   font-size: 0.82rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .game-btn:hover {
-  border-color: #ffffff;
+  border-color: #000000;
+  background: #f4f4f5;
 }
 
 .btn-active {
-  background: #ffffff !important;
-  color: #000000 !important;
-  border-color: #ffffff !important;
+  background: #000000 !important;
+  color: #ffffff !important;
+  border-color: #000000 !important;
   font-weight: 700;
+}
+
+/* HUD Components */
+.game-hud-box {
+  background: #fafafa;
+  border: 1px solid var(--border-hairline);
+  padding: 0.75rem 1rem;
+  text-align: center;
+  flex: 1;
+}
+
+.game-hud-val {
+  font-family: var(--font-mono);
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #000000;
+  margin-top: 0.25rem;
+}
+
+/* Station Dossier (Round 2) */
+.station-dossier {
+  background: #ffffff;
+  border: 1px solid var(--border-hairline);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+}
+
+.radio-pill {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.radio-pill label {
+  flex: 1;
+  text-align: center;
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--border-muted);
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  background: #ffffff;
+  color: #000000;
+}
+
+.radio-pill label:hover {
+  border-color: #000000;
+}
+
+.radio-pill input[type="radio"] {
+  display: none;
+}
+
+.radio-pill input[type="radio"]:checked + span {
+  display: block;
+  background: #000000;
+  color: #ffffff;
+  margin: -0.6rem -1rem;
+  padding: 0.6rem 1rem;
 }

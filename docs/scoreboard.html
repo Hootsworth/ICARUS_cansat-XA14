@@ -12,7 +12,7 @@
 <body>
     <nav class="navbar">
         <a href="./index.html" class="nav-brand">
-            <div style="width: 24px; height: 24px; border: 2px solid #ffffff; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-weight: 800; font-size: 0.75rem;">
+            <div style="width: 24px; height: 24px; border: 2px solid var(--text-main); display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-weight: 800; font-size: 0.75rem;">
                 I
             </div>
             <div>
@@ -22,14 +22,14 @@
         </a>
         <div style="display: flex; align-items: center; gap: 1rem;">
             <div class="nav-badge mono" id="live-utc-clock">--:--:-- UTC</div>
-            <div class="nav-badge mono" id="mission-countdown" style="border-color: #525252; color: #ffffff;">T-00:00:00</div>
+            <div class="nav-badge mono" id="mission-countdown" style="border-color: #525252; color: var(--text-main);">T-00:00:00</div>
             <ul class="nav-links">
                 <li><a href="./index.html" class="nav-link">Dashboard</a></li>
                 <li><a href="./round1.html" class="nav-link">Round 1</a></li>
                 <li><a href="./round2.html" class="nav-link">Round 2</a></li>
                 <li><a href="./round3.html" class="nav-link">Round 3</a></li>
                 <li><a href="./round4.html" class="nav-link">Round 4</a></li>
-                <li><a href="./scoreboard.html" class="nav-link" style="color:#ffffff;">Scoreboard</a></li>
+                <li><a href="./scoreboard.html" class="nav-link active">Scoreboard</a></li>
             </ul>
         </div>
     </nav>
@@ -38,7 +38,7 @@
         <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; border-bottom: 1px solid var(--border-muted); padding-bottom: 1rem;">
             <div>
                 <div class="eyebrow">[PUBLIC PROJECTOR SCOREBOARD]</div>
-                <h1 style="font-size: 1.8rem; margin: 0.2rem 0; color: #ffffff;">Official Flight Standings</h1>
+                <h1 style="font-size: 1.8rem; margin: 0.2rem 0; color: #000000;">Official Flight Standings</h1>
                 <p style="color: var(--text-muted); font-size: 0.85rem;">
                     Scores aggregate validated milestones from Round 1, Round 2, and Round 4. Round 3 flight scores remain cryptographically sealed.
                 </p>
@@ -54,7 +54,7 @@
                     <tr>
                         <th style="width: 60px; text-align: center;">Rank</th>
                         <th>Callsign</th>
-                        <th style="color: #ffffff;">Total Score</th>
+                        <th style="color: var(--text-main);">Total Score</th>
                         <th>R1: Briefing</th>
                         <th>R2: Readiness</th>
                         <th style="border-left: 1px solid var(--border-muted); border-right: 1px solid var(--border-muted); text-align: center;">R3: Drop Sim (Secret)</th>
@@ -84,25 +84,25 @@
             tr.innerHTML = `
                 <td style="text-align: center; font-weight: 700;" class="mono">${index + 1}</td>
                 <td>
-                    <div style="font-weight: 700; color: #ffffff;">${item.team.name}</div>
+                    <div style="font-weight: 700; color: var(--text-main);">${item.team.name}</div>
                     <div class="mono" style="font-size: 0.72rem; color: var(--text-dim);">STATION ${item.team.id}</div>
                 </td>
-                <td class="mono" style="font-size: 1.2rem; font-weight: 800; color: #ffffff;">
+                <td class="mono" style="font-size: 1.2rem; font-weight: 800; color: var(--text-main);">
                     ${item.public_total} PTS
                 </td>
                 <td class="mono">
-                    ${item.r1 && item.r1.status === 'submitted' ? '<span style="color:#ffffff;">PASS (+100)</span>' : '<span style="color:var(--text-dim);">PENDING</span>'}
+                    ${item.r1 && item.r1.status === 'submitted' ? '<span style="color:var(--text-main); font-weight:600;">PASS (+100)</span>' : '<span style="color:var(--text-dim);">PENDING</span>'}
                 </td>
                 <td class="mono">
-                    ${item.r2 && item.r2.status === 'submitted' ? `<span style="color:#ffffff;">+${item.r2.score}</span>` : '<span style="color:var(--text-dim);">--</span>'}
+                    ${item.r2 && item.r2.status === 'submitted' ? `<span style="color:var(--text-main); font-weight:600;">+${item.r2.score}</span>` : '<span style="color:var(--text-dim);">--</span>'}
                 </td>
-                <td class="mono" style="border-left: 1px solid var(--border-hairline); border-right: 1px solid var(--border-hairline); text-align: center; background: #080808;">
+                <td class="mono" style="border-left: 1px solid var(--border-hairline); border-right: 1px solid var(--border-hairline); text-align: center; background: #fafafa;">
                     ${item.r3 && item.r3.status === 'submitted' ? '<span class="badge badge-active mono" style="font-size:0.68rem;">SEALED [HMAC]</span>' : '<span style="color:var(--text-dim);">STANDBY</span>'}
                 </td>
                 <td class="mono">
-                    ${item.r4_pts > 0 ? `<span style="color:#ffffff; font-weight:600;">+${item.r4_pts}</span> <span style="font-size:0.72rem; color:var(--text-dim);">(${item.r4_solves} solves)</span>` : '<span style="color:var(--text-dim);">0</span>'}
+                    ${item.r4_pts > 0 ? `<span style="color:var(--text-main); font-weight:600;">+${item.r4_pts}</span> <span style="font-size:0.72rem; color:var(--text-dim);">(${item.r4_solves} solves)</span>` : '<span style="color:var(--text-dim);">0</span>'}
                 </td>
-                <td class="mono" style="text-align: right; font-weight: 700; color: #ffffff;">
+                <td class="mono" style="text-align: right; font-weight: 700; color: var(--text-main);">
                     ${item.team.credits}
                 </td>
             `;

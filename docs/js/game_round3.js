@@ -343,11 +343,11 @@ class CanSatDropGame {
         const h = this.canvas.height;
 
         ctx.clearRect(0, 0, w, h);
-        ctx.fillStyle = "#000000";
+        ctx.fillStyle = "#ffffff";
         ctx.fillRect(0, 0, w, h);
 
-        // 1. Grid & Atmospheric Layer lines
-        ctx.strokeStyle = "#141414";
+        // 1. Grid & Atmospheric Layer lines (Clean subtle technical grid)
+        ctx.strokeStyle = "#f0f0f2";
         ctx.lineWidth = 1;
         for (let y = 0; y < h; y += 40) {
             ctx.beginPath();
@@ -357,7 +357,7 @@ class CanSatDropGame {
         }
 
         // 2. Wind Streamer particles
-        ctx.strokeStyle = "#222222";
+        ctx.strokeStyle = "#d4d4d8";
         ctx.lineWidth = 1;
         for (let p of this.particles) {
             p.x += (this.windSpeed * 12 + (p.speed * 10)) * 0.05;
@@ -372,15 +372,15 @@ class CanSatDropGame {
 
         // 3. Left Altitude Tape (Aviation Style Monochrome Barometer)
         const tapeW = 70;
-        ctx.fillStyle = "#080808";
+        ctx.fillStyle = "#f8f8fa";
         ctx.fillRect(0, 0, tapeW, h);
-        ctx.strokeStyle = "#262626";
+        ctx.strokeStyle = "#e4e4e7";
         ctx.beginPath();
         ctx.moveTo(tapeW, 0); ctx.lineTo(tapeW, h);
         ctx.stroke();
 
         ctx.font = "9px 'JetBrains Mono', monospace";
-        ctx.fillStyle = "#737373";
+        ctx.fillStyle = "#71717a";
         // Altitude ticks: 1000m mapped to canvas height
         for (let a = 1000; a >= 0; a -= 100) {
             const tickY = 25 + ((1000 - a) / 1000) * (h - 50);
@@ -392,7 +392,7 @@ class CanSatDropGame {
 
         // Altitude Indicator Bug on Tape
         const currentTapeY = 25 + ((1000 - Math.max(0, this.altitude)) / 1000) * (h - 50);
-        ctx.fillStyle = "#ffffff";
+        ctx.fillStyle = "#000000";
         ctx.beginPath();
         ctx.moveTo(tapeW - 16, currentTapeY - 5);
         ctx.lineTo(tapeW - 2, currentTapeY);
@@ -408,7 +408,7 @@ class CanSatDropGame {
             ctx.globalAlpha = groundAlpha;
 
             // Ground Baseline
-            ctx.strokeStyle = "#525252";
+            ctx.strokeStyle = "#000000";
             ctx.lineWidth = 2;
             ctx.beginPath();
             ctx.moveTo(tapeW, groundY); ctx.lineTo(w, groundY);
@@ -419,17 +419,17 @@ class CanSatDropGame {
             // Target rings: 25m, 75m, 150m
             const mToPx = 1.6; // 1 meter = 1.6 px
 
-            ctx.strokeStyle = "#ffffff";
-            ctx.lineWidth = 1;
+            ctx.strokeStyle = "#000000";
+            ctx.lineWidth = 1.5;
             ctx.beginPath();
             ctx.moveTo(targetScreenX, groundY - 10); ctx.lineTo(targetScreenX, groundY + 10);
             ctx.stroke();
             ctx.font = "10px 'JetBrains Mono', monospace";
-            ctx.fillStyle = "#ffffff";
+            ctx.fillStyle = "#000000";
             ctx.fillText("◉ 0m", targetScreenX - 12, groundY + 22);
 
             // Ring boundaries
-            ctx.strokeStyle = "#333333";
+            ctx.strokeStyle = "#71717a";
             ctx.strokeRect(targetScreenX - 25 * mToPx, groundY - 4, 50 * mToPx, 8);
             ctx.strokeRect(targetScreenX - 75 * mToPx, groundY - 2, 150 * mToPx, 4);
 
@@ -439,12 +439,10 @@ class CanSatDropGame {
         // 5. Draw CanSat Vehicle
         const centerX = tapeW + (w - tapeW) / 2;
         const cansatScreenX = Math.max(tapeW + 20, Math.min(w - 20, centerX + (this.xOffset * 1.6)));
-        // Vertical position on screen: descends smoothly, stays in middle 40% until final touchdown
         let cansatScreenY;
         if (this.altitude > 150) {
             cansatScreenY = 130 + Math.sin(this.totalFlightTime * 2) * 4;
         } else {
-            // Smoothly approach ground
             const progress = (150 - this.altitude) / 150.0;
             cansatScreenY = 130 + progress * (groundY - 145);
         }
@@ -455,7 +453,7 @@ class CanSatDropGame {
             const canopyY = cansatScreenY - 48;
 
             // Suspension Lines
-            ctx.strokeStyle = "#525252";
+            ctx.strokeStyle = "#71717a";
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(cansatScreenX, cansatScreenY - 10); ctx.lineTo(cansatScreenX - chuteRadius, canopyY + 6);
@@ -463,36 +461,34 @@ class CanSatDropGame {
             ctx.moveTo(cansatScreenX, cansatScreenY - 10); ctx.lineTo(cansatScreenX, canopyY);
             ctx.stroke();
 
-            // Parachute Canopy (Monochrome Half-Dome with Vent)
-            ctx.fillStyle = "#ffffff";
+            // Parachute Canopy (Monochrome Black Dome with White Vent)
+            ctx.fillStyle = "#000000";
             ctx.beginPath();
             ctx.arc(cansatScreenX, canopyY, chuteRadius, Math.PI, 0, false);
             ctx.closePath();
             ctx.fill();
 
-            // Canopy Gores (stripes)
-            ctx.strokeStyle = "#000000";
+            // Canopy Gores (White technical stripes)
+            ctx.strokeStyle = "#ffffff";
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.arc(cansatScreenX, canopyY, chuteRadius * 0.5, Math.PI, 0, false);
             ctx.stroke();
         }
 
-        // CanSat Cylinder Body (Monochrome Technical)
-        ctx.fillStyle = "#ffffff";
+        // CanSat Cylinder Body (Crisp Black Technical Cylinder)
+        ctx.fillStyle = "#000000";
         ctx.fillRect(cansatScreenX - 6, cansatScreenY - 10, 12, 20);
-        ctx.strokeStyle = "#000000";
+        ctx.strokeStyle = "#ffffff";
         ctx.lineWidth = 1;
-        ctx.strokeRect(cansatScreenX - 6, cansatScreenY - 10, 12, 20);
+        ctx.strokeRect(cansatScreenX - 5, cansatScreenY - 8, 10, 16);
 
         // Steering Fins
-        ctx.fillStyle = this.finTrim !== 0 ? "#ffffff" : "#737373";
+        ctx.fillStyle = this.finTrim !== 0 ? "#000000" : "#52525b";
         if (this.finTrim === -1) {
-            // Port fin angled
             ctx.fillRect(cansatScreenX - 11, cansatScreenY + 2, 5, 6);
             ctx.fillRect(cansatScreenX + 6, cansatScreenY + 4, 4, 4);
         } else if (this.finTrim === 1) {
-            // Starboard fin angled
             ctx.fillRect(cansatScreenX - 10, cansatScreenY + 4, 4, 4);
             ctx.fillRect(cansatScreenX + 6, cansatScreenY + 2, 5, 6);
         } else {
@@ -504,7 +500,7 @@ class CanSatDropGame {
         if (this.buzzerArmed) {
             const strobe = Math.floor(this.totalFlightTime * 6) % 2 === 0;
             if (strobe) {
-                ctx.fillStyle = "#ffffff";
+                ctx.fillStyle = "#000000";
                 ctx.beginPath();
                 ctx.arc(cansatScreenX, cansatScreenY - 13, 3, 0, Math.PI * 2);
                 ctx.fill();
@@ -513,7 +509,7 @@ class CanSatDropGame {
 
         // 6. In-Canvas Telemetry HUD Labels
         ctx.font = "11px 'JetBrains Mono', monospace";
-        ctx.fillStyle = "#a3a3a3";
+        ctx.fillStyle = "#09090b";
         ctx.fillText(`ALTITUDE: ${Math.round(this.altitude)} m`, tapeW + 15, 25);
         ctx.fillText(`DESCENT V: -${this.vy.toFixed(1)} m/s`, tapeW + 15, 42);
         ctx.fillText(`DRIFT OFFSET: ${this.xOffset >= 0 ? '+' : ''}${this.xOffset.toFixed(1)} m`, tapeW + 15, 59);

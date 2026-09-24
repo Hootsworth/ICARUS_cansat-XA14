@@ -5,18 +5,18 @@
 {% block content %}
 <div style="max-width: 960px; margin: 2rem auto; padding: 0;">
     <!-- Round Header -->
-    <div class="card" style="margin-bottom: 2rem; border-left: 3px solid #ffffff;">
+    <div class="card" style="margin-bottom: 2rem; border-left: 3px solid #000000;">
         <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem;">
             <div>
                 <div class="eyebrow">[ROUND 02 / ENGINEERING REVIEW]</div>
-                <h1 style="font-size: 1.6rem; margin: 0.3rem 0; color: #ffffff;">Mission Go / No-Go: Flight Readiness Review</h1>
+                <h1 style="font-size: 1.6rem; margin: 0.3rem 0; color: #000000;">Mission Go / No-Go: Flight Readiness Review</h1>
                 <p style="color: var(--text-muted); font-size: 0.85rem;">
                     Analyze pre-flight telemetry across 5 engineering stations. Make the correct aerospace operations call for each subsystem.
                 </p>
             </div>
             <div style="text-align: right;">
                 <div class="eyebrow">Operating Station</div>
-                <div class="mono" style="font-weight: 700; color: #ffffff; font-size: 1rem;">Team {{ team.id }}: {{ team.name }}</div>
+                <div class="mono" style="font-weight: 700; color: #000000; font-size: 1rem;">Team {{ team.id }}: {{ team.name }}</div>
             </div>
         </div>
     </div>
@@ -25,7 +25,7 @@
     <!-- Locked State -->
     <div class="card" style="text-align: center; padding: 4rem 2rem;">
         <div class="mono" style="font-size: 2rem; margin-bottom: 1rem;">[LOCKED]</div>
-        <h2 style="color: #ffffff; margin-bottom: 0.5rem; font-size: 1.3rem;">Round 2 is Currently Locked</h2>
+        <h2 style="color: #000000; margin-bottom: 0.5rem; font-size: 1.3rem;">Round 2 is Currently Locked</h2>
         <p style="color: var(--text-muted); max-width: 480px; margin: 0 auto 2rem; font-size: 0.85rem;">
             You must verify your station's Launch Authorisation Code in Round 1 before the Flight Readiness Review unlocks.
         </p>
@@ -36,13 +36,13 @@
     <!-- Completed State -->
     <div class="card" style="text-align: center; padding: 4rem 2rem;">
         <div class="mono" style="font-size: 2rem; margin-bottom: 1rem;">[VERIFIED]</div>
-        <h2 style="color: #ffffff; margin-bottom: 0.5rem; font-size: 1.3rem;">Flight Readiness Review Certified</h2>
+        <h2 style="color: #000000; margin-bottom: 0.5rem; font-size: 1.3rem;">Flight Readiness Review Certified</h2>
         <p style="color: var(--text-muted); margin-bottom: 2rem; font-size: 0.85rem;">
             Your engineering decisions have been validated by the Flight Director.
         </p>
         <div style="display: inline-block; border: 1px solid var(--border-muted); padding: 1.5rem 3rem; margin-bottom: 2rem;">
             <div class="eyebrow" style="margin-bottom: 0.5rem;">Readiness Score</div>
-            <div class="mono" style="font-size: 2.8rem; font-weight: 800; color: #ffffff;">{{ final_score }} <span style="font-size: 1rem; color: var(--text-dim);">/ 500 PTS</span></div>
+            <div class="mono" style="font-size: 2.8rem; font-weight: 800; color: #000000;">{{ final_score }} <span style="font-size: 1rem; color: var(--text-dim);">/ 500 PTS</span></div>
         </div>
         <div>
             <a href="/dashboard" class="btn btn-primary">Proceed to Round 3 &rarr;</a>
@@ -60,7 +60,7 @@
     <!-- Submit Section -->
     <div class="card" style="margin-top: 2rem; text-align: center; padding: 2rem; display: none;" id="submit-card">
         <div class="eyebrow" style="margin-bottom: 0.5rem;">Certification Sign-Off</div>
-        <h3 style="color: #ffffff; margin-bottom: 1rem;">Ready to Transmit Flight Decisions?</h3>
+        <h3 style="color: #000000; margin-bottom: 1rem;">Ready to Transmit Flight Decisions?</h3>
         <p style="color: var(--text-muted); font-size: 0.85rem; max-width: 500px; margin: 0 auto 1.5rem;">
             Ensure your team has reviewed all 5 subsystem telemetry profiles. Submitting will commit your flight readiness ledger.
         </p>
@@ -101,7 +101,7 @@ function renderStations() {
         
         let telemRows = "";
         for (const [k, v] of Object.entries(st.telemetry_data)) {
-            telemRows += `<tr><td style="color:#737373; width:40%;">${k}</td><td class="mono" style="color:#ffffff; font-weight:600;">${v}</td></tr>`;
+            telemRows += `<tr><td style="color:#71717a; width:40%;">${k}</td><td class="mono" style="color:var(--text-main); font-weight:600;">${v}</td></tr>`;
         }
         
         let chartRows = st.strip_chart.map(line => `<div>${line}</div>`).join("");
@@ -109,9 +109,9 @@ function renderStations() {
         let optionsHtml = "";
         st.options.forEach(opt => {
             optionsHtml += `
-            <label style="display:flex; align-items:flex-start; gap:0.75rem; padding:0.75rem 1rem; border:1px solid var(--border-muted); margin-bottom:0.5rem; cursor:pointer; background:#000000; transition:border-color 0.15s ease;">
+            <label style="display:flex; align-items:flex-start; gap:0.75rem; padding:0.75rem 1rem; border:1px solid var(--border-muted); margin-bottom:0.5rem; cursor:pointer; background:#ffffff; transition:border-color 0.15s ease;">
                 <input type="radio" name="station_${st.id}" value="${opt.id}" onchange="selectCall(${st.id}, '${opt.id}')" style="margin-top:0.25rem;">
-                <div style="font-size:0.85rem; color:#ffffff;">
+                <div style="font-size:0.85rem; color:var(--text-main);">
                     <strong class="mono">[${opt.id}]</strong> ${opt.text}
                 </div>
             </label>
@@ -122,7 +122,7 @@ function renderStations() {
         <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-muted); padding-bottom:0.75rem; margin-bottom:1.25rem;">
             <div>
                 <span class="eyebrow">[STATION 0${st.id} / 05]</span>
-                <h3 style="font-size:1.15rem; color:#ffffff; margin-top:0.2rem;">${st.subsystem}</h3>
+                <h3 style="font-size:1.15rem; color:var(--text-main); margin-top:0.2rem;">${st.subsystem}</h3>
                 <div class="mono" style="font-size:0.8rem; color:var(--text-dim);">${st.component}</div>
             </div>
             <span class="badge" id="badge_station_${st.id}">PENDING</span>
@@ -140,14 +140,14 @@ function renderStations() {
             <!-- Strip Chart / Plot -->
             <div>
                 <div class="eyebrow" style="margin-bottom:0.5rem;">${st.chart_label}</div>
-                <div class="mono" style="background:#050505; border:1px solid var(--border-hairline); padding:0.75rem; font-size:0.75rem; line-height:1.6; color:#a3a3a3; white-space:pre-wrap;">
+                <div class="mono" style="background:#fafafa; border:1px solid var(--border-hairline); padding:0.75rem; font-size:0.75rem; line-height:1.6; color:#3f3f46; white-space:pre-wrap;">
                     ${chartRows}
                 </div>
             </div>
         </div>
 
         <!-- Engineering Findings -->
-        <div style="border-left:2px solid #ffffff; padding:0.5rem 1rem; margin-bottom:1.5rem; background:var(--bg-subtle);">
+        <div style="border-left:2px solid #000000; padding:0.5rem 1rem; margin-bottom:1.5rem; background:#f4f4f5;">
             <div class="eyebrow">Operations Note</div>
             <div style="font-size:0.85rem; color:var(--text-main); margin-top:0.25rem;">${st.findings}</div>
         </div>

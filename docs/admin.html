@@ -12,7 +12,7 @@
 <body>
     <nav class="navbar">
         <a href="./index.html" class="nav-brand">
-            <div style="width: 24px; height: 24px; border: 2px solid #ffffff; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-weight: 800; font-size: 0.75rem;">
+            <div style="width: 24px; height: 24px; border: 2px solid var(--text-main); display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-weight: 800; font-size: 0.75rem;">
                 I
             </div>
             <div>
@@ -22,7 +22,7 @@
         </a>
         <div style="display: flex; align-items: center; gap: 1rem;">
             <div class="nav-badge mono" id="live-utc-clock">--:--:-- UTC</div>
-            <div class="nav-badge mono" id="mission-countdown" style="border-color: #525252; color: #ffffff;">T-00:00:00</div>
+            <div class="nav-badge mono" id="mission-countdown" style="border-color: #525252; color: var(--text-main);">T-00:00:00</div>
             <ul class="nav-links">
                 <li><a href="./index.html" class="nav-link">Dashboard</a></li>
                 <li><a href="./scoreboard.html" class="nav-link">Scoreboard</a></li>
@@ -35,7 +35,7 @@
         <div class="card" style="padding: 2.5rem; border: 1px solid var(--border-muted);">
             <div style="margin-bottom: 2rem;">
                 <div class="eyebrow">[RESTRICTED ACCESS]</div>
-                <h2 style="font-size: 1.4rem; color: #ffffff; margin-top: 0.3rem;">Flight Director Authentication</h2>
+                <h2 style="font-size: 1.4rem; color: #000000; margin-top: 0.3rem;">Flight Director Authentication</h2>
                 <p style="color: var(--text-muted); font-size: 0.82rem; margin-top: 0.25rem;">
                     Enter master flight director authorization credentials.
                 </p>
@@ -64,7 +64,7 @@
         <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; border-bottom: 1px solid var(--border-muted); padding-bottom: 1rem;">
             <div>
                 <div class="eyebrow">[OPERATIONS OVERSIGHT]</div>
-                <h1 style="font-size: 1.8rem; margin: 0.2rem 0; color: #ffffff;">Flight Director Master Console</h1>
+                <h1 style="font-size: 1.8rem; margin: 0.2rem 0; color: #000000;">Flight Director Master Console</h1>
             </div>
             <div style="display: flex; gap: 0.75rem; align-items: center;">
                 <span class="badge badge-active" style="padding: 0.35rem 0.8rem;">
@@ -77,11 +77,11 @@
         </div>
 
         <!-- REMOTE REALTIME TIMER & BROADCAST CONTROL (MULTI-COMPUTER SYNC) -->
-        <div class="card" style="margin-bottom: 2.5rem; border-left: 3px solid #ffffff;">
+        <div class="card" style="margin-bottom: 2.5rem; border-left: 3px solid #000000;">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.25rem;">
                 <div>
                     <div class="eyebrow">[SHARED DATABASE / REALTIME DISPATCH]</div>
-                    <h2 style="font-size: 1.3rem; margin: 0.2rem 0; color: #ffffff;">Remote Flight Timer & Hall Broadcast Control</h2>
+                    <h2 style="font-size: 1.3rem; margin: 0.2rem 0; color: #000000;">Remote Flight Timer & Hall Broadcast Control</h2>
                     <p style="color: var(--text-muted); font-size: 0.82rem;">
                         Control competition rounds, countdown clocks, and emergency announcements on all 11 team workstations remotely in real time.
                     </p>
@@ -97,7 +97,7 @@
             </div>
 
             <!-- Firebase Config Sub-panel (Collapsible) -->
-            <div id="firebase-cfg-box" style="display: none; background: #000000; border: 1px solid var(--border-muted); padding: 1.25rem; margin-bottom: 1.5rem;">
+            <div id="firebase-cfg-box" style="display: none; background: #fafafa; border: 1px solid var(--border-muted); padding: 1.25rem; margin-bottom: 1.5rem;">
                 <div class="eyebrow" style="margin-bottom: 0.5rem;">Firebase Project Configuration (Firestore Shared Database)</div>
                 <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 0.75rem;">
                     Paste your Firebase web project configuration object below.
@@ -175,7 +175,7 @@
             <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-muted); display: flex; justify-content: space-between; align-items: center;">
                 <div>
                     <div class="eyebrow">[ADMIN REVEAL]</div>
-                    <h2 style="font-size: 1.2rem; margin-top: 0.2rem; color: #ffffff;">Master 4-Round Standings (Includes Secret Scoring)</h2>
+                    <h2 style="font-size: 1.2rem; margin-top: 0.2rem; color: #000000;">Master 4-Round Standings (Includes Secret Scoring)</h2>
                 </div>
                 <span class="badge badge-active">SECRET AUDIT</span>
             </div>
@@ -185,7 +185,7 @@
                     <tr>
                         <th style="width: 50px; text-align: center;">Rank</th>
                         <th>Callsign</th>
-                        <th style="color: #ffffff;">Grand Total</th>
+                        <th style="color: var(--text-main);">Grand Total</th>
                         <th>Public Total</th>
                         <th>R1: Briefing</th>
                         <th>R2: Readiness</th>
@@ -247,28 +247,28 @@
             tr.innerHTML = `
                 <td style="text-align: center; font-weight: 700;" class="mono">${index + 1}</td>
                 <td>
-                    <div style="font-weight: 700; color: #ffffff;">${item.team.name}</div>
+                    <div style="font-weight: 700; color: var(--text-main);">${item.team.name}</div>
                     <div class="mono" style="font-size: 0.72rem; color: var(--text-dim);">STATION ${item.team.id} | CODE: ${item.team.code}</div>
                 </td>
-                <td class="mono" style="font-size: 1.15rem; font-weight: 800; color: #ffffff;">
+                <td class="mono" style="font-size: 1.15rem; font-weight: 800; color: var(--text-main);">
                     ${item.grand_total} PTS
                 </td>
                 <td class="mono" style="color: var(--text-muted);">
                     ${item.public_total} PTS
                 </td>
                 <td class="mono">
-                    ${item.r1 && item.r1.status === 'submitted' ? '<span style="color:#ffffff;">PASS (+100)</span>' : '<span style="color:var(--text-dim);">PENDING</span>'}
+                    ${item.r1 && item.r1.status === 'submitted' ? '<span style="color:var(--text-main); font-weight:600;">PASS (+100)</span>' : '<span style="color:var(--text-dim);">PENDING</span>'}
                 </td>
                 <td class="mono">
-                    ${item.r2 && item.r2.status === 'submitted' ? `<span style="color:#ffffff;">+${item.r2.score}</span>` : '<span style="color:var(--text-dim);">--</span>'}
+                    ${item.r2 && item.r2.status === 'submitted' ? `<span style="color:var(--text-main); font-weight:600;">+${item.r2.score}</span>` : '<span style="color:var(--text-dim);">--</span>'}
                 </td>
-                <td class="mono" style="border-left: 1px solid var(--border-hairline); border-right: 1px solid var(--border-hairline); background: #080808;">
-                    ${item.r3 && item.r3.status === 'submitted' ? `<strong style="color:#ffffff; font-size:1rem;">+${item.r3.score} PTS</strong><div style="font-size:0.7rem; color:var(--text-dim);">✓ HMAC VERIFIED</div>` : '<span style="color:var(--text-dim);">--</span>'}
+                <td class="mono" style="border-left: 1px solid var(--border-hairline); border-right: 1px solid var(--border-hairline); background: #fafafa;">
+                    ${item.r3 && item.r3.status === 'submitted' ? `<strong style="color:var(--text-main); font-size:1rem;">+${item.r3.score} PTS</strong><div style="font-size:0.7rem; color:var(--text-dim);">✓ HMAC VERIFIED</div>` : '<span style="color:var(--text-dim);">--</span>'}
                 </td>
                 <td class="mono">
-                    ${item.r4_pts > 0 ? `<span style="font-weight:600; color:#ffffff;">+${item.r4_pts}</span> <span style="font-size:0.72rem; color:var(--text-dim);">(${item.r4_solves} solves)</span>` : '<span style="color:var(--text-dim);">0</span>'}
+                    ${item.r4_pts > 0 ? `<span style="font-weight:600; color:var(--text-main);">+${item.r4_pts}</span> <span style="font-size:0.72rem; color:var(--text-dim);">(${item.r4_solves} solves)</span>` : '<span style="color:var(--text-dim);">0</span>'}
                 </td>
-                <td class="mono" style="font-weight: 700; color: #ffffff;">
+                <td class="mono" style="font-weight: 700; color: var(--text-main);">
                     ${item.team.credits}
                 </td>
             `;
@@ -351,8 +351,8 @@
         if (badge) {
             const orig = badge.textContent;
             badge.textContent = `✓ ${msg}`;
-            badge.style.background = "#ffffff";
-            badge.style.color = "#000000";
+            badge.style.background = "#000000";
+            badge.style.color = "#ffffff";
             setTimeout(() => {
                 badge.textContent = orig;
                 badge.style.background = "";

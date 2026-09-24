@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="./css/style.css">
     <style>
     .station-dossier {
-        background: #000000;
+        background: #ffffff;
         border: 1px solid var(--border-muted);
         padding: 1.5rem;
         margin-bottom: 1.5rem;
@@ -30,12 +30,14 @@
         font-weight: 700;
         cursor: pointer;
         transition: all 0.15s ease;
+        background: #ffffff;
+        color: var(--text-main);
     }
     .radio-pill input[type="radio"] { display: none; }
     .radio-pill input[type="radio"]:checked + span {
         display: block;
-        background: #ffffff;
-        color: #000000;
+        background: #000000;
+        color: #ffffff;
         margin: -0.6rem -1rem;
         padding: 0.6rem 1rem;
     }
@@ -44,7 +46,7 @@
 <body>
     <nav class="navbar">
         <a href="./index.html" class="nav-brand">
-            <div style="width: 24px; height: 24px; border: 2px solid #ffffff; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-weight: 800; font-size: 0.75rem;">
+            <div style="width: 24px; height: 24px; border: 2px solid var(--text-main); display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-weight: 800; font-size: 0.75rem;">
                 I
             </div>
             <div>
@@ -54,11 +56,11 @@
         </a>
         <div style="display: flex; align-items: center; gap: 1rem;">
             <div class="nav-badge mono" id="live-utc-clock">--:--:-- UTC</div>
-            <div class="nav-badge mono" id="mission-countdown" style="border-color: #525252; color: #ffffff;">T-00:00:00</div>
+            <div class="nav-badge mono" id="mission-countdown" style="border-color: #525252; color: var(--text-main);">T-00:00:00</div>
             <ul class="nav-links">
                 <li><a href="./index.html" class="nav-link">Dashboard</a></li>
                 <li><a href="./round1.html" class="nav-link">Round 1</a></li>
-                <li><a href="./round2.html" class="nav-link" style="color:#ffffff;">Round 2</a></li>
+                <li><a href="./round2.html" class="nav-link active">Round 2</a></li>
                 <li><a href="./round3.html" class="nav-link">Round 3</a></li>
                 <li><a href="./round4.html" class="nav-link">Round 4</a></li>
                 <li><a href="./scoreboard.html" class="nav-link">Scoreboard</a></li>
@@ -68,9 +70,9 @@
     </nav>
 
     <div class="container" style="max-width: 860px; padding-top: 2rem;">
-        <div class="card" style="border-left: 3px solid #ffffff; margin-bottom: 2rem;">
+        <div class="card" style="border-left: 3px solid #000000; margin-bottom: 2rem;">
             <div class="eyebrow">[ROUND 02 / PRE-FLIGHT READINESS REVIEW]</div>
-            <h1 style="font-size: 1.6rem; color: #ffffff; margin: 0.3rem 0;">CanSat Subsystem Inspection Stations</h1>
+            <h1 style="font-size: 1.6rem; color: #000000; margin: 0.3rem 0;">CanSat Subsystem Inspection Stations</h1>
             <p style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.5;">
                 Inspect 5 engineering stations. Analyze strip charts, telemetry logs, and flight criteria. Determine whether each subsystem is <strong>GO</strong> or <strong>NO-GO</strong> for launch. Up to 500 PTS (+100 PTS per correct station).
             </p>
@@ -82,8 +84,8 @@
             <!-- Station 1 -->
             <div class="station-dossier">
                 <div class="eyebrow">[STATION 01 / ELECTRICAL POWER SYSTEM]</div>
-                <h3 style="color:#ffffff; font-size:1.1rem; margin:0.3rem 0 0.5rem;">EPS Battery Voltage Sag Under Transmit Pulse</h3>
-                <div style="background:#0a0a0a; border:1px solid var(--border-hairline); padding:0.75rem; font-family:var(--font-mono); font-size:0.78rem; line-height:1.5; color:#a3a3a3; margin-bottom:0.75rem;">
+                <h3 style="color:#000000; font-size:1.1rem; margin:0.3rem 0 0.5rem;">EPS Battery Voltage Sag Under Transmit Pulse</h3>
+                <div style="background:#fafafa; border:1px solid var(--border-hairline); padding:0.75rem; font-family:var(--font-mono); font-size:0.78rem; line-height:1.5; color:#3f3f46; margin-bottom:0.75rem;">
                     [CRITERIA]: V_bat must remain &ge; 3.30V during 500mA radio transmit burst. If V &lt; 3.30V, MCU brownout risk.<br>
                     [DATA]: Idle V: 3.74V. During 100ms LoRa TX packet: V dips to <strong>3.18V</strong> for 85ms before recovering to 3.65V.
                 </div>
@@ -96,8 +98,8 @@
             <!-- Station 2 -->
             <div class="station-dossier">
                 <div class="eyebrow">[STATION 02 / RECOVERY SUBSYSTEM]</div>
-                <h3 style="color:#ffffff; font-size:1.1rem; margin:0.3rem 0 0.5rem;">Parachute Ejection Door Servo Interlock</h3>
-                <div style="background:#0a0a0a; border:1px solid var(--border-hairline); padding:0.75rem; font-family:var(--font-mono); font-size:0.78rem; line-height:1.5; color:#a3a3a3; margin-bottom:0.75rem;">
+                <h3 style="color:#000000; font-size:1.1rem; margin:0.3rem 0 0.5rem;">Parachute Ejection Door Servo Interlock</h3>
+                <div style="background:#fafafa; border:1px solid var(--border-hairline); padding:0.75rem; font-family:var(--font-mono); font-size:0.78rem; line-height:1.5; color:#3f3f46; margin-bottom:0.75rem;">
                     [CRITERIA]: Servo travel 90&deg; &plusmn; 5&deg;; stall current &lt; 250mA; physical door limit switch confirmed.<br>
                     [DATA]: Measured angle: 89.2&deg;. Current spike: 180mA for 120ms then drops to 45mA idle. Limit switch telemetry returns <code>DOOR_UNLATCHED=1</code>.
                 </div>
@@ -110,8 +112,8 @@
             <!-- Station 3 -->
             <div class="station-dossier">
                 <div class="eyebrow">[STATION 03 / NAVIGATION & GNSS]</div>
-                <h3 style="color:#ffffff; font-size:1.1rem; margin:0.3rem 0 0.5rem;">GNSS 3D Fix & Horizontal Dilution of Precision (HDOP)</h3>
-                <div style="background:#0a0a0a; border:1px solid var(--border-hairline); padding:0.75rem; font-family:var(--font-mono); font-size:0.78rem; line-height:1.5; color:#a3a3a3; margin-bottom:0.75rem;">
+                <h3 style="color:#000000; font-size:1.1rem; margin:0.3rem 0 0.5rem;">GNSS 3D Fix & Horizontal Dilution of Precision (HDOP)</h3>
+                <div style="background:#fafafa; border:1px solid var(--border-hairline); padding:0.75rem; font-family:var(--font-mono); font-size:0.78rem; line-height:1.5; color:#3f3f46; margin-bottom:0.75rem;">
                     [CRITERIA]: 3D fix with &ge; 6 satellites tracked; HDOP must be &le; 2.0 for precise landing telemetry.<br>
                     [DATA]: Satellites in view: 8. Fix type: 3D-FIX. <strong>HDOP = 4.2</strong> (Multipath reflection from launch crane observed).
                 </div>
@@ -124,8 +126,8 @@
             <!-- Station 4 -->
             <div class="station-dossier">
                 <div class="eyebrow">[STATION 04 / SENSOR CALIBRATION]</div>
-                <h3 style="color:#ffffff; font-size:1.1rem; margin:0.3rem 0 0.5rem;">Barometric Altimeter vs Airfield QNH Datum</h3>
-                <div style="background:#0a0a0a; border:1px solid var(--border-hairline); padding:0.75rem; font-family:var(--font-mono); font-size:0.78rem; line-height:1.5; color:#a3a3a3; margin-bottom:0.75rem;">
+                <h3 style="color:#000000; font-size:1.1rem; margin:0.3rem 0 0.5rem;">Barometric Altimeter vs Airfield QNH Datum</h3>
+                <div style="background:#fafafa; border:1px solid var(--border-hairline); padding:0.75rem; font-family:var(--font-mono); font-size:0.78rem; line-height:1.5; color:#3f3f46; margin-bottom:0.75rem;">
                     [CRITERIA]: Pre-launch elevation reading within &plusmn;10m of airfield surveyed benchmark (860m MSL).<br>
                     [DATA]: Local METAR QNH: 1013.25 hPa. Sensor reads 864m MSL (&Delta; = +4m). Residual variance &lt; 0.4m over 60s sample.
                 </div>
@@ -138,8 +140,8 @@
             <!-- Station 5 -->
             <div class="station-dossier">
                 <div class="eyebrow">[STATION 05 / TELECOMMUNICATIONS]</div>
-                <h3 style="color:#ffffff; font-size:1.1rem; margin:0.3rem 0 0.5rem;">LoRa 433MHz Ground Station RF Link Margin</h3>
-                <div style="background:#0a0a0a; border:1px solid var(--border-hairline); padding:0.75rem; font-family:var(--font-mono); font-size:0.78rem; line-height:1.5; color:#a3a3a3; margin-bottom:0.75rem;">
+                <h3 style="color:#000000; font-size:1.1rem; margin:0.3rem 0 0.5rem;">LoRa 433MHz Ground Station RF Link Margin</h3>
+                <div style="background:#fafafa; border:1px solid var(--border-hairline); padding:0.75rem; font-family:var(--font-mono); font-size:0.78rem; line-height:1.5; color:#3f3f46; margin-bottom:0.75rem;">
                     [CRITERIA]: Received RSSI &ge; -115 dBm; SNR &ge; -5 dB at 1.5 km range. Minimum link margin &gt; 10 dB.<br>
                     [DATA]: Measured RSSI = -98 dBm, SNR = +7.5 dB. Noise floor = -120 dBm. Calculated link margin = <strong>+14.5 dB</strong>.
                 </div>
@@ -156,7 +158,7 @@
 
         <div style="margin-top: 2rem; display: flex; justify-content: space-between; align-items: center;">
             <a href="./index.html" class="mono" style="font-size: 0.8rem; color: var(--text-muted);">&larr; Return to Dashboard</a>
-            <a href="./round3.html" id="r3-link" class="mono" style="font-size: 0.8rem; color: #ffffff; display: none;">Proceed to Round 3 &rarr;</a>
+            <a href="./round3.html" id="r3-link" class="mono" style="font-size: 0.8rem; color: #000000; display: none;">Proceed to Round 3 &rarr;</a>
         </div>
     </div>
 

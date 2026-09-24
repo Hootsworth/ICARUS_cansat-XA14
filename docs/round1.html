@@ -12,7 +12,7 @@
 <body>
     <nav class="navbar">
         <a href="./index.html" class="nav-brand">
-            <div style="width: 24px; height: 24px; border: 2px solid #ffffff; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-weight: 800; font-size: 0.75rem;">
+            <div style="width: 24px; height: 24px; border: 2px solid var(--text-main); display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-weight: 800; font-size: 0.75rem;">
                 I
             </div>
             <div>
@@ -22,10 +22,10 @@
         </a>
         <div style="display: flex; align-items: center; gap: 1rem;">
             <div class="nav-badge mono" id="live-utc-clock">--:--:-- UTC</div>
-            <div class="nav-badge mono" id="mission-countdown" style="border-color: #525252; color: #ffffff;">T-00:00:00</div>
+            <div class="nav-badge mono" id="mission-countdown" style="border-color: #525252; color: var(--text-main);">T-00:00:00</div>
             <ul class="nav-links">
                 <li><a href="./index.html" class="nav-link">Dashboard</a></li>
-                <li><a href="./round1.html" class="nav-link" style="color:#ffffff;">Round 1</a></li>
+                <li><a href="./round1.html" class="nav-link active">Round 1</a></li>
                 <li><a href="./round2.html" class="nav-link">Round 2</a></li>
                 <li><a href="./round3.html" class="nav-link">Round 3</a></li>
                 <li><a href="./round4.html" class="nav-link">Round 4</a></li>
@@ -36,9 +36,9 @@
     </nav>
 
     <div class="container" style="max-width: 680px; padding-top: 3rem;">
-        <div class="card" style="border-left: 3px solid #ffffff; padding: 2.5rem;">
+        <div class="card" style="border-left: 3px solid #000000; padding: 2.5rem;">
             <div class="eyebrow">[ROUND 01 / PHYSICAL PUZZLE VERIFICATION]</div>
-            <h1 style="font-size: 1.6rem; color: #ffffff; margin: 0.3rem 0 0.75rem;">Mission Briefing Authorization</h1>
+            <h1 style="font-size: 1.6rem; color: #000000; margin: 0.3rem 0 0.75rem;">Mission Briefing Authorization</h1>
             <p style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.6; margin-bottom: 2rem;">
                 Teams decode an offline mission dossier and cipher under proctor supervision. Enter your decrypted Launch Authorization Code below to verify your station and unlock flight operations.
             </p>
@@ -60,7 +60,7 @@
 
             <div style="margin-top: 2rem; border-top: 1px solid var(--border-hairline); padding-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
                 <a href="./index.html" class="mono" style="font-size: 0.8rem; color: var(--text-muted);">&larr; Return to Dashboard</a>
-                <a href="./round2.html" id="r2-link" class="mono" style="font-size: 0.8rem; color: #ffffff; display: none;">Proceed to Round 2 &rarr;</a>
+                <a href="./round2.html" id="r2-link" class="mono" style="font-size: 0.8rem; color: #000000; display: none;">Proceed to Round 2 &rarr;</a>
             </div>
         </div>
     </div>

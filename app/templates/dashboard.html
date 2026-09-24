@@ -27,9 +27,9 @@
 <div class="alert alert-warning">
     <div class="mono" style="font-size: 0.9rem; font-weight: 700;">[ERRATA]</div>
     <div>
-        <strong style="font-size: 0.95rem; color: #ffffff;">12:00 UTC SENSOR CALIBRATION BULLETIN RELEASED</strong>
+        <strong style="font-size: 0.95rem; color: var(--text-main);">12:00 UTC SENSOR CALIBRATION BULLETIN RELEASED</strong>
         <p style="font-size: 0.85rem; margin-top: 0.25rem; color: var(--text-muted);">
-            Ground station notice: ICD Calibration Offset for OBC Temperature follows Revision B (+1050 raw offset), differing from Rev A battery formulas. Refer to <a href="/documents" style="color: #ffffff; text-decoration: underline;">Flight Docs</a>.
+            Ground station notice: ICD Calibration Offset for OBC Temperature follows Revision B (+1050 raw offset), differing from Rev A battery formulas. Refer to <a href="/documents" style="color: var(--text-main); text-decoration: underline;">Flight Docs</a>.
         </p>
     </div>
 </div>
@@ -40,7 +40,7 @@
 <div class="alert alert-info">
     <div class="mono" style="font-size: 0.9rem; font-weight: 700;">[ALERT]</div>
     <div style="flex-grow: 1;">
-        <strong style="font-size: 0.95rem; color: #ffffff;">PHASE 4: LIVE CONTINGENCY FINALE IN PROGRESS</strong>
+        <strong style="font-size: 0.95rem; color: var(--text-main);">PHASE 4: LIVE CONTINGENCY FINALE IN PROGRESS</strong>
         <p style="font-size: 0.85rem; margin-top: 0.25rem; color: var(--text-muted);">
             Emergency recovery runbook OP-RB-88 authorized. Connect to live telemetry console to issue command sequence.
         </p>
@@ -54,7 +54,7 @@
     <div style="display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid var(--border-muted); padding-bottom: 1rem; margin-bottom: 1.5rem;">
         <div>
             <div class="eyebrow">Flight Sequence</div>
-            <h2 style="font-size: 1.4rem; color: #ffffff; margin-top: 0.2rem;">4-Round Mission Architecture</h2>
+            <h2 style="font-size: 1.4rem; color: var(--text-main); margin-top: 0.2rem;">4-Round Mission Architecture</h2>
         </div>
         <div class="eyebrow">Progression Path</div>
     </div>
@@ -78,7 +78,7 @@
             </div>
             <div>
                 {% if rounds_summary[1].status == 'submitted' %}
-                <div class="mono" style="font-size: 0.85rem; color: #ffffff; font-weight: 700;">
+                <div class="mono" style="font-size: 0.85rem; color: var(--text-main); font-weight: 700;">
                     +{{ rounds_summary[1].score }} PTS / VERIFIED
                 </div>
                 {% else %}
@@ -113,7 +113,7 @@
             </div>
             <div>
                 {% if rounds_summary[2].status == 'submitted' %}
-                <div class="mono" style="font-size: 0.85rem; color: #ffffff; font-weight: 700; margin-bottom: 0.5rem;">
+                <div class="mono" style="font-size: 0.85rem; color: var(--text-main); font-weight: 700; margin-bottom: 0.5rem;">
                     +{{ rounds_summary[2].score }} PTS AWARDED
                 </div>
                 <a href="/round2" class="mono" style="font-size: 0.75rem; color: var(--text-dim); text-decoration: underline;">Review &rarr;</a>
@@ -147,7 +147,7 @@
             </div>
             <div>
                 {% if rounds_summary[3].status == 'submitted' %}
-                <div class="mono" style="font-size: 0.8rem; color: #ffffff; font-weight: 600; margin-bottom: 0.4rem;">
+                <div class="mono" style="font-size: 0.8rem; color: var(--text-main); font-weight: 600; margin-bottom: 0.4rem;">
                     TELEMETRY SEALED (SECRET)
                 </div>
                 <a href="/round3" class="mono" style="font-size: 0.75rem; color: var(--text-dim); text-decoration: underline;">View Simulation &rarr;</a>
@@ -181,10 +181,10 @@
             </div>
             <div>
                 {% if rounds_summary[4].status == 'active' or rounds_summary[4].status == 'submitted' %}
-                <div class="mono" style="font-size: 0.85rem; color: #ffffff; font-weight: 700; margin-bottom: 0.5rem;">
+                <div class="mono" style="font-size: 0.85rem; color: var(--text-main); font-weight: 700; margin-bottom: 0.5rem;">
                     {{ r4_score }} PTS EARNED
                 </div>
-                <a href="#round4-section" class="mono" style="font-size: 0.75rem; color: #ffffff; text-decoration: underline;">View Tasks &darr;</a>
+                <a href="#round4-section" class="mono" style="font-size: 0.75rem; color: var(--text-main); text-decoration: underline;">View Tasks &darr;</a>
                 {% else %}
                 <div class="eyebrow" style="color: var(--text-dim);">Prerequisite: Round 3</div>
                 {% endif %}
@@ -217,7 +217,7 @@
             </div>
             <div>
                 {% if flags.get(phase_key) %}
-                <span class="nav-badge mono" style="border-color: #ffffff; color: #ffffff;">
+                <span class="nav-badge mono" style="border-color: var(--border-hairline); color: var(--text-main);">
                     FLAG: {{ flags.get(phase_key) }}
                 </span>
                 {% endif %}
@@ -239,12 +239,12 @@
                 <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-hairline); padding-top: 0.75rem; margin-top: 0.5rem;">
                     <span class="mono" style="font-size: 0.75rem; color: var(--text-dim);">
                         {% if ch.is_solved %}
-                            <span style="color:#ffffff;">+{{ ch.points_awarded }} PTS</span>
+                            <span style="color:var(--text-main); font-weight:600;">+{{ ch.points_awarded }} PTS</span>
                         {% else %}
                             <span>PENDING</span>
                         {% endif %}
                     </span>
-                    <span class="mono" style="font-size: 0.75rem; color: #ffffff;">
+                    <span class="mono" style="font-size: 0.75rem; color: var(--text-main);">
                         OPEN &rarr;
                     </span>
                 </div>
@@ -266,7 +266,7 @@ async function submitRound1Code() {
     const code = input.value.trim();
     if (!code) {
         fb.style.display = "block";
-        fb.style.color = "#a3a3a3";
+        fb.style.color = "var(--text-muted)";
         fb.innerText = "Code required.";
         return;
     }
@@ -285,11 +285,11 @@ async function submitRound1Code() {
         
         fb.style.display = "block";
         if (data.status === "success" || data.status === "already_submitted") {
-            fb.style.color = "#ffffff";
+            fb.style.color = "var(--text-main)";
             fb.innerText = "✓ " + data.message;
             setTimeout(() => window.location.reload(), 1200);
         } else {
-            fb.style.color = "#a3a3a3";
+            fb.style.color = "var(--text-muted)";
             fb.innerText = "✗ " + (data.message || "Invalid Code.");
             btn.disabled = false;
             btn.innerText = "Verify Code";
