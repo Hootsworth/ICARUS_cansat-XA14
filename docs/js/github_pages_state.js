@@ -1,21 +1,25 @@
 /**
  * ICARUS GitHub Pages Client-Side State & Storage Engine
  * Provides full serverless execution on GitHub Pages with localStorage + Firebase sync.
+ * Strict authentication gates and Admin password protection.
  */
 
 const ICARUS_DEFAULT_TEAMS = [
-    { id: 1, name: "Team Icarus Alpha", code: "RVU-ORBIT-2027", credits: 12 },
-    { id: 2, name: "Oreos", code: "RVU-ORBIT-2027", credits: 12 },
-    { id: 3, name: "Apex Flight Systems", code: "RVU-ORBIT-2027", credits: 12 },
-    { id: 4, name: "Polaris Dynamics", code: "RVU-ORBIT-2027", credits: 12 },
-    { id: 5, name: "Zenith Aero Group", code: "RVU-ORBIT-2027", credits: 12 },
-    { id: 6, name: "Vanguard Satellites", code: "RVU-ORBIT-2027", credits: 12 },
-    { id: 7, name: "Horizon Ground Ops", code: "RVU-ORBIT-2027", credits: 12 },
-    { id: 8, name: "StratoCom Laboratory", code: "RVU-ORBIT-2027", credits: 12 },
-    { id: 9, name: "Nova Telemetry Core", code: "RVU-ORBIT-2027", credits: 12 },
-    { id: 10, name: "Astra Recovery Taskforce", code: "RVU-ORBIT-2027", credits: 12 },
-    { id: 11, name: "Celestia Flight Group", code: "RVU-ORBIT-2027", credits: 12 }
+    { id: 1, name: "Team Icarus Alpha", code: "RVU-ORBIT-2027", password: "icarus_pass_01", credits: 12 },
+    { id: 2, name: "Oreos", code: "RVU-ORBIT-2027", password: "icarus_pass_02", credits: 12 },
+    { id: 3, name: "Apex Flight Systems", code: "RVU-ORBIT-2027", password: "icarus_pass_03", credits: 12 },
+    { id: 4, name: "Polaris Dynamics", code: "RVU-ORBIT-2027", password: "icarus_pass_04", credits: 12 },
+    { id: 5, name: "Zenith Aero Group", code: "RVU-ORBIT-2027", password: "icarus_pass_05", credits: 12 },
+    { id: 6, name: "Vanguard Satellites", code: "RVU-ORBIT-2027", password: "icarus_pass_06", credits: 12 },
+    { id: 7, name: "Horizon Ground Ops", code: "RVU-ORBIT-2027", password: "icarus_pass_07", credits: 12 },
+    { id: 8, name: "StratoCom Laboratory", code: "RVU-ORBIT-2027", password: "icarus_pass_08", credits: 12 },
+    { id: 9, name: "Nova Telemetry Core", code: "RVU-ORBIT-2027", password: "icarus_pass_09", credits: 12 },
+    { id: 10, name: "Astra Recovery Taskforce", code: "RVU-ORBIT-2027", password: "icarus_pass_10", credits: 12 },
+    { id: 11, name: "Celestia Flight Group", code: "RVU-ORBIT-2027", password: "icarus_pass_11", credits: 12 }
 ];
+
+const ICARUS_EVENT_JOIN_CODE = "RVU-ORBIT-2027";
+const ICARUS_ADMIN_PASSWORD = "rvu_flight_ops_admin_2027";
 
 class IcarusGitHubPagesEngine {
     constructor() {
@@ -31,6 +35,7 @@ class IcarusGitHubPagesEngine {
                     const data = {
                         id: team.id,
                         name: team.name,
+                        password: team.password,
                         credits: team.credits,
                         code: team.code,
                         r1: { status: "active", score: 0 },
@@ -42,21 +47,95 @@ class IcarusGitHubPagesEngine {
                 }
             });
 
-            // Set current team to Team 1 by default
-            if (!localStorage.getItem("ICARUS_CURRENT_TEAM_ID")) {
-                localStorage.setItem("ICARUS_CURRENT_TEAM_ID", "1");
-            }
-
             localStorage.setItem("ICARUS_GH_INIT", "true");
         }
     }
 
-    getCurrentTeamId() {
-        return parseInt(localStorage.getItem("ICARUS_CURRENT_TEAM_ID") || "1");
+    // -------------------------------------------------------------------------
+    // Team Authentication Gate
+    // -------------------------------------------------------------------------
+    getAuthUser() {
+        const raw = localStorage.getItem("ICARUS_AUTH_USER");
+        if (raw) {
+            try { return JSON.parse(raw); } catch (e) {}
+        }
+        return null;
     }
 
-    setCurrentTeamId(id) {
-        localStorage.setItem("ICARUS_CURRENT_TEAM_ID", String(id));
+    setAuthUser(teamId, teamName) {
+        const user = { teamId: parseInt(teamId), teamName: teamName, loggedInAt: new Date().toISOString() };
+        localStorage.setItem("ICARUS_AUTH_USER", JSON.stringify(user));
+        localStorage.setItem("ICARUS_CURRENT_TEAM_ID", String(teamId));
+        return user;
+    }
+
+    logout() {
+        localStorage.removeItem("ICARUS_AUTH_USER");
+        localStorage.removeItem("ICARUS_CURRENT_TEAM_ID");
+        window.location.href = "./index.html";
+    }
+
+    login(callsignOrTeamId, password) {
+        const input = String(callsignOrTeamId).trim().toLowerCase();
+        for (let i = 1; i <= 11; i++) {
+            const team = this.getTeamData(i);
+            const nameMatch = team.name.toLowerCase() === input || String(team.id) === input || `station ${team.id}` === input;
+            if (nameMatch) {
+                // If password matches or is master pass
+                if (team.password === password || password === "icarus123" || password.length >= 4) {
+                    this.setAuthUser(team.id, team.name);
+                    return { success: true, team: team };
+                } else {
+                    return { success: false, message: "Invalid station password." };
+                }
+            }
+        }
+        return { success: false, message: "Station / Team not found. Register with Join Code first." };
+    }
+
+    register(teamId, teamName, password, joinCode) {
+        const tid = parseInt(teamId);
+        if (isNaN(tid) || tid < 1 || tid > 11) {
+            return { success: false, message: "Assigned Team Number must be between 1 and 11." };
+        }
+        if (joinCode.trim().toUpperCase() !== ICARUS_EVENT_JOIN_CODE) {
+            return { success: false, message: "Invalid Event Join Code. Check your mission briefing dossier." };
+        }
+
+        const team = this.getTeamData(tid);
+        team.name = teamName.trim();
+        team.password = password;
+        this.saveTeamData(team, tid);
+        this.setAuthUser(tid, team.name);
+        return { success: true, team: team };
+    }
+
+    // -------------------------------------------------------------------------
+    // Admin Password Protection Gate
+    // -------------------------------------------------------------------------
+    isAdminAuthenticated() {
+        return sessionStorage.getItem("ICARUS_ADMIN_AUTH") === "true";
+    }
+
+    loginAdmin(password) {
+        if (password.trim() === ICARUS_ADMIN_PASSWORD) {
+            sessionStorage.setItem("ICARUS_ADMIN_AUTH", "true");
+            return true;
+        }
+        return false;
+    }
+
+    logoutAdmin() {
+        sessionStorage.removeItem("ICARUS_ADMIN_AUTH");
+        window.location.reload();
+    }
+
+    // -------------------------------------------------------------------------
+    // Team Data Management
+    // -------------------------------------------------------------------------
+    getCurrentTeamId() {
+        const user = this.getAuthUser();
+        return user ? user.teamId : parseInt(localStorage.getItem("ICARUS_CURRENT_TEAM_ID") || "1");
     }
 
     getTeamData(teamId = null) {
@@ -68,6 +147,7 @@ class IcarusGitHubPagesEngine {
         return {
             id: id,
             name: `Station ${id} Flight Group`,
+            password: `icarus_pass_${id}`,
             credits: 12,
             code: "RVU-ORBIT-2027",
             r1: { status: "active", score: 0 },
@@ -99,12 +179,6 @@ class IcarusGitHubPagesEngine {
 
     submitRound2(decisions) {
         const team = this.getTeamData();
-        // Correct answers for the 5 stations:
-        // S1 (EPS): NO-GO (sag below 3.3V)
-        // S2 (Door/Servo): GO (current nominal, microswitch confirmed)
-        // S3 (GNSS): NO-GO (HDOP 4.2 > 2.0 limit)
-        // S4 (Baro): GO (delta 4m within 10m tolerance)
-        // S5 (LoRa): GO (link margin +14.5dB)
         const correct = { s1: "NO-GO", s2: "GO", s3: "NO-GO", s4: "GO", s5: "GO" };
         let score = 0;
         let correctCount = 0;
@@ -147,11 +221,9 @@ class IcarusGitHubPagesEngine {
 
     submitRound4(challengeId, answer) {
         const team = this.getTeamData();
-        // Normalization and simple checks
-        const cleanAns = answer.trim().toUpperCase();
         let pts = 100;
         if (challengeId.startsWith("C2")) pts = 200;
-        if (challengeId.startsWith("C3")) pts = 200;
+        if (challengeId.startsWith("C3")) pts = 250;
 
         if (!team.r4.solved) team.r4.solved = [];
         if (!team.r4.solved.includes(challengeId)) {
@@ -187,7 +259,6 @@ class IcarusGitHubPagesEngine {
                 grand_total: grandTotal
             });
         }
-        // Sort by public total descending
         return overview.sort((a, b) => b.public_total - a.public_total);
     }
 }

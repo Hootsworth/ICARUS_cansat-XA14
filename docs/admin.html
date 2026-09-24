@@ -25,25 +25,55 @@
             <div class="nav-badge mono" id="mission-countdown" style="border-color: #525252; color: #ffffff;">T-00:00:00</div>
             <ul class="nav-links">
                 <li><a href="./index.html" class="nav-link">Dashboard</a></li>
-                <li><a href="./round1.html" class="nav-link">Round 1</a></li>
-                <li><a href="./round2.html" class="nav-link">Round 2</a></li>
-                <li><a href="./round3.html" class="nav-link">Round 3</a></li>
-                <li><a href="./round4.html" class="nav-link">Round 4</a></li>
                 <li><a href="./scoreboard.html" class="nav-link">Scoreboard</a></li>
-                <li><a href="./admin.html" class="nav-link" style="color:#ffffff; border-bottom: 1px solid #ffffff;">Admin</a></li>
             </ul>
         </div>
     </nav>
 
-    <div class="container" style="max-width: 1100px; padding-top: 2rem;">
+    <!-- ADMIN LOGIN GATE (Shown when NOT authenticated) -->
+    <div id="admin-login-container" class="container" style="max-width: 440px; padding-top: 5rem;">
+        <div class="card" style="padding: 2.5rem; border: 1px solid var(--border-muted);">
+            <div style="margin-bottom: 2rem;">
+                <div class="eyebrow">[RESTRICTED ACCESS]</div>
+                <h2 style="font-size: 1.4rem; color: #ffffff; margin-top: 0.3rem;">Flight Director Authentication</h2>
+                <p style="color: var(--text-muted); font-size: 0.82rem; margin-top: 0.25rem;">
+                    Enter master flight director authorization credentials.
+                </p>
+            </div>
+
+            <div id="admin-err-msg" class="alert alert-warning" style="display: none; padding: 0.75rem 1rem; font-size: 0.82rem; margin-bottom: 1.25rem;"></div>
+
+            <form id="admin-login-form" onsubmit="handleAdminLogin(event)">
+                <div class="form-group">
+                    <label class="form-label">Flight Director Password</label>
+                    <input type="password" id="admin-password-input" class="form-control" placeholder="••••••••" required autofocus>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem; margin-top: 0.5rem;">
+                    Unlock Flight Director Console &rarr;
+                </button>
+            </form>
+
+            <div style="margin-top: 1.5rem; text-align: center;">
+                <a href="./index.html" class="mono" style="font-size: 0.78rem; color: var(--text-dim);">&larr; Return to Team Portal</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN CONSOLE (Shown ONLY when authenticated) -->
+    <div id="admin-console-container" class="container" style="display: none; max-width: 1100px; padding-top: 2rem;">
         <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; border-bottom: 1px solid var(--border-muted); padding-bottom: 1rem;">
             <div>
                 <div class="eyebrow">[OPERATIONS OVERSIGHT]</div>
                 <h1 style="font-size: 1.8rem; margin: 0.2rem 0; color: #ffffff;">Flight Director Master Console</h1>
             </div>
-            <span class="badge badge-active" style="padding: 0.35rem 0.8rem;">
-                ADMIN PRIVILEGES ACTIVE
-            </span>
+            <div style="display: flex; gap: 0.75rem; align-items: center;">
+                <span class="badge badge-active" style="padding: 0.35rem 0.8rem;">
+                    ADMIN PRIVILEGES ACTIVE
+                </span>
+                <button onclick="window.IcarusEngine.logoutAdmin()" class="btn btn-secondary" style="font-size: 0.72rem; padding: 0.35rem 0.8rem;">
+                    Lock Console ✕
+                </button>
+            </div>
         </div>
 
         <!-- REMOTE REALTIME TIMER & BROADCAST CONTROL (MULTI-COMPUTER SYNC) -->
@@ -176,9 +206,37 @@
     <script src="./js/firebase_sync.js"></script>
     <script src="./js/github_pages_state.js"></script>
     <script>
+    function checkAdminAuth() {
+        const isAuthed = window.IcarusEngine.isAdminAuthenticated();
+        const loginContainer = document.getElementById("admin-login-container");
+        const consoleContainer = document.getElementById("admin-console-container");
+
+        if (!isAuthed) {
+            loginContainer.style.display = "block";
+            consoleContainer.style.display = "none";
+        } else {
+            loginContainer.style.display = "none";
+            consoleContainer.style.display = "block";
+            renderAdminStandings();
+        }
+    }
+
+    function handleAdminLogin(e) {
+        e.preventDefault();
+        const pass = document.getElementById("admin-password-input").value;
+        const success = window.IcarusEngine.loginAdmin(pass);
+        const errMsg = document.getElementById("admin-err-msg");
+
+        if (success) {
+            checkAdminAuth();
+        } else {
+            errMsg.style.display = "block";
+            errMsg.textContent = "Access Denied: Invalid Flight Director Password.";
+        }
+    }
+
     function renderAdminStandings() {
         const teams = window.IcarusEngine.getAllTeamsOverview();
-        // Sort by grand total descending
         teams.sort((a, b) => b.grand_total - a.grand_total);
 
         const tbody = document.getElementById("admin-table-body");
@@ -222,7 +280,6 @@
         if (window.IcarusCommander && window.IcarusCommander.startTimer) {
             await window.IcarusCommander.startTimer(roundNum, minutes, title);
         } else {
-            // Local fallback
             const endsAt = Date.now() + (minutes * 60 * 1000);
             localStorage.setItem("ICARUS_REMOTE_TIMER", JSON.stringify({
                 timer_running: true,
@@ -305,8 +362,12 @@
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-        renderAdminStandings();
-        setInterval(renderAdminStandings, 5000);
+        checkAdminAuth();
+        setInterval(() => {
+            if (window.IcarusEngine.isAdminAuthenticated()) {
+                renderAdminStandings();
+            }
+        }, 5000);
 
         const btnToggle = document.getElementById("btn-toggle-cfg");
         const cfgBox = document.getElementById("firebase-cfg-box");

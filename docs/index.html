@@ -8,6 +8,24 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./css/style.css">
+    <style>
+    .auth-tab {
+        flex: 1;
+        text-align: center;
+        padding: 0.75rem 1rem;
+        font-family: var(--font-mono);
+        font-size: 0.85rem;
+        font-weight: 700;
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        color: var(--text-muted);
+        transition: all 0.15s ease;
+    }
+    .auth-tab.active {
+        color: #ffffff;
+        border-bottom-color: #ffffff;
+    }
+    </style>
 </head>
 <body>
     <nav class="navbar">
@@ -25,43 +43,119 @@
             <div class="nav-badge mono" id="mission-countdown" style="border-color: #525252; color: #ffffff;">T-00:00:00</div>
             <ul class="nav-links">
                 <li><a href="./index.html" class="nav-link" style="color:#ffffff;">Dashboard</a></li>
-                <li><a href="./round1.html" class="nav-link">Round 1</a></li>
-                <li><a href="./round2.html" class="nav-link">Round 2</a></li>
-                <li><a href="./round3.html" class="nav-link">Round 3</a></li>
-                <li><a href="./round4.html" class="nav-link">Round 4</a></li>
+                <li class="authed-only" style="display:none;"><a href="./round1.html" class="nav-link">Round 1</a></li>
+                <li class="authed-only" style="display:none;"><a href="./round2.html" class="nav-link">Round 2</a></li>
+                <li class="authed-only" style="display:none;"><a href="./round3.html" class="nav-link">Round 3</a></li>
+                <li class="authed-only" style="display:none;"><a href="./round4.html" class="nav-link">Round 4</a></li>
                 <li><a href="./scoreboard.html" class="nav-link">Scoreboard</a></li>
-                <li><a href="./admin.html" class="nav-link" style="border-bottom: 1px solid #737373;">Admin</a></li>
+                <li class="authed-only" style="display:none;"><a href="javascript:void(0)" onclick="window.IcarusEngine.logout()" class="nav-link" style="border-bottom: 1px solid #737373;">Logout</a></li>
             </ul>
         </div>
     </nav>
 
-    <div class="container" style="padding-top: 1.5rem;">
+    <!-- SECTION 1: AUTHENTICATION / REGISTRATION GATE (Shown when NOT logged in) -->
+    <div id="auth-gate-container" class="container" style="max-width: 460px; padding-top: 3.5rem;">
+        <div class="card" style="padding: 2.5rem; border: 1px solid var(--border-muted);">
+            <div style="margin-bottom: 1.75rem;">
+                <div class="eyebrow">[STATION ENTRY GATE]</div>
+                <h2 style="font-size: 1.5rem; color: #ffffff; margin-top: 0.3rem;">ICARUS Flight Operations</h2>
+                <p style="color: var(--text-muted); font-size: 0.82rem; margin-top: 0.25rem;">Authenticate workstation or register team credentials</p>
+            </div>
+
+            <div id="auth-error-box" class="alert alert-warning" style="display: none; padding: 0.75rem 1rem; font-size: 0.82rem; margin-bottom: 1.25rem;"></div>
+
+            <!-- Tab Switcher -->
+            <div style="display: flex; border-bottom: 1px solid var(--border-hairline); margin-bottom: 1.5rem;">
+                <div id="tab-login-btn" class="auth-tab active" onclick="switchAuthTab('login')">Station Login</div>
+                <div id="tab-register-btn" class="auth-tab" onclick="switchAuthTab('register')">Register Team</div>
+            </div>
+
+            <!-- LOGIN FORM -->
+            <form id="form-station-login" onsubmit="handleLoginSubmit(event)">
+                <div class="form-group">
+                    <label class="form-label">Team Name, Callsign, or Station Number (1-11)</label>
+                    <input type="text" id="login-callsign" class="form-control" placeholder="e.g. 1 or Team Icarus Alpha" required autofocus>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Station Password</label>
+                    <input type="password" id="login-password" class="form-control" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem; margin-top: 0.5rem;">
+                    Authenticate Station &rarr;
+                </button>
+            </form>
+
+            <!-- REGISTER FORM -->
+            <form id="form-station-register" onsubmit="handleRegisterSubmit(event)" style="display: none;">
+                <div class="form-group">
+                    <label class="form-label">Assigned Station Number (1 to 11)</label>
+                    <input type="number" id="reg-team-id" class="form-control" min="1" max="11" placeholder="e.g. 1" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Team Name / Callsign</label>
+                    <input type="text" id="reg-team-name" class="form-control" placeholder="e.g. Orion Flight Group" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Station Password</label>
+                    <input type="password" id="reg-password" class="form-control" placeholder="Create password" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Event Join Code</label>
+                    <input type="text" id="reg-join-code" class="form-control mono" placeholder="RVU-ORBIT-2027" required style="text-transform: uppercase;">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem; margin-top: 0.5rem;">
+                    Register Station &rarr;
+                </button>
+            </form>
+
+            <!-- Divider -->
+            <div style="display: flex; align-items: center; margin: 1.75rem 0 1.25rem; gap: 0.75rem;">
+                <div style="flex: 1; height: 1px; background: var(--border-muted);"></div>
+                <span class="mono" style="font-size: 0.72rem; color: var(--text-dim); text-transform: uppercase;">or instant entry</span>
+                <div style="flex: 1; height: 1px; background: var(--border-muted);"></div>
+            </div>
+
+            <!-- Anonymous Station Entry Button -->
+            <div style="display: flex; gap: 0.5rem;">
+                <select id="quick-station-select" class="form-control mono" style="flex: 1; font-size: 0.78rem; padding: 0.45rem;">
+                    <option value="1">Station 01 (Icarus Alpha)</option>
+                    <option value="2">Station 02 (Oreos)</option>
+                    <option value="3">Station 03 (Apex Flight)</option>
+                    <option value="4">Station 04 (Polaris)</option>
+                    <option value="5">Station 05 (Zenith)</option>
+                    <option value="6">Station 06 (Vanguard)</option>
+                    <option value="7">Station 07 (Horizon)</option>
+                    <option value="8">Station 08 (StratoCom)</option>
+                    <option value="9">Station 09 (Nova Telemetry)</option>
+                    <option value="10">Station 10 (Astra Recovery)</option>
+                    <option value="11">Station 11 (Celestia)</option>
+                </select>
+                <button type="button" onclick="handleQuickEntry()" class="btn btn-secondary" style="font-size: 0.78rem; padding: 0.45rem 1rem;">
+                    Enter Station &rarr;
+                </button>
+            </div>
+            <div style="font-size: 0.7rem; color: var(--text-dim); margin-top: 0.4rem; text-align: center;">
+                Select your assigned workstation number to enter directly.
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 2: AUTHENTICATED DASHBOARD (Shown ONLY when logged in) -->
+    <div id="dashboard-container" class="container" style="display: none; padding-top: 1.5rem;">
         <!-- Top Station Context Header -->
         <div class="card" style="margin-bottom: 2rem; border-left: 3px solid #ffffff;">
             <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem;">
                 <div>
-                    <div class="eyebrow">[ICARUS MISSION PORTAL / GITHUB PAGES]</div>
-                    <h1 style="font-size: 1.8rem; margin: 0.2rem 0; color: #ffffff;">Flight Operations Command</h1>
+                    <div class="eyebrow">[ACTIVE FLIGHT WORKSTATION]</div>
+                    <h1 id="dash-team-name" style="font-size: 1.8rem; margin: 0.2rem 0; color: #ffffff;">Station Flight Ops</h1>
                     <p style="color: var(--text-muted); font-size: 0.85rem;">
                         4-Stage CanSat Telemetry & Atmospheric Flight Operations Challenge.
                     </p>
                 </div>
                 <div style="text-align: right;">
-                    <div class="eyebrow">Active Workstation</div>
-                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.2rem;">
-                        <select id="team-selector" class="form-control mono" style="font-size: 0.8rem; padding: 0.35rem 0.6rem; width: 220px;">
-                            <option value="1">Team 1: Team Icarus Alpha</option>
-                            <option value="2">Team 2: Oreos</option>
-                            <option value="3">Team 3: Apex Flight Systems</option>
-                            <option value="4">Team 4: Polaris Dynamics</option>
-                            <option value="5">Team 5: Zenith Aero Group</option>
-                            <option value="6">Team 6: Vanguard Satellites</option>
-                            <option value="7">Team 7: Horizon Ground Ops</option>
-                            <option value="8">Team 8: StratoCom Laboratory</option>
-                            <option value="9">Team 9: Nova Telemetry Core</option>
-                            <option value="10">Team 10: Astra Recovery</option>
-                            <option value="11">Team 11: Celestia Flight Group</option>
-                        </select>
+                    <div class="eyebrow">Operating Station</div>
+                    <div id="dash-team-id-badge" class="mono" style="font-weight: 700; color: #ffffff; font-size: 1.1rem; margin-top: 0.2rem;">
+                        STATION 01
                     </div>
                 </div>
             </div>
@@ -164,10 +258,6 @@
                 <div class="eyebrow">Projector View</div>
                 <div style="font-weight: 700; font-size: 1rem; color: #ffffff;">Public Scoreboard &rarr;</div>
             </a>
-            <a href="./admin.html" class="btn btn-secondary" style="flex: 1; text-align: center; padding: 1rem;">
-                <div class="eyebrow">Flight Operations</div>
-                <div style="font-weight: 700; font-size: 1rem; color: #ffffff;">Flight Director Admin Console &rarr;</div>
-            </a>
         </div>
     </div>
 
@@ -176,79 +266,151 @@
     <script src="./js/firebase_sync.js"></script>
     <script src="./js/github_pages_state.js"></script>
     <script>
-    function refreshUI() {
-        const team = window.IcarusEngine.getTeamData();
-        const selector = document.getElementById("team-selector");
-        if (selector) selector.value = team.id;
+    function switchAuthTab(tab) {
+        const tabLogin = document.getElementById("tab-login-btn");
+        const tabReg = document.getElementById("tab-register-btn");
+        const formLogin = document.getElementById("form-station-login");
+        const formReg = document.getElementById("form-station-register");
+        const errBox = document.getElementById("auth-error-box");
+        errBox.style.display = "none";
 
-        // R1
-        const badgeR1 = document.getElementById("badge-r1");
-        const scoreR1 = document.getElementById("score-r1");
-        if (team.r1.status === "submitted") {
-            badgeR1.textContent = "PASS (+100)";
-            badgeR1.className = "badge badge-active";
-            scoreR1.style.display = "block";
+        if (tab === "login") {
+            tabLogin.className = "auth-tab active";
+            tabReg.className = "auth-tab";
+            formLogin.style.display = "block";
+            formReg.style.display = "none";
+        } else {
+            tabLogin.className = "auth-tab";
+            tabReg.className = "auth-tab active";
+            formLogin.style.display = "none";
+            formReg.style.display = "block";
         }
+    }
 
-        // R2
-        const badgeR2 = document.getElementById("badge-r2");
-        const scoreR2 = document.getElementById("score-r2");
-        const btnR2 = document.getElementById("btn-link-r2");
-        if (team.r2.status === "submitted") {
-            badgeR2.textContent = "COMPLETED";
-            badgeR2.className = "badge badge-active";
-            scoreR2.textContent = `+${team.r2.score} PTS AWARDED`;
-            scoreR2.style.display = "block";
-            btnR2.className = "btn btn-secondary";
-            btnR2.textContent = "Review Stations →";
-        } else if (team.r2.status === "active") {
-            badgeR2.textContent = "ACTIVE";
-            badgeR2.className = "badge badge-active";
-            btnR2.className = "btn btn-primary";
+    function handleLoginSubmit(e) {
+        e.preventDefault();
+        const callsign = document.getElementById("login-callsign").value;
+        const pass = document.getElementById("login-password").value;
+        const res = window.IcarusEngine.login(callsign, pass);
+
+        if (res.success) {
+            checkAuthAndRender();
+        } else {
+            showAuthError(res.message);
         }
+    }
 
-        // R3
-        const badgeR3 = document.getElementById("badge-r3");
-        const scoreR3 = document.getElementById("score-r3");
-        const btnR3 = document.getElementById("btn-link-r3");
-        if (team.r3.status === "submitted") {
-            badgeR3.textContent = "SEALED";
-            badgeR3.className = "badge badge-active";
-            scoreR3.style.display = "block";
-            btnR3.className = "btn btn-secondary";
-            btnR3.textContent = "View Flight Log →";
-        } else if (team.r3.status === "active") {
-            badgeR3.textContent = "ACTIVE";
-            badgeR3.className = "badge badge-active";
-            btnR3.className = "btn btn-primary";
+    function handleRegisterSubmit(e) {
+        e.preventDefault();
+        const tid = document.getElementById("reg-team-id").value;
+        const name = document.getElementById("reg-team-name").value;
+        const pass = document.getElementById("reg-password").value;
+        const code = document.getElementById("reg-join-code").value;
+
+        const res = window.IcarusEngine.register(tid, name, pass, code);
+        if (res.success) {
+            checkAuthAndRender();
+        } else {
+            showAuthError(res.message);
         }
+    }
 
-        // R4
-        const badgeR4 = document.getElementById("badge-r4");
-        const scoreR4 = document.getElementById("score-r4");
-        const btnR4 = document.getElementById("btn-link-r4");
-        if (team.r4.status === "submitted") {
-            badgeR4.textContent = "ACTIVE";
-            badgeR4.className = "badge badge-active";
-            scoreR4.textContent = `+${team.r4.score} PTS`;
-            scoreR4.style.display = "block";
-            btnR4.className = "btn btn-primary";
-        } else if (team.r4.status === "active") {
-            badgeR4.textContent = "ACTIVE";
-            badgeR4.className = "badge badge-active";
-            btnR4.className = "btn btn-primary";
+    function handleQuickEntry() {
+        const tid = document.getElementById("quick-station-select").value;
+        const team = window.IcarusEngine.getTeamData(tid);
+        window.IcarusEngine.setAuthUser(tid, team.name);
+        checkAuthAndRender();
+    }
+
+    function showAuthError(msg) {
+        const errBox = document.getElementById("auth-error-box");
+        errBox.style.display = "block";
+        errBox.textContent = msg;
+    }
+
+    function checkAuthAndRender() {
+        const user = window.IcarusEngine.getAuthUser();
+        const authGate = document.getElementById("auth-gate-container");
+        const dash = document.getElementById("dashboard-container");
+        const authedLinks = document.querySelectorAll(".authed-only");
+
+        if (!user) {
+            // Show login gate, hide dashboard
+            authGate.style.display = "block";
+            dash.style.display = "none";
+            authedLinks.forEach(el => el.style.display = "none");
+        } else {
+            // Show dashboard, hide login gate
+            authGate.style.display = "none";
+            dash.style.display = "block";
+            authedLinks.forEach(el => el.style.display = "inline");
+
+            const team = window.IcarusEngine.getTeamData(user.teamId);
+            document.getElementById("dash-team-name").textContent = team.name;
+            document.getElementById("dash-team-id-badge").textContent = `STATION ${team.id.toString().padStart(2, '0')}`;
+
+            // R1
+            const badgeR1 = document.getElementById("badge-r1");
+            const scoreR1 = document.getElementById("score-r1");
+            if (team.r1 && team.r1.status === "submitted") {
+                badgeR1.textContent = "PASS (+100)";
+                badgeR1.className = "badge badge-active";
+                scoreR1.style.display = "block";
+            }
+
+            // R2
+            const badgeR2 = document.getElementById("badge-r2");
+            const scoreR2 = document.getElementById("score-r2");
+            const btnR2 = document.getElementById("btn-link-r2");
+            if (team.r2 && team.r2.status === "submitted") {
+                badgeR2.textContent = "COMPLETED";
+                badgeR2.className = "badge badge-active";
+                scoreR2.textContent = `+${team.r2.score} PTS AWARDED`;
+                scoreR2.style.display = "block";
+                btnR2.className = "btn btn-secondary";
+                btnR2.textContent = "Review Stations →";
+            } else if (team.r2 && team.r2.status === "active") {
+                badgeR2.textContent = "ACTIVE";
+                badgeR2.className = "badge badge-active";
+                btnR2.className = "btn btn-primary";
+            }
+
+            // R3
+            const badgeR3 = document.getElementById("badge-r3");
+            const scoreR3 = document.getElementById("score-r3");
+            const btnR3 = document.getElementById("btn-link-r3");
+            if (team.r3 && team.r3.status === "submitted") {
+                badgeR3.textContent = "SEALED";
+                badgeR3.className = "badge badge-active";
+                scoreR3.style.display = "block";
+                btnR3.className = "btn btn-secondary";
+                btnR3.textContent = "View Flight Log →";
+            } else if (team.r3 && team.r3.status === "active") {
+                badgeR3.textContent = "ACTIVE";
+                badgeR3.className = "badge badge-active";
+                btnR3.className = "btn btn-primary";
+            }
+
+            // R4
+            const badgeR4 = document.getElementById("badge-r4");
+            const scoreR4 = document.getElementById("score-r4");
+            const btnR4 = document.getElementById("btn-link-r4");
+            if (team.r4 && team.r4.status === "submitted") {
+                badgeR4.textContent = "ACTIVE";
+                badgeR4.className = "badge badge-active";
+                scoreR4.textContent = `+${team.r4.score} PTS`;
+                scoreR4.style.display = "block";
+                btnR4.className = "btn btn-primary";
+            } else if (team.r4 && team.r4.status === "active") {
+                badgeR4.textContent = "ACTIVE";
+                badgeR4.className = "badge badge-active";
+                btnR4.className = "btn btn-primary";
+            }
         }
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-        refreshUI();
-        const selector = document.getElementById("team-selector");
-        if (selector) {
-            selector.addEventListener("change", (e) => {
-                window.IcarusEngine.setCurrentTeamId(e.target.value);
-                refreshUI();
-            });
-        }
+        checkAuthAndRender();
     });
     </script>
 </body>

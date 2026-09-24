@@ -30,7 +30,7 @@
                 <li><a href="./round3.html" class="nav-link">Round 3</a></li>
                 <li><a href="./round4.html" class="nav-link">Round 4</a></li>
                 <li><a href="./scoreboard.html" class="nav-link">Scoreboard</a></li>
-                <li><a href="./admin.html" class="nav-link">Admin</a></li>
+                <li><a href="javascript:void(0)" onclick="window.IcarusEngine.logout()" class="nav-link" style="border-bottom: 1px solid #737373;">Logout</a></li>
             </ul>
         </div>
     </nav>
@@ -71,6 +71,11 @@
     <script src="./js/github_pages_state.js"></script>
     <script>
     document.addEventListener("DOMContentLoaded", () => {
+        if (!window.IcarusEngine.getAuthUser()) {
+            window.location.href = "./index.html";
+            return;
+        }
+
         const team = window.IcarusEngine.getTeamData();
         const alertBox = document.getElementById("status-alert");
         const r2Link = document.getElementById("r2-link");
