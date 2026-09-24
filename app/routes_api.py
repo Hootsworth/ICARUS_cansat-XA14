@@ -149,14 +149,6 @@ async def submit_challenge(request: Request):
         conn.close()
         raise HTTPException(status_code=404, detail="Challenge ID not found.")
         
-    # Round 2 is staged. Do not allow direct jumps into sealed evidence phases.
-    if ch["round_id"] == 2 and ch["phase"] in ("PHASE_2", "PHASE_3"):
-        required_phase = "PHASE_1" if ch["phase"] == "PHASE_2" else "PHASE_2"
-        cur.execute("SELECT 1 FROM flags WHERE team_id = ? AND phase = ?", (team["id"], required_phase))
-        if not cur.fetchone():
-            conn.close()
-            raise HTTPException(status_code=403, detail=f"{ch['phase']} is sealed. Complete the previous phase first.")
-
     # 2. Check if already solved correctly
     cur.execute("SELECT * FROM submissions WHERE team_id = ? AND challenge_id = ? AND correct = 1", (team["id"], challenge_id))
     existing_correct = cur.fetchone()
@@ -248,50 +240,18 @@ async def submit_challenge(request: Request):
                 VALUES (?, ?, ?, ?)
                 """, (team["id"], phase, flag_unlocked, datetime.now(timezone.utc).isoformat()))
                 
-    # Record the submission against the challenge's owning round.
-    challenge_round = ch["round_id"]
+    # Record submission (Round 4)
     cur.execute("""
     INSERT INTO submissions (team_id, round_id, challenge_id, answer, correct, points_awarded, ts_utc_ms, attempt_no)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    """, (team["id"], challenge_round, challenge_id, answer_raw, 1 if is_correct else 0, points_awarded, now_ms, attempt_no))
-
-    # Keep the owning round's score in sync.
+    VALUES (?, 4, ?, ?, ?, ?, ?, ?)
+    """, (team["id"], challenge_id, answer_raw, 1 if is_correct else 0, points_awarded, now_ms, attempt_no))
+    
+    # Keep Round 4 status and score in sync
     cur.execute("""
     INSERT OR REPLACE INTO round_status (team_id, round_id, status, score, unlocked_at)
-    VALUES (?, ?, 'active', (SELECT COALESCE(SUM(points_awarded), 0) FROM submissions WHERE team_id = ? AND round_id = ? AND correct = 1), ?)
-    """, (team["id"], challenge_round, team["id"], challenge_round, datetime.now(timezone.utc).isoformat()))
-
-    # Round 2 is the main investigation. Completing C1-C3 unlocks Round 3.
-    if is_correct and challenge_round == 2:
-        cur.execute("""
-        SELECT id FROM challenges
-        WHERE round_id = 2 AND phase IN ('PHASE_1', 'PHASE_2', 'PHASE_3')
-        """)
-        required_ids = {row["id"] for row in cur.fetchall()}
-        cur.execute("""
-        SELECT challenge_id FROM submissions
-        WHERE team_id = ? AND round_id = 2 AND correct = 1
-        """, (team["id"],))
-        solved_ids = {row["challenge_id"] for row in cur.fetchall()}
-        if required_ids.issubset(solved_ids):
-            now_iso = datetime.now(timezone.utc).isoformat()
-            cur.execute("""
-            UPDATE round_status
-            SET status = 'submitted', submitted_at = ?, score = (
-                SELECT COALESCE(SUM(points_awarded), 0) FROM submissions
-                WHERE team_id = ? AND round_id = 2 AND correct = 1
-            )
-            WHERE team_id = ? AND round_id = 2
-            """, (now_iso, team["id"], team["id"]))
-            cur.execute("""
-            INSERT OR REPLACE INTO round_status (team_id, round_id, status, score, unlocked_at)
-            VALUES (?, 3, 'active', 0, ?)
-            """, (team["id"], now_iso))
-            cur.execute("""
-            INSERT INTO events (kind, detail, ts_utc_ms)
-            VALUES ('ROUND2_COMPLETED', ?, ?)
-            """, (f"Team {team['id']} completed the main telemetry investigation.", now_ms))
-
+    VALUES (?, 4, 'active', (SELECT COALESCE(SUM(points_awarded), 0) FROM submissions WHERE team_id = ? AND round_id = 4 AND correct = 1), ?)
+    """, (team["id"], team["id"], datetime.now(timezone.utc).isoformat()))
+    
     conn.commit()
     conn.close()
     
@@ -322,16 +282,6 @@ async def request_telemetry_pass(request: Request):
         raise HTTPException(status_code=401, detail="Authentication required. Provide Bearer API token in Authorization header.")
         
     team_id = team["id"]
-
-    # High-rate downlink belongs to Phase 2 and is released only after Phase 1.
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute("SELECT 1 FROM flags WHERE team_id = ? AND phase = 'PHASE_1'", (team_id,))
-    phase1_unlocked = cur.fetchone()
-    conn.close()
-    if not phase1_unlocked:
-        raise HTTPException(status_code=403, detail="High-rate downlink is sealed until Phase 1 is solved.")
-
     now_time = time.time()
     now_ms = int(now_time * 1000)
     
