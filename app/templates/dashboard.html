@@ -106,9 +106,9 @@
                     <span class="badge">LOCKED</span>
                     {% endif %}
                 </div>
-                <h3 style="font-size: 1.05rem; margin-bottom: 0.4rem;">Telemetry Investigation</h3>
+                <h3 style="font-size: 1.05rem; margin-bottom: 0.4rem;">Flight Readiness Review</h3>
                 <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 1rem;">
-                    Analyze 24-hour beacon telemetry, planned mission events, high-rate downlinks, and seeded spacecraft faults.
+                    5 interactive subsystem inspection stations: EPS battery sag, recovery door servo, GNSS HDOP, barometer QNH, and LoRa link.
                 </p>
             </div>
             <div>
@@ -116,7 +116,7 @@
                 <div class="mono" style="font-size: 0.85rem; color: var(--text-main); font-weight: 700; margin-bottom: 0.5rem;">
                     +{{ rounds_summary[2].score }} PTS AWARDED
                 </div>
-                <a href="/round2" class="mono" style="font-size: 0.75rem; color: var(--text-dim); text-decoration: underline;">Investigate &rarr;</a>
+                <a href="/round2" class="mono" style="font-size: 0.75rem; color: var(--text-dim); text-decoration: underline;">Review &rarr;</a>
                 {% elif rounds_summary[2].status == 'active' %}
                 <a href="/round2" class="btn btn-primary" style="width: 100%; font-size: 0.75rem;">
                     Begin Review &rarr;
