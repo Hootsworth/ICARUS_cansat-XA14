@@ -164,6 +164,16 @@
             const db = getFirestore(app);
             const auth = getAuth(app);
 
+            // Optional Analytics initialization
+            try {
+                const { getAnalytics, isSupported } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js");
+                if (await isSupported()) {
+                    window.IcarusFirebase.analytics = getAnalytics(app);
+                }
+            } catch (anErr) {
+                // Analytics is optional for web app state sync
+            }
+
             window.IcarusFirebase.app = app;
             window.IcarusFirebase.db = db;
             window.IcarusFirebase.auth = auth;

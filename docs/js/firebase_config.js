@@ -3,19 +3,18 @@
  * Supports Google Auth, Anonymous Station Auth, and Firestore Shared Realtime DB.
  */
 
-// Default configuration template
-// You can enter your credentials via Admin Console > "⚙ Firebase Config",
-// or embed them here directly in window.FIREBASE_CONFIG.
+// Official Production Firebase Configuration (Default across all workstations)
 const DEFAULT_FIREBASE_CONFIG = {
-    apiKey: "",
-    authDomain: "",
-    projectId: "",
-    storageBucket: "",
-    messagingSenderId: "",
-    appId: ""
+    apiKey: "AIzaSyBLbqh7mPrPAV3FVo46JnHE1iKM3SdfdyY",
+    authDomain: "icarus-b8052.firebaseapp.com",
+    projectId: "icarus-b8052",
+    storageBucket: "icarus-b8052.firebasestorage.app",
+    messagingSenderId: "783216515090",
+    appId: "1:783216515090:web:ff32e5491d8c87058c20cb",
+    measurementId: "G-G2S7E5NZFB"
 };
 
-// Retrieve custom credentials saved in localStorage, or window.FIREBASE_CONFIG, or DEFAULT_FIREBASE_CONFIG
+// Retrieve credentials (uses default config automatically, or custom override if set)
 function getFirebaseConfig() {
     try {
         const custom = localStorage.getItem("ICARUS_FIREBASE_CONFIG");
