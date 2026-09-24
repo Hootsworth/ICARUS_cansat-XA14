@@ -1,104 +1,211 @@
 {% extends "base.html" %}
-{% block title %}Round 2: Telemetry Investigation | ICARUS{% endblock %}
+
+{% block title %}Round 2: Flight Readiness Review | ICARUS{% endblock %}
 
 {% block content %}
-<div style="max-width:1100px;margin:2rem auto;">
-  <div class="card" style="margin-bottom:1.5rem;border-left:3px solid #000;">
-    <div style="display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;">
-      <div>
-        <div class="eyebrow">[ROUND 02 / PRIMARY INVESTIGATION]</div>
-        <h1 style="font-size:1.7rem;margin:.35rem 0;">Satellite Telemetry Investigation</h1>
-        <p style="color:var(--text-muted);max-width:760px;">
-          Team {{ team.id }} receives its own seeded mission. Decode evidence, choose where to spend limited downlink credits, isolate faults, and prove your conclusions from the telemetry.
+<div style="max-width: 960px; margin: 2rem auto; padding: 0;">
+    <!-- Round Header -->
+    <div class="card" style="margin-bottom: 2rem; border-left: 3px solid #000000;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <div class="eyebrow">[ROUND 02 / ENGINEERING REVIEW]</div>
+                <h1 style="font-size: 1.6rem; margin: 0.3rem 0; color: #000000;">Mission Go / No-Go: Flight Readiness Review</h1>
+                <p style="color: var(--text-muted); font-size: 0.85rem;">
+                    Analyze pre-flight telemetry across 5 engineering stations. Make the correct aerospace operations call for each subsystem.
+                </p>
+            </div>
+            <div style="text-align: right;">
+                <div class="eyebrow">Operating Station</div>
+                <div class="mono" style="font-weight: 700; color: #000000; font-size: 1rem;">Team {{ team.id }}: {{ team.name }}</div>
+            </div>
+        </div>
+    </div>
+
+    {% if not is_active and not is_completed %}
+    <!-- Locked State -->
+    <div class="card" style="text-align: center; padding: 4rem 2rem;">
+        <div class="mono" style="font-size: 2rem; margin-bottom: 1rem;">[LOCKED]</div>
+        <h2 style="color: #000000; margin-bottom: 0.5rem; font-size: 1.3rem;">Round 2 is Currently Locked</h2>
+        <p style="color: var(--text-muted); max-width: 480px; margin: 0 auto 2rem; font-size: 0.85rem;">
+            You must verify your station's Launch Authorisation Code in Round 1 before the Flight Readiness Review unlocks.
         </p>
-      </div>
-      <div style="text-align:right;">
-        <div class="eyebrow">Station</div>
-        <div class="mono" style="font-weight:700;">{{ team.name }}</div>
-        <div class="mono" style="margin-top:.4rem;">{{ main_solved }}/{{ main_challenge_count }} core solved</div>
-      </div>
+        <a href="/dashboard" class="btn btn-primary">Return to Dashboard</a>
     </div>
-  </div>
 
-  {% if not is_active and not is_completed %}
-  <div class="card" style="padding:3rem;text-align:center;">
-    <div class="mono" style="font-size:1.8rem;">[LOCKED]</div>
-    <p style="color:var(--text-muted);">Complete Round 1 to receive access to the telemetry investigation.</p>
-    <a href="/dashboard" class="btn btn-primary">Return to Dashboard</a>
-  </div>
-  {% else %}
-  <div class="card" style="margin-bottom:1.5rem;">
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;">
-      <div>
-        <div class="eyebrow">Mission Architecture</div>
-        <h2 style="font-size:1.25rem;margin:.25rem 0;">Evidence chain</h2>
-        <p style="font-size:.85rem;color:var(--text-muted);margin:0;">
-          The data is intentionally distributed. The browser does not contain the master answers or a complete high-rate archive.
+    {% elif is_completed %}
+    <!-- Completed State -->
+    <div class="card" style="text-align: center; padding: 4rem 2rem;">
+        <div class="mono" style="font-size: 2rem; margin-bottom: 1rem;">[VERIFIED]</div>
+        <h2 style="color: #000000; margin-bottom: 0.5rem; font-size: 1.3rem;">Flight Readiness Review Certified</h2>
+        <p style="color: var(--text-muted); margin-bottom: 2rem; font-size: 0.85rem;">
+            Your engineering decisions have been validated by the Flight Director.
         </p>
-      </div>
-      <a href="/packages" class="btn btn-secondary">Open Mission Packages →</a>
-    </div>
-  </div>
-
-  {% for key in ["PHASE_1","PHASE_2","PHASE_3","BONUS"] %}
-  {% set pd = phase_data[key] %}
-  <section class="card" style="margin-bottom:1.25rem;">
-    <div style="display:flex;justify-content:space-between;gap:1rem;align-items:flex-start;flex-wrap:wrap;border-bottom:1px solid var(--border-muted);padding-bottom:.9rem;margin-bottom:1rem;">
-      <div>
-        <div class="eyebrow">{{ key }}</div>
-        <h2 style="font-size:1.2rem;margin:.3rem 0;">{{ pd.title }}</h2>
-        <p style="font-size:.84rem;color:var(--text-muted);margin:0;">{{ pd.desc }}</p>
-      </div>
-      <div class="mono" style="font-size:.8rem;">
-        {% if key == "PHASE_1" %}{{ progress.PHASE_1 }}/3
-        {% elif key == "PHASE_2" %}{{ progress.PHASE_2 }}/4
-        {% elif key == "PHASE_3" %}{{ progress.PHASE_3 }}/4
-        {% else %}{{ progress.BONUS }}/2{% endif %}
-      </div>
-    </div>
-
-    {% if key == "PHASE_2" and not flags.get("PHASE_1") %}
-    <div style="padding:1rem;border:1px solid var(--border-muted);color:var(--text-muted);font-size:.85rem;">
-      Phase 2 evidence is sealed. Solve all Phase 1 challenges to release its package.
-    </div>
-    {% elif key == "PHASE_3" and not flags.get("PHASE_2") %}
-    <div style="padding:1rem;border:1px solid var(--border-muted);color:var(--text-muted);font-size:.85rem;">
-      Phase 3 is sealed. Complete Phase 2 to receive the fault-isolation package.
-    </div>
-    {% else %}
-    <div class="challenge-grid">
-      {% for ch in challenges if ch.phase == key %}
-      <a href="/challenge/{{ ch.id }}" class="challenge-card {{ 'solved' if ch.is_solved else '' }}" style="text-decoration:none;color:inherit;">
+        <div style="display: inline-block; border: 1px solid var(--border-muted); padding: 1.5rem 3rem; margin-bottom: 2rem;">
+            <div class="eyebrow" style="margin-bottom: 0.5rem;">Readiness Score</div>
+            <div class="mono" style="font-size: 2.8rem; font-weight: 800; color: #000000;">{{ final_score }} <span style="font-size: 1rem; color: var(--text-dim);">/ 500 PTS</span></div>
+        </div>
         <div>
-          <div class="card-top">
-            <span class="challenge-id mono">{{ ch.id }}</span>
-            <span class="challenge-pts mono">{{ ch.points }} PTS</span>
-          </div>
-          <div class="challenge-title">{{ ch.title }}</div>
-          <div class="challenge-desc">{{ ch.description }}</div>
+            <a href="/dashboard" class="btn btn-primary">Proceed to Round 3 &rarr;</a>
         </div>
-        <div style="border-top:1px solid var(--border-hairline);padding-top:.7rem;margin-top:.5rem;">
-          {% if ch.is_solved %}
-          <span class="mono" style="font-size:.75rem;">✓ SOLVED · +{{ ch.points_awarded }} PTS</span>
-          {% else %}
-          <span class="mono" style="font-size:.75rem;">INVESTIGATE →</span>
-          {% endif %}
+    </div>
+
+    {% else %}
+    <!-- Active Readiness Review Stations -->
+    <div id="readiness-stations-container">
+        <div class="card" style="text-align: center; padding: 2rem;" id="loading-box">
+            <div class="mono">Loading Pre-Flight Telemetry Dossiers...</div>
         </div>
-      </a>
-      {% endfor %}
+    </div>
+
+    <!-- Submit Section -->
+    <div class="card" style="margin-top: 2rem; text-align: center; padding: 2rem; display: none;" id="submit-card">
+        <div class="eyebrow" style="margin-bottom: 0.5rem;">Certification Sign-Off</div>
+        <h3 style="color: #000000; margin-bottom: 1rem;">Ready to Transmit Flight Decisions?</h3>
+        <p style="color: var(--text-muted); font-size: 0.85rem; max-width: 500px; margin: 0 auto 1.5rem;">
+            Ensure your team has reviewed all 5 subsystem telemetry profiles. Submitting will commit your flight readiness ledger.
+        </p>
+        <button id="btn-submit-review" onclick="submitReadinessReview()" class="btn btn-primary" style="padding: 0.8rem 2.5rem;">
+            Commit Flight Operations Decisions
+        </button>
+        <div id="review-feedback" class="mono" style="font-size: 0.85rem; margin-top: 1rem; display: none;"></div>
     </div>
     {% endif %}
-  </section>
-  {% endfor %}
-
-  {% if is_completed %}
-  <div class="card" style="padding:2rem;text-align:center;">
-    <div class="eyebrow">[ROUND 02 COMPLETE]</div>
-    <h2 style="margin:.4rem 0;">Telemetry investigation certified</h2>
-    <p style="color:var(--text-muted);">Core fault-isolation chain complete. Round 3 has been unlocked.</p>
-    <a href="/round3" class="btn btn-primary">Proceed to Round 3 →</a>
-  </div>
-  {% endif %}
-  {% endif %}
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+{% if is_active and not is_completed %}
+<script>
+let stationsData = [];
+const userCalls = {};
+
+async function loadDossiers() {
+    try {
+        const res = await fetch("/api/round2/dossiers");
+        const data = await res.json();
+        stationsData = data.stations || [];
+        renderStations();
+    } catch (e) {
+        document.getElementById("loading-box").innerText = "Failed to load telemetry dossiers.";
+    }
+}
+
+function renderStations() {
+    const container = document.getElementById("readiness-stations-container");
+    container.innerHTML = "";
+    
+    stationsData.forEach((st, idx) => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.style.marginBottom = "2rem";
+        
+        let telemRows = "";
+        for (const [k, v] of Object.entries(st.telemetry_data)) {
+            telemRows += `<tr><td style="color:#71717a; width:40%;">${k}</td><td class="mono" style="color:var(--text-main); font-weight:600;">${v}</td></tr>`;
+        }
+        
+        let chartRows = st.strip_chart.map(line => `<div>${line}</div>`).join("");
+        
+        let optionsHtml = "";
+        st.options.forEach(opt => {
+            optionsHtml += `
+            <label style="display:flex; align-items:flex-start; gap:0.75rem; padding:0.75rem 1rem; border:1px solid var(--border-muted); margin-bottom:0.5rem; cursor:pointer; background:#ffffff; transition:border-color 0.15s ease;">
+                <input type="radio" name="station_${st.id}" value="${opt.id}" onchange="selectCall(${st.id}, '${opt.id}')" style="margin-top:0.25rem;">
+                <div style="font-size:0.85rem; color:var(--text-main);">
+                    <strong class="mono">[${opt.id}]</strong> ${opt.text}
+                </div>
+            </label>
+            `;
+        });
+        
+        card.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-muted); padding-bottom:0.75rem; margin-bottom:1.25rem;">
+            <div>
+                <span class="eyebrow">[STATION 0${st.id} / 05]</span>
+                <h3 style="font-size:1.15rem; color:var(--text-main); margin-top:0.2rem;">${st.subsystem}</h3>
+                <div class="mono" style="font-size:0.8rem; color:var(--text-dim);">${st.component}</div>
+            </div>
+            <span class="badge" id="badge_station_${st.id}">PENDING</span>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:1.5rem; margin-bottom:1.5rem;">
+            <!-- Telemetry Parameters -->
+            <div>
+                <div class="eyebrow" style="margin-bottom:0.5rem;">LIVE SENSOR READINGS</div>
+                <table class="scoreboard-table" style="font-size:0.8rem;">
+                    <tbody>${telemRows}</tbody>
+                </table>
+            </div>
+
+            <!-- Strip Chart / Plot -->
+            <div>
+                <div class="eyebrow" style="margin-bottom:0.5rem;">${st.chart_label}</div>
+                <div class="mono" style="background:#fafafa; border:1px solid var(--border-hairline); padding:0.75rem; font-size:0.75rem; line-height:1.6; color:#3f3f46; white-space:pre-wrap;">
+                    ${chartRows}
+                </div>
+            </div>
+        </div>
+
+        <!-- Engineering Findings -->
+        <div style="border-left:2px solid #000000; padding:0.5rem 1rem; margin-bottom:1.5rem; background:#f4f4f5;">
+            <div class="eyebrow">Operations Note</div>
+            <div style="font-size:0.85rem; color:var(--text-main); margin-top:0.25rem;">${st.findings}</div>
+        </div>
+
+        <!-- Decision Options -->
+        <div>
+            <div class="eyebrow" style="margin-bottom:0.75rem;">SELECT FLIGHT DIRECTOR CALL</div>
+            ${optionsHtml}
+        </div>
+        `;
+        
+        container.appendChild(card);
+    });
+    
+    document.getElementById("submit-card").style.display = "block";
+}
+
+function selectCall(stationId, optId) {
+    userCalls[stationId] = optId;
+    const badge = document.getElementById(`badge_station_${stationId}`);
+    if (badge) {
+        badge.innerText = `SELECTED: [${optId}]`;
+        badge.className = "badge badge-active";
+    }
+}
+
+async function submitReadinessReview() {
+    if (Object.keys(userCalls).length < 5) {
+        alert("Please make a flight call for all 5 stations before committing.");
+        return;
+    }
+    
+    const btn = document.getElementById("btn-submit-review");
+    const fb = document.getElementById("review-feedback");
+    btn.disabled = true;
+    btn.innerText = "Transmitting Ledger...";
+    fb.style.display = "none";
+    
+    try {
+        const res = await fetch("/api/round2/evaluate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ calls: userCalls })
+        });
+        const data = await res.json();
+        
+        fb.style.display = "block";
+        fb.innerText = `✓ ${data.message}`;
+        setTimeout(() => window.location.reload(), 1400);
+    } catch (e) {
+        fb.style.display = "block";
+        fb.innerText = "Network error submitting decisions.";
+        btn.disabled = false;
+        btn.innerText = "Commit Flight Operations Decisions";
+    }
+}
+
+document.addEventListener("DOMContentLoaded", loadDossiers);
+</script>
+{% endif %}
 {% endblock %}
