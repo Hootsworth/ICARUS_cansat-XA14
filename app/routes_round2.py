@@ -257,7 +257,7 @@ async def round2_submit_anomaly(request: Request):
             continue
         expected_dt = _parse_timestamp(row["onset_utc"])
         time_ok = abs((submitted_dt - expected_dt).total_seconds()) <= 1.0
-        subsystem_ok = subsystem_norm in SUBSYSTEM_ALIASES.get(row["type"], set())
+        subsystem_ok = any(alias in subsystem_norm for alias in SUBSYSTEM_ALIASES.get(row["type"], set()))
         if time_ok and subsystem_ok:
             match = row
             break
