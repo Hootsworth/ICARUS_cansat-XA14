@@ -322,6 +322,16 @@ async def request_telemetry_pass(request: Request):
         raise HTTPException(status_code=401, detail="Authentication required. Provide Bearer API token in Authorization header.")
         
     team_id = team["id"]
+
+    # High-rate downlink belongs to Phase 2 and is released only after Phase 1.
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT 1 FROM flags WHERE team_id = ? AND phase = 'PHASE_1'", (team_id,))
+    phase1_unlocked = cur.fetchone()
+    conn.close()
+    if not phase1_unlocked:
+        raise HTTPException(status_code=403, detail="High-rate downlink is sealed until Phase 1 is solved.")
+
     now_time = time.time()
     now_ms = int(now_time * 1000)
     
