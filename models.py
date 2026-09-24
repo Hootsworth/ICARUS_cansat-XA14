@@ -214,9 +214,9 @@ def init_db():
     # Seed default rounds
     default_rounds = [
         (1, "Round 1: Mission Briefing", "physical", "Solve the offline physical cipher dossier to retrieve your launch authorization code.", "2027-03-14T00:00:00Z", "2027-03-14T23:59:59Z", None),
-        (2, "Round 2: Telemetry Investigation", "telemetry", "Team-specific satellite telemetry investigation with staged evidence, controlled downlink, and fault isolation.", "2027-03-14T00:00:00Z", "2027-03-14T23:59:59Z", 1),
+        (2, "Round 2: Rapid Flight Quiz", "quiz", "Server-authoritative timed rapid quiz testing telemetry, orbital dynamics, and avionics.", "2027-03-14T00:00:00Z", "2027-03-14T23:59:59Z", 1),
         (3, "Round 3: Mission Ops Mini-Game", "game", "Interactive CanSat/spacecraft resource management simulation across simulated orbits.", "2027-03-14T00:00:00Z", "2027-03-14T23:59:59Z", 2),
-        (4, "Round 4: Live Contingency Finale", "code", "Real-time live recovery of the spacecraft using the mission runbook and console.", "2027-03-14T00:00:00Z", "2027-03-14T23:59:59Z", 3)
+        (4, "Round 4: Telemetry Analysis", "code", "Forensic analysis of CanSat/satellite telemetry, anomaly isolation, and live recovery.", "2027-03-14T00:00:00Z", "2027-03-14T23:59:59Z", 3)
     ]
     for r in default_rounds:
         cur.execute("""
@@ -226,22 +226,22 @@ def init_db():
 
     # Populate Default Challenges for Round 4
     challenges_data = [
-        ("C1.1", 2, "PHASE_1", "Clock Drift Calculation", CHALLENGE_POINTS["C1.1"], "numeric", "Determine OBC oscillator drift rate in PPM (or true dump start UTC).", 1),
-        ("C1.2", 2, "PHASE_1", "Telemetry Gap Identification", CHALLENGE_POINTS["C1.2"], "iso_time_and_val", "Detect start UTC and duration (s) of missing frame gap in sample dump.", 2),
-        ("C1.3", 2, "PHASE_1", "Tick Rollover Timestamp", CHALLENGE_POINTS["C1.3"], "iso_time", "Identify exact UTC timestamp of uint16 tick rollover (from 65535 to 0).", 3),
+        ("C1.1", 4, "PHASE_1", "Clock Drift Calculation", CHALLENGE_POINTS["C1.1"], "numeric", "Determine OBC oscillator drift rate in PPM (or true dump start UTC).", 1),
+        ("C1.2", 4, "PHASE_1", "Telemetry Gap Identification", CHALLENGE_POINTS["C1.2"], "iso_time_and_val", "Detect start UTC and duration (s) of missing frame gap in sample dump.", 2),
+        ("C1.3", 4, "PHASE_1", "Tick Rollover Timestamp", CHALLENGE_POINTS["C1.3"], "iso_time", "Identify exact UTC timestamp of uint16 tick rollover (from 65535 to 0).", 3),
         
-        ("C2.1", 2, "PHASE_2", "Fault 1: Electrical Power Subsystem", CHALLENGE_POINTS["C2.1"], "iso_time_and_code", "Identify F1 onset UTC and ICD signature code (e.g. 2027-03-14T... EPS-07).", 4),
-        ("C2.2", 2, "PHASE_2", "Fault 2: Thermal Control Subsystem", CHALLENGE_POINTS["C2.2"], "iso_time_and_code", "Identify F2 unplanned heater onset UTC and ICD code.", 5),
-        ("C2.3", 2, "PHASE_2", "Fault 3: ADCS Cascade Onset", CHALLENGE_POINTS["C2.3"], "iso_time_and_code", "Identify F3 cascade initial onset UTC and ICD code.", 6),
-        ("C2.4", 2, "PHASE_2", "Fault 4: Communications Bit Error", CHALLENGE_POINTS["C2.4"], "frame_id_and_code", "Identify F4 single-bit corrupted frame ID (reset:seq) and ICD code.", 7),
+        ("C2.1", 4, "PHASE_2", "Fault 1: Electrical Power Subsystem", CHALLENGE_POINTS["C2.1"], "iso_time_and_code", "Identify F1 onset UTC and ICD signature code (e.g. 2027-03-14T... EPS-07).", 4),
+        ("C2.2", 4, "PHASE_2", "Fault 2: Thermal Control Subsystem", CHALLENGE_POINTS["C2.2"], "iso_time_and_code", "Identify F2 unplanned heater onset UTC and ICD code.", 5),
+        ("C2.3", 4, "PHASE_2", "Fault 3: ADCS Cascade Onset", CHALLENGE_POINTS["C2.3"], "iso_time_and_code", "Identify F3 cascade initial onset UTC and ICD code.", 6),
+        ("C2.4", 4, "PHASE_2", "Fault 4: Communications Bit Error", CHALLENGE_POINTS["C2.4"], "frame_id_and_code", "Identify F4 single-bit corrupted frame ID (reset:seq) and ICD code.", 7),
         
-        ("C3.1", 2, "PHASE_3", "Cascade Parameter Sequence", CHALLENGE_POINTS["C3.1"], "string", "Ordered list of parameter IDs whose deviation begins in F3 cascade.", 8),
-        ("C3.2", 2, "PHASE_3", "OBC Reset Recovery Timestamp", CHALLENGE_POINTS["C3.2"], "iso_time", "UTC timestamp of the first frame transmitted after OBC reboot.", 9),
-        ("C3.3", 2, "PHASE_3", "Bit Error Recovery & Voltage", CHALLENGE_POINTS["C3.3"], "index_and_mV", "0-based flipped bit index in frame and recovered original battery voltage (mV).", 10),
-        ("C3.4", 2, "PHASE_3", "F1 Orbit & Post-Eclipse Voltage", CHALLENGE_POINTS["C3.4"], "orbit_and_mV", "Orbit index of F1 onset and battery voltage at end of that eclipse (mV).", 11),
+        ("C3.1", 4, "PHASE_3", "Cascade Parameter Sequence", CHALLENGE_POINTS["C3.1"], "string", "Ordered list of parameter IDs whose deviation begins in F3 cascade.", 8),
+        ("C3.2", 4, "PHASE_3", "OBC Reset Recovery Timestamp", CHALLENGE_POINTS["C3.2"], "iso_time", "UTC timestamp of the first frame transmitted after OBC reboot.", 9),
+        ("C3.3", 4, "PHASE_3", "Bit Error Recovery & Voltage", CHALLENGE_POINTS["C3.3"], "index_and_mV", "0-based flipped bit index in frame and recovered original battery voltage (mV).", 10),
+        ("C3.4", 4, "PHASE_3", "F1 Orbit & Post-Eclipse Voltage", CHALLENGE_POINTS["C3.4"], "orbit_and_mV", "Orbit index of F1 onset and battery voltage at end of that eclipse (mV).", 11),
         
-        ("B1.1", 2, "BONUS", "Forged Uplink Telecommand", CHALLENGE_POINTS["B1.1"], "string", "Identify the command ID with forged HMAC signature in uplink_log.csv.", 12),
-        ("B1.2", 2, "BONUS", "Replayed Uplink Telecommand", CHALLENGE_POINTS["B1.2"], "string", "Identify the command ID with replayed counter in uplink_log.csv.", 13),
+        ("B1.1", 4, "BONUS", "Forged Uplink Telecommand", CHALLENGE_POINTS["B1.1"], "string", "Identify the command ID with forged HMAC signature in uplink_log.csv.", 12),
+        ("B1.2", 4, "BONUS", "Replayed Uplink Telecommand", CHALLENGE_POINTS["B1.2"], "string", "Identify the command ID with replayed counter in uplink_log.csv.", 13),
         
         ("FINALE", 4, "FINALE", "Live Contingency Recovery", CHALLENGE_POINTS["FINALE"], "string", "Recover spacecraft from Safe Mode following flight runbook in live console.", 14),
     ]
