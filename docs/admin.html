@@ -155,22 +155,6 @@
                     <span id="current-global-round-badge" class="badge badge-active mono" style="font-size: 0.75rem; background: #ffffff; color: #000000;">
                         ACTIVE: STAGE 1
                     </span>
-                    <button id="btn-toggle-cfg" type="button" class="btn btn-secondary" style="font-size: 0.72rem; padding: 0.35rem 0.75rem;">
-                        ⚙ Firebase Config
-                    </button>
-                </div>
-            </div>
-
-            <!-- Firebase Config Box -->
-            <div id="firebase-cfg-box" style="display: none; background: #18181b; border: 1px solid #27272a; border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem;">
-                <div class="eyebrow" style="margin-bottom: 0.5rem; color: #38bdf8;">Firebase Project Configuration (Firestore Sync)</div>
-                <p style="color: #a1a1aa; font-size: 0.8rem; margin-bottom: 0.75rem;">
-                    Configure Firebase keys for multi-laptop instant synchronisation.
-                </p>
-                <textarea id="firebase-cfg-input" class="form-control mono" rows="4" style="font-size: 0.75rem; margin-bottom: 0.75rem;" placeholder='{\n  "apiKey": "...",\n  "authDomain": "...",\n  "projectId": "..."\n}'></textarea>
-                <div style="display: flex; gap: 0.5rem;">
-                    <button id="btn-save-cfg" type="button" class="btn btn-primary" style="font-size: 0.75rem; padding: 0.4rem 1rem;">Save & Reconnect</button>
-                    <button id="btn-clear-cfg" type="button" class="btn btn-secondary" style="font-size: 0.75rem; padding: 0.4rem 1rem;">Reset Default</button>
                 </div>
             </div>
 
@@ -717,45 +701,6 @@
                 updateFirebaseStatusIndicator();
             }
         }, 3000);
-
-        const btnToggle = document.getElementById("btn-toggle-cfg");
-        const cfgBox = document.getElementById("firebase-cfg-box");
-        const cfgInput = document.getElementById("firebase-cfg-input");
-        const btnSave = document.getElementById("btn-save-cfg");
-        const btnClear = document.getElementById("btn-clear-cfg");
-
-        if (btnToggle && cfgBox) {
-            btnToggle.addEventListener("click", () => {
-                const isHidden = cfgBox.style.display === "none";
-                cfgBox.style.display = isHidden ? "block" : "none";
-                if (isHidden && window.IcarusFirebase) {
-                    cfgInput.value = JSON.stringify(window.IcarusFirebase.getConfig(), null, 2);
-                }
-            });
-        }
-
-        if (btnSave) {
-            btnSave.addEventListener("click", () => {
-                try {
-                    const parsed = JSON.parse(cfgInput.value);
-                    if (window.IcarusFirebase) {
-                        window.IcarusFirebase.saveConfig(parsed);
-                    }
-                } catch (e) {
-                    alert("Invalid JSON format for Firebase configuration.");
-                }
-            });
-        }
-
-        if (btnClear) {
-            btnClear.addEventListener("click", () => {
-                if (confirm("Reset to default configuration?")) {
-                    if (window.IcarusFirebase) {
-                        window.IcarusFirebase.clearConfig();
-                    }
-                }
-            });
-        }
     });
     </script>
 </body>
