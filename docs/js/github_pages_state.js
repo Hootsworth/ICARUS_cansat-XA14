@@ -209,124 +209,48 @@ class IcarusGitHubPagesEngine {
             password: `icarus_pass_${id}`,
             credits: 12,
             code: "RVU-ORBIT-2027",
-            r1: { status: "active", score: 0, answers: null, completedAt: null },
-            r2: { status: "locked", rawScore: 0, rankPts: 0, completedAt: null },
-            r3: { status: "locked", score: 50, code: "", completedAt: null },
-            r4: { status: "locked", score: 0, answers: null, completedAt: null }
+            r1: { status: "active", score: 0, details: null, completedAt: null },
+            r2: { status: "locked", score: 0, code: "", completedAt: null },
+            r3: { status: "locked", score: 0, answers: null, completedAt: null }
         };
     }
 
     saveTeamData(data, teamId = null) {
         const id = teamId || data.id || this.getCurrentTeamId();
         localStorage.setItem(`ICARUS_TEAM_${id}`, JSON.stringify(data));
-        // Auto-recalculate Round 2 rankings whenever a team's score updates
-        this.recalculateRound2Rankings();
     }
 
     // -------------------------------------------------------------------------
-    // Round 1: Launch Planning Quiz Evaluation (15 Questions)
+    // Round 1: Go / No-Go Launch Decision Game Submission
     // -------------------------------------------------------------------------
-    submitRound1Quiz(answers) {
+    submitRound1GoNoGo(score, details = {}) {
         const team = this.getTeamData();
-        const rubric = {
-            q1: "B",  // with open('flight.csv', 'r') as f:
-            q2: "B",  // 65 ohms ((3.3 - 2.0) / 0.02 = 65)
-            q3: "B",  // 4.0 hours (500 / 125 = 4.0)
-            q4: "A",  // if altitude < 400 and velocity_z < 0:
-            q5: "C",  // Gyroscope (angular rotation rate in deg/s)
-            q6: "B",  // Overvoltage damage risk to 3.3V GPIO
-            q7: "B",  // High-frequency decoupling and transient supply stabilization
-            q8: "B",  // float("  1013.25\n".strip())
-            q9: "B",  // Open-drain/open-collector requires pull-ups to pull HIGH
-            q10: "B", // 1024 steps (~3.22 mV per step)
-            q11: "C", // set (unordered, mutable, unique elements)
-            q12: "B", // Watchdog Timer reboots MCU if firmware hangs
-            q13: "B", // 3.30V (6.6 * (10 / 20) = 3.3V)
-            q14: "B", // sum(pressures) / len(pressures)
-            q15: "B"  // 1.485 W (3.3V * 0.45A = 1.485 W)
-        };
-
-        let correct = 0;
-        const total = 15;
-        for (const [k, v] of Object.entries(rubric)) {
-            if (answers[k] && answers[k] === v) correct++;
-        }
-
-        const score = Math.round((correct / total) * 100);
+        const finalScore = Math.min(100, Math.max(0, Math.round(score)));
         team.r1.status = "submitted";
-        team.r1.score = score;
-        team.r1.answers = answers;
+        team.r1.score = finalScore;
+        team.r1.details = details;
         team.r1.completedAt = new Date().toISOString();
         team.r2.status = "active"; // Unlock Round 2
         this.saveTeamData(team);
 
         return {
             success: true,
-            score: score,
-            correct: correct,
-            total: total,
-            message: `Launch Planning Quiz evaluated: ${correct}/${total} correct (+${score} PTS).`
+            score: finalScore,
+            message: `Go / No-Go Launch Poll Complete: ${finalScore}/100 PTS recorded. Proceeding to Blackbox Telemetry Analysis.`
         };
     }
 
     // -------------------------------------------------------------------------
-    // Round 2: 8-Bit Space Shooter Submission & Top-5 Ranking
+    // Round 2: Telemetry Analysis Submission
     // -------------------------------------------------------------------------
-    submitRound2ShooterScore(rawScore) {
+    submitRound2Analysis(codeScript, notes = "") {
         const team = this.getTeamData();
         team.r2.status = "submitted";
-        team.r2.rawScore = Math.max(team.r2.rawScore || 0, Math.round(rawScore));
+        team.r2.code = codeScript;
+        team.r2.notes = notes;
+        team.r2.score = 50; // standard 50 pts for verified analysis script
         team.r2.completedAt = new Date().toISOString();
         team.r3.status = "active"; // Unlock Round 3
-        this.saveTeamData(team);
-        return {
-            success: true,
-            rawScore: team.r2.rawScore,
-            message: "Flight flight telemetry recorded. Standby for crash investigation."
-        };
-    }
-
-    recalculateRound2Rankings() {
-        const scores = [];
-        for (let i = 1; i <= 11; i++) {
-            const raw = localStorage.getItem(`ICARUS_TEAM_${i}`);
-            if (raw) {
-                try {
-                    const t = JSON.parse(raw);
-                    scores.push({ id: t.id, rawScore: (t.r2 && t.r2.rawScore) ? t.r2.rawScore : 0 });
-                } catch (e) {}
-            }
-        }
-
-        scores.sort((a, b) => b.rawScore - a.rawScore);
-        const pointsDistribution = [5, 4, 3, 2, 1];
-
-        scores.forEach((item, index) => {
-            const rankPts = (item.rawScore > 0 && index < pointsDistribution.length) ? pointsDistribution[index] : 0;
-            const raw = localStorage.getItem(`ICARUS_TEAM_${item.id}`);
-            if (raw) {
-                try {
-                    const t = JSON.parse(raw);
-                    if (!t.r2) t.r2 = {};
-                    t.r2.rankPts = rankPts;
-                    t.r2.rankPosition = index + 1;
-                    localStorage.setItem(`ICARUS_TEAM_${item.id}`, JSON.stringify(t));
-                } catch (e) {}
-            }
-        });
-    }
-
-    // -------------------------------------------------------------------------
-    // Round 3: Telemetry Analysis Submission
-    // -------------------------------------------------------------------------
-    submitRound3Analysis(codeScript, notes = "") {
-        const team = this.getTeamData();
-        team.r3.status = "submitted";
-        team.r3.code = codeScript;
-        team.r3.notes = notes;
-        team.r3.score = 50; // standard 50 pts for verified analysis script
-        team.r3.completedAt = new Date().toISOString();
-        team.r4.status = "active"; // Unlock Round 4
         this.saveTeamData(team);
         return {
             success: true,
@@ -335,9 +259,9 @@ class IcarusGitHubPagesEngine {
     }
 
     // -------------------------------------------------------------------------
-    // Round 4: Root Cause Investigation Quiz Evaluation (15 Questions)
+    // Round 3: Root Cause Investigation Quiz Evaluation (15 Questions)
     // -------------------------------------------------------------------------
-    submitRound4Quiz(answers) {
+    submitRound3Quiz(answers) {
         const team = this.getTeamData();
         const rubric = {
             q1: "B",  // 15,000 ms (15.0s) Apogee timestamp
@@ -364,10 +288,10 @@ class IcarusGitHubPagesEngine {
         }
 
         const score = correct * 8; // 15 * 8 = 120 PTS max
-        team.r4.status = "submitted";
-        team.r4.score = score;
-        team.r4.answers = answers;
-        team.r4.completedAt = new Date().toISOString();
+        team.r3.status = "submitted";
+        team.r3.score = score;
+        team.r3.answers = answers;
+        team.r3.completedAt = new Date().toISOString();
         this.saveTeamData(team);
 
         return {
@@ -388,20 +312,16 @@ class IcarusGitHubPagesEngine {
         const rKey = String(roundNum).toLowerCase();
 
         if (rKey === "1" || rKey === "r1" || rKey === "all") {
-            team.r1 = { status: "active", score: 0, answers: null, completedAt: null };
+            team.r1 = { status: "active", score: 0, details: null, completedAt: null };
         }
         if (rKey === "2" || rKey === "r2" || rKey === "all") {
-            team.r2 = { status: "active", rawScore: 0, rankPts: 0, completedAt: null };
+            team.r2 = { status: "active", score: 0, code: "", completedAt: null };
         }
         if (rKey === "3" || rKey === "r3" || rKey === "all") {
-            team.r3 = { status: "active", score: 0, code: "", completedAt: null };
-        }
-        if (rKey === "4" || rKey === "r4" || rKey === "all") {
-            team.r4 = { status: "active", score: 0, answers: null, completedAt: null };
+            team.r3 = { status: "active", score: 0, answers: null, completedAt: null };
         }
 
         this.saveTeamData(team, tid);
-        this.recalculateRound2Rankings();
 
         return {
             success: true,
@@ -428,27 +348,22 @@ class IcarusGitHubPagesEngine {
     // Private Master Scoreboard Overview (Admin Only)
     // -------------------------------------------------------------------------
     getAllTeamsOverview() {
-        this.recalculateRound2Rankings();
         const overview = [];
         for (let i = 1; i <= 11; i++) {
             const team = this.getTeamData(i);
             const r1Pts = (team.r1 && team.r1.status === "submitted") ? (team.r1.score || 0) : 0;
-            const r2Pts = (team.r2 && team.r2.rankPts) ? team.r2.rankPts : 0;
+            const r2Pts = (team.r2 && team.r2.status === "submitted") ? (team.r2.score || 0) : 0;
             const r3Pts = (team.r3 && team.r3.status === "submitted") ? (team.r3.score || 0) : 0;
-            const r4Pts = (team.r4 && team.r4.status === "submitted") ? (team.r4.score || 0) : 0;
-            const grandTotal = r1Pts + r2Pts + r3Pts + r4Pts;
+            const grandTotal = r1Pts + r2Pts + r3Pts;
 
             overview.push({
                 team: { id: team.id, name: team.name, code: team.code },
                 r1: team.r1,
                 r2: team.r2,
                 r3: team.r3,
-                r4: team.r4,
                 r1_pts: r1Pts,
                 r2_pts: r2Pts,
-                r2_raw: (team.r2 && team.r2.rawScore) ? team.r2.rawScore : 0,
                 r3_pts: r3Pts,
-                r4_pts: r4Pts,
                 grand_total: grandTotal
             });
         }

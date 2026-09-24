@@ -20,90 +20,12 @@
         font-size: 0.8rem;
         font-weight: 700;
         border-bottom: 2px solid transparent;
-        color: var(--text-muted);
+        color: #71717a;
         transition: all 0.15s ease;
     }
     .auth-tab.active {
-        color: #000000;
-        border-bottom-color: #000000;
-    }
-    .quiz-card {
-        background: #ffffff;
-        border: 1px solid var(--border-muted);
-        padding: 1.5rem;
-        margin-bottom: 1.5rem;
-    }
-    .quiz-opt {
-        display: flex;
-        align-items: flex-start;
-        gap: 0.75rem;
-        padding: 0.75rem 1rem;
-        border: 1px solid var(--border-muted);
-        margin-bottom: 0.5rem;
-        cursor: pointer;
-        background: #ffffff;
-        transition: all 0.15s ease;
-        font-size: 0.85rem;
-    }
-    .quiz-opt:hover {
-        border-color: #000000;
-        background: #fbfbfb;
-    }
-    .quiz-opt input[type="radio"] {
-        margin-top: 0.2rem;
-    }
-    .ide-container {
-        border: 1px solid var(--border-muted);
-        background: #ffffff;
-    }
-    .ide-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.6rem 1rem;
-        background: #f4f4f5;
-        border-bottom: 1px solid var(--border-muted);
-        font-family: var(--font-mono);
-        font-size: 0.78rem;
-    }
-    .ide-textarea {
-        width: 100%;
-        height: 280px;
-        padding: 1rem;
-        font-family: var(--font-mono);
-        font-size: 0.82rem;
-        line-height: 1.5;
-        border: none;
-        outline: none;
-        resize: vertical;
-        background: #ffffff;
-        color: #09090b;
-    }
-    .ide-terminal {
-        background: #09090b;
-        color: #f4f4f5;
-        font-family: var(--font-mono);
-        font-size: 0.8rem;
-        line-height: 1.6;
-        padding: 1rem;
-        height: 160px;
-        overflow-y: auto;
-        white-space: pre-wrap;
-        border-top: 1px solid var(--border-muted);
-    }
-    .anti-cheat-alert {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: #000000;
         color: #ffffff;
-        border: 1px solid #ef4444;
-        padding: 1rem 1.25rem;
-        font-family: var(--font-mono);
-        font-size: 0.8rem;
-        z-index: 9999;
-        display: none;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        border-bottom-color: #ffffff;
     }
     </style>
 </head>
@@ -111,7 +33,7 @@
     <!-- Top Minimal Navigation Bar -->
     <nav class="navbar">
         <div class="nav-brand">
-            <div style="width: 24px; height: 24px; border: 2px solid var(--text-main); display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-weight: 800; font-size: 0.75rem;">
+            <div style="width: 28px; height: 28px; background: #000000; color: #ffffff; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-weight: 800; font-size: 0.8rem;">
                 I
             </div>
             <div>
@@ -119,10 +41,10 @@
                 <div class="brand-subtitle">Telemetry Analysis Challenge</div>
             </div>
         </div>
-        <div style="display: flex; align-items: center; gap: 1rem;">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
             <div class="nav-badge mono" id="live-utc-clock">--:--:-- UTC</div>
-            <div class="nav-badge mono authed-only" id="mission-countdown" style="display: none; border-color: #525252; color: var(--text-main);">T-00:00:00</div>
-            <div class="authed-only mono" id="top-station-badge" style="display: none; font-size: 0.8rem; font-weight: 700; padding: 0.25rem 0.6rem; border: 1px solid var(--border-muted);">
+            <div class="nav-badge mono authed-only" id="mission-countdown" style="display: none; border-color: #3f3f46; color: #ffffff;">T-00:00:00</div>
+            <div class="authed-only mono" id="top-station-badge" style="display: none; font-size: 0.78rem; font-weight: 700; padding: 0.35rem 0.75rem; border-radius: 8px; background: #f4f4f5; color: #000000; border: 1px solid #e4e4e7;">
                 STATION --
             </div>
             <button class="authed-only btn btn-secondary" id="top-logout-btn" style="display: none; font-size: 0.75rem; padding: 0.35rem 0.85rem;" onclick="handleUserLogout()">
@@ -138,20 +60,20 @@
     </div>
 
     <!-- MAIN APP CONTAINER -->
-    <div id="app-viewport" class="container" style="max-width: 900px; padding-top: 2rem; padding-bottom: 4rem;">
+    <div id="app-viewport" class="container" style="max-width: 960px; padding-top: 2rem; padding-bottom: 5rem;">
         
         <!-- SECTION 0: AUTHENTICATION GATE (Shown ONLY when not logged in) -->
         <div id="auth-gate-box" style="max-width: 440px; margin: 3rem auto;">
-            <div class="card" style="padding: 2.5rem; border: 1px solid var(--border-muted);">
+            <div class="card" style="padding: 2.5rem;">
                 <div style="margin-bottom: 1.75rem;">
-                    <div class="eyebrow">[STATION ENTRY GATE]</div>
-                    <h2 style="font-size: 1.5rem; color: #000000; margin-top: 0.3rem;">ICARUS Flight Operations</h2>
-                    <p style="color: var(--text-muted); font-size: 0.82rem; margin-top: 0.25rem;">Enter workstation credentials or register station</p>
+                    <div class="eyebrow" style="color: #38bdf8;">[STATION ENTRY GATE]</div>
+                    <h2 style="font-size: 1.5rem; color: #ffffff; margin-top: 0.3rem;">ICARUS Flight Operations</h2>
+                    <p style="color: #a1a1aa; font-size: 0.82rem; margin-top: 0.25rem;">Enter workstation credentials or register station</p>
                 </div>
 
                 <div id="auth-error-box" class="alert alert-warning" style="display: none; padding: 0.75rem 1rem; font-size: 0.82rem; margin-bottom: 1.25rem;"></div>
 
-                <div style="display: flex; border-bottom: 1px solid var(--border-hairline); margin-bottom: 1.5rem;">
+                <div style="display: flex; border-bottom: 1px solid #27272a; margin-bottom: 1.5rem;">
                     <div id="tab-login-btn" class="auth-tab active" onclick="switchAuthTab('login')">Station Login</div>
                     <div id="tab-register-btn" class="auth-tab" onclick="switchAuthTab('register')">Register Team</div>
                 </div>
@@ -166,7 +88,7 @@
                         <label class="form-label">Station Password</label>
                         <input type="password" id="login-password" class="form-control" placeholder="••••••••" required>
                     </div>
-                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem; margin-top: 0.5rem;">
+                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.85rem; margin-top: 0.5rem;">
                         Authenticate Station &rarr;
                     </button>
                 </form>
@@ -189,30 +111,30 @@
                         <label class="form-label">Event Join Code</label>
                         <input type="text" id="reg-join-code" class="form-control mono" placeholder="RVU-ORBIT-2027" required style="text-transform: uppercase;">
                     </div>
-                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem; margin-top: 0.5rem;">
+                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.85rem; margin-top: 0.5rem;">
                         Register Station &rarr;
                     </button>
                 </form>
 
                 <div style="display: flex; align-items: center; margin: 1.75rem 0 1.25rem; gap: 0.75rem;">
-                    <div style="flex: 1; height: 1px; background: var(--border-muted);"></div>
-                    <span class="mono" style="font-size: 0.72rem; color: var(--text-dim); text-transform: uppercase;">or instant entry</span>
-                    <div style="flex: 1; height: 1px; background: var(--border-muted);"></div>
+                    <div style="flex: 1; height: 1px; background: #27272a;"></div>
+                    <span class="mono" style="font-size: 0.72rem; color: #71717a; text-transform: uppercase;">or instant entry</span>
+                    <div style="flex: 1; height: 1px; background: #27272a;"></div>
                 </div>
 
                 <div style="display: flex; gap: 0.5rem;">
                     <select id="quick-station-select" class="form-control mono" style="flex: 1; font-size: 0.78rem; padding: 0.45rem;">
-                        <option value="1">Station 01 (Icarus Alpha)</option>
-                        <option value="2">Station 02 (Oreos)</option>
-                        <option value="3">Station 03 (Apex Flight)</option>
-                        <option value="4">Station 04 (Polaris)</option>
-                        <option value="5">Station 05 (Zenith)</option>
-                        <option value="6">Station 06 (Vanguard)</option>
-                        <option value="7">Station 07 (Horizon)</option>
-                        <option value="8">Station 08 (StratoCom)</option>
-                        <option value="9">Station 09 (Nova Telemetry)</option>
-                        <option value="10">Station 10 (Astra Recovery)</option>
-                        <option value="11">Station 11 (Celestia)</option>
+                        <option value="1">Station 01 (Ares)</option>
+                        <option value="2">Station 02 (Athena)</option>
+                        <option value="3">Station 03 (Daedalus)</option>
+                        <option value="4">Station 04 (Helios)</option>
+                        <option value="5">Station 05 (Hermes)</option>
+                        <option value="6">Station 06 (Titan)</option>
+                        <option value="7">Station 07 (Orion)</option>
+                        <option value="8">Station 08 (Voyager)</option>
+                        <option value="9">Station 09 (Apollo)</option>
+                        <option value="10">Station 10 (Selene)</option>
+                        <option value="11">Station 11 (Hyperion)</option>
                     </select>
                     <button type="button" onclick="handleQuickEntry()" class="btn btn-secondary" style="font-size: 0.78rem; padding: 0.45rem 1rem;">
                         Enter &rarr;
@@ -221,340 +143,168 @@
             </div>
         </div>
 
-        <!-- SECTION 1: ROUND 1 - PLANNING A LAUNCH (QUIZ + FULLSCREEN LOCK) -->
+        <!-- SECTION 1: ROUND 1 - GO / NO-GO LAUNCH DECISION GAME -->
         <div id="stage-r1" style="display: none;">
-            <div class="card" style="border-left: 3px solid #000000; margin-bottom: 2rem;">
-                <div class="eyebrow">[ROUND 01 / MISSION PREPARATION]</div>
-                <h1 style="font-size: 1.6rem; color: #000000; margin: 0.3rem 0;">Phase 1: Planning a Launch</h1>
-                <p style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.5;">
-                    Verify pre-flight engineering fundamentals: Python scripting, sensor power limits, and parachute deployment logic.
+            <div class="card" style="border-left: 4px solid #10b981; margin-bottom: 2rem;">
+                <div class="eyebrow" style="color: #10b981;">[PHASE 01 / LAUNCH READINESS POLL]</div>
+                <h1 style="font-size: 1.8rem; color: #ffffff; margin: 0.3rem 0;">Phase 1: Go / No-Go Flight Verification</h1>
+                <p style="color: #a1a1aa; font-size: 0.88rem; line-height: 1.6;">
+                    Verify 15 critical avionics, sensor, weather, and recovery parameters in real time before the launch window countdown expires. Decide <strong>GO</strong> or <strong>NO-GO</strong> for each flight check.
                 </p>
             </div>
 
-            <!-- Pre-Start Fullscreen Gate -->
-            <div id="r1-prestart-box" class="card" style="text-align: center; padding: 3rem 2rem;">
-                <div class="mono" style="font-size: 1.8rem; margin-bottom: 0.5rem;">[SECURITY BRIEFING]</div>
-                <h2 style="font-size: 1.3rem; margin-bottom: 0.5rem; color: #000000;">Launch Planning Examination</h2>
-                <p style="color: var(--text-muted); max-width: 540px; margin: 0 auto 1.5rem; font-size: 0.85rem; line-height: 1.6;">
-                    To maintain strict competition integrity, this round operates in <strong>Enforced Fullscreen Mode</strong>.
-                    Any window switch, tab change, or screen minimization is logged in real-time to the Flight Director's anti-cheat monitor.
+            <!-- Start Game Gate -->
+            <div id="r1-prestart-box" class="card" style="text-align: center; padding: 3.5rem 2rem;">
+                <div class="mono" style="font-size: 2.2rem; margin-bottom: 0.5rem;">🚀</div>
+                <h2 style="font-size: 1.4rem; margin-bottom: 0.5rem; color: #ffffff;">Subsystem Launch Poll Briefing</h2>
+                <p style="color: #a1a1aa; max-width: 540px; margin: 0 auto 1.75rem; font-size: 0.86rem; line-height: 1.6;">
+                    You will review 15 telemetry inspection cards. Tap <strong>GO</strong> if parameters are strictly within flight limits, or <strong>NO-GO</strong> if any violation or danger is detected.
+                    Keyboard shortcuts: <strong>[G]</strong> for GO &bull; <strong>[N]</strong> for NO-GO.
                 </p>
-                <button type="button" class="btn btn-primary" onclick="startRound1WithFullscreen()" style="padding: 0.85rem 2.5rem; font-size: 0.95rem;">
-                    Enter Fullscreen & Begin Planning Quiz &rarr;
+                <button type="button" class="btn btn-primary" onclick="startGoNoGoGame()" style="padding: 0.9rem 2.75rem; font-size: 1rem;">
+                    Initiate Launch Poll (60s) &rarr;
                 </button>
             </div>
 
-            <!-- Active Quiz Form (Shown after starting) -->
-            <form id="r1-quiz-form" style="display: none;" onsubmit="handleRound1Submit(event)">
-                <div class="alert alert-info" style="margin-bottom: 1.5rem; font-size: 0.8rem;">
-                    ● Fullscreen Anti-Cheat Active. Do not switch tabs or exit fullscreen until your quiz is committed. 15 questions total (100 PTS).
-                </div>
-
-                <!-- Q1 -->
-                <div class="quiz-card">
-                    <div class="eyebrow">[PYTHON FILE I/O / 01]</div>
-                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">Which Python statement correctly opens a flight telemetry CSV for reading and ensures the file is safely closed when exiting the context?</div>
-                    <label class="quiz-opt"><input type="radio" name="q1" value="A" required> <span><code>f = open('flight.csv', 'r'); f.close()</code></span></label>
-                    <label class="quiz-opt"><input type="radio" name="q1" value="B" required> <span><code>with open('flight.csv', 'r') as f:</code></span></label>
-                    <label class="quiz-opt"><input type="radio" name="q1" value="C" required> <span><code>import csv; csv.load('flight.csv')</code></span></label>
-                    <label class="quiz-opt"><input type="radio" name="q1" value="D" required> <span><code>read_file('flight.csv', mode='read')</code></span></label>
-                </div>
-
-                <!-- Q2 -->
-                <div class="quiz-card">
-                    <div class="eyebrow">[ELECTRONICS & OHM'S LAW / 02]</div>
-                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">A telemetry status LED has a forward voltage drop of 2.0V and requires 20mA (0.02A) forward current. When powered from a regulated 3.3V rail, what series resistor is required?</div>
-                    <label class="quiz-opt"><input type="radio" name="q2" value="A" required> <span>10 &Omega;</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q2" value="B" required> <span>65 &Omega; (since R = (3.3V - 2.0V) / 0.02A = 65 &Omega;)</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q2" value="C" required> <span>165 &Omega;</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q2" value="D" required> <span>330 &Omega;</span></label>
-                </div>
-
-                <!-- Q3 -->
-                <div class="quiz-card">
-                    <div class="eyebrow">[POWER BUDGET / 03]</div>
-                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">Your CanSat payload is equipped with a 500 mAh single-cell LiPo battery. If total average continuous current draw during flight is 125 mA, what is the maximum expected runtime?</div>
-                    <label class="quiz-opt"><input type="radio" name="q3" value="A" required> <span>2.5 hours</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q3" value="B" required> <span>4.0 hours (500 mAh / 125 mA = 4.0 hours)</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q3" value="C" required> <span>6.2 hours</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q3" value="D" required> <span>1.25 hours</span></label>
-                </div>
-
-                <!-- Q4 -->
-                <div class="quiz-card">
-                    <div class="eyebrow">[FLIGHT LOGIC / 04]</div>
-                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">In onboard descent logic, which Python conditional properly commands parachute deployment only after falling below 400m and descending (downward vertical velocity &lt; 0)?</div>
-                    <label class="quiz-opt"><input type="radio" name="q4" value="A" required> <span><code>if altitude < 400 and velocity_z < 0: deploy_chute()</code></span></label>
-                    <label class="quiz-opt"><input type="radio" name="q4" value="B" required> <span><code>if altitude <= 400 or velocity_z > 0: deploy_chute()</code></span></label>
-                    <label class="quiz-opt"><input type="radio" name="q4" value="C" required> <span><code>while altitude == 400: deploy_chute()</code></span></label>
-                    <label class="quiz-opt"><input type="radio" name="q4" value="D" required> <span><code>if altitude > 400 and velocity_z < 0: deploy_chute()</code></span></label>
-                </div>
-
-                <!-- Q5 -->
-                <div class="quiz-card">
-                    <div class="eyebrow">[INSTRUMENTATION / 05]</div>
-                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">Which sensor component is specifically responsible for measuring the 3-axis rotational velocity and angular roll rate of the payload in degrees per second (&deg;/s)?</div>
-                    <label class="quiz-opt"><input type="radio" name="q5" value="A" required> <span>Barometric pressure transducer</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q5" value="B" required> <span>Digital optical encoder</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q5" value="C" required> <span>3-Axis Gyroscope / IMU rate sensor</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q5" value="D" required> <span>Thermistor bridge</span></label>
-                </div>
-
-                <!-- Q6 -->
-                <div class="quiz-card">
-                    <div class="eyebrow">[CIRCUIT DESIGN & LOGIC LEVELS / 06]</div>
-                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">What hazard occurs if an unshifted 5.0V UART output signal is connected directly to a 3.3V microcontroller GPIO pin?</div>
-                    <label class="quiz-opt"><input type="radio" name="q6" value="A" required> <span>The transmission baud rate is cut in half</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q6" value="B" required> <span>Over-voltage injection stresses internal clamping diodes and causes permanent silicon damage</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q6" value="C" required> <span>The signal automatically steps down to 3.3V with zero current</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q6" value="D" required> <span>The battery voltage instantly resets to 0V</span></label>
-                </div>
-
-                <!-- Q7 -->
-                <div class="quiz-card">
-                    <div class="eyebrow">[ELECTRONICS - POWER DECOUPLING / 07]</div>
-                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">What is the primary engineering purpose of placing a 0.1 &mu;F ceramic decoupling capacitor immediately adjacent to an IC's VCC/VDD pin?</div>
-                    <label class="quiz-opt"><input type="radio" name="q7" value="A" required> <span>To step up the DC voltage from 3.3V to 5V</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q7" value="B" required> <span>To filter high-frequency switching noise and provide immediate local charge during transient current demands</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q7" value="C" required> <span>To store enough power to run the payload for hours after battery disconnection</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q7" value="D" required> <span>To pull down open-drain communication signals</span></label>
-                </div>
-
-                <!-- Q8 -->
-                <div class="quiz-card">
-                    <div class="eyebrow">[PYTHON DATA PARSING / 08]</div>
-                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">In Python, how do you safely parse a raw radio packet string like <code>"  1013.25\r\n"</code> into a floating-point number?</div>
-                    <label class="quiz-opt"><input type="radio" name="q8" value="A" required> <span><code>int("  1013.25\r\n")</code></span></label>
-                    <label class="quiz-opt"><input type="radio" name="q8" value="B" required> <span><code>float("  1013.25\r\n".strip())</code></span></label>
-                    <label class="quiz-opt"><input type="radio" name="q8" value="C" required> <span><code>str.to_float("  1013.25\r\n")</code></span></label>
-                    <label class="quiz-opt"><input type="radio" name="q8" value="D" required> <span><code>eval_numeric("  1013.25\r\n")</code></span></label>
-                </div>
-
-                <!-- Q9 -->
-                <div class="quiz-card">
-                    <div class="eyebrow">[COMMUNICATION BUSSES - I2C / 09]</div>
-                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">Why does an I2C communication bus (SDA and SCL) require external pull-up resistors to the positive voltage rail?</div>
-                    <label class="quiz-opt"><input type="radio" name="q9" value="A" required> <span>Because I2C devices generate excessive high-voltage pulses that must be absorbed</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q9" value="B" required> <span>Because I2C pins have open-drain/open-collector drivers and require pull-ups to pull the bus HIGH when idle</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q9" value="C" required> <span>To dynamically synchronize the clock frequency between master and slave</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q9" value="D" required> <span>To convert serial data into parallel words</span></label>
-                </div>
-
-                <!-- Q10 -->
-                <div class="quiz-card">
-                    <div class="eyebrow">[ADC RESOLUTION / 10]</div>
-                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">A microcontroller features a 10-bit Analog-to-Digital Converter (ADC) with a 3.3V reference. How many discrete quantization levels exist, and what is the approximate step resolution?</div>
-                    <label class="quiz-opt"><input type="radio" name="q10" value="A" required> <span>256 steps (&approx; 12.89 mV per step)</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q10" value="B" required> <span>1024 steps (&approx; 3.22 mV per step, since 3.3V / 1024)</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q10" value="C" required> <span>4096 steps (&approx; 0.81 mV per step)</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q10" value="D" required> <span>512 steps (&approx; 6.45 mV per step)</span></label>
-                </div>
-
-                <!-- Q11 -->
-                <div class="quiz-card">
-                    <div class="eyebrow">[PYTHON DATA STRUCTURES / 11]</div>
-                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">Which built-in Python collection data structure is mutable, unordered, and strictly prevents duplicate elements?</div>
-                    <label class="quiz-opt"><input type="radio" name="q11" value="A" required> <span><code>list</code></span></label>
-                    <label class="quiz-opt"><input type="radio" name="q11" value="B" required> <span><code>tuple</code></span></label>
-                    <label class="quiz-opt"><input type="radio" name="q11" value="C" required> <span><code>set</code></span></label>
-                    <label class="quiz-opt"><input type="radio" name="q11" value="D" required> <span><code>dict_keys</code></span></label>
-                </div>
-
-                <!-- Q12 -->
-                <div class="quiz-card">
-                    <div class="eyebrow">[AVIONICS RELIABILITY / 12]</div>
-                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">What is the primary role of an onboard Hardware Watchdog Timer (WDT) in CanSat flight software?</div>
-                    <label class="quiz-opt"><input type="radio" name="q12" value="A" required> <span>To measure battery internal temperature and trigger cooling</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q12" value="B" required> <span>To automatically reboot the microcontroller if firmware freezes, enters an infinite loop, or hangs</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q12" value="C" required> <span>To encrypt radio telemetry packets before transmission</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q12" value="D" required> <span>To calculate GPS clock drift</span></label>
-                </div>
-
-                <!-- Q13 -->
-                <div class="quiz-card">
-                    <div class="eyebrow">[ELECTRONICS - VOLTAGE DIVIDER / 13]</div>
-                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">A voltage divider consists of R1 = 10 k&Omega; and R2 = 10 k&Omega;. If an input voltage of 6.60V is applied across the divider, what voltage appears at the output node across R2?</div>
-                    <label class="quiz-opt"><input type="radio" name="q13" value="A" required> <span>1.65 V</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q13" value="B" required> <span>3.30 V (since Vout = 6.60V &times; [10k / (10k + 10k)])</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q13" value="C" required> <span>5.00 V</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q13" value="D" required> <span>6.60 V</span></label>
-                </div>
-
-                <!-- Q14 -->
-                <div class="quiz-card">
-                    <div class="eyebrow">[PYTHON STATISTICS / 14]</div>
-                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">Given a list of calibrated sensor pressure readings <code>pressures = [1013.2, 1010.5, 1008.0]</code>, which Python expression computes the standard arithmetic mean?</div>
-                    <label class="quiz-opt"><input type="radio" name="q14" value="A" required> <span><code>pressures.mean()</code></span></label>
-                    <label class="quiz-opt"><input type="radio" name="q14" value="B" required> <span><code>sum(pressures) / len(pressures)</code></span></label>
-                    <label class="quiz-opt"><input type="radio" name="q14" value="C" required> <span><code>average(pressures)</code></span></label>
-                    <label class="quiz-opt"><input type="radio" name="q14" value="D" required> <span><code>pressures.average()</code></span></label>
-                </div>
-
-                <!-- Q15 -->
-                <div class="quiz-card">
-                    <div class="eyebrow">[POWER ELECTRONICS / 15]</div>
-                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">A long-range radio transmitter draws 450mA (0.45A) from a 3.3V power bus during an RF burst. What electrical power is consumed during this transmission?</div>
-                    <label class="quiz-opt"><input type="radio" name="q15" value="A" required> <span>0.742 W</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q15" value="B" required> <span>1.485 W (P = V &times; I = 3.3V &times; 0.45A)</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q15" value="C" required> <span>3.750 W</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q15" value="D" required> <span>7.333 W</span></label>
-                </div>
-
-                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.95rem; font-size: 0.95rem;">
-                    Submit Launch Planning Verification (15/15) &rarr;
-                </button>
-            </form>
+            <!-- Interactive Game Mount -->
+            <div id="r1-game-container" style="display: none;">
+                <div id="gonogo-mount"></div>
+            </div>
         </div>
 
-        <!-- SECTION 2: ROUND 2 - THE LAUNCH (8-BIT SPACE SHOOTER) -->
+        <!-- SECTION 2: ROUND 2 - TELEMETRY ANALYSIS (FORCE FULLSCREEN) -->
         <div id="stage-r2" style="display: none;">
-            <div class="card" style="border-left: 3px solid #000000; margin-bottom: 2rem;">
-                <div class="eyebrow">[ROUND 02 / FLIGHT EXECUTION]</div>
-                <h1 style="font-size: 1.6rem; color: #000000; margin: 0.3rem 0;">Phase 2: The Launch (Atmospheric Ascent)</h1>
-                <p style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.5;">
-                    Pilot your rocket through atmospheric debris and orbital clutter. Top 5 teams by score will be awarded bonus points (1st: 5 pts, 2nd: 4 pts, 3rd: 3 pts, 4th: 2 pts, 5th: 1 pt).
+            <div class="card" style="border-left: 4px solid #38bdf8; margin-bottom: 2rem;">
+                <div class="eyebrow" style="color: #38bdf8;">[PHASE 02 / BLACKBOX CRASH ANALYSIS]</div>
+                <h1 style="font-size: 1.8rem; color: #ffffff; margin: 0.3rem 0;">Phase 2: Telemetry Analysis & Python IDE</h1>
+                <p style="color: #a1a1aa; font-size: 0.88rem; line-height: 1.6;">
+                    The rocket ascended nominal through apogee but experienced an in-flight anomaly and impacted ground. Decode raw blackbox telemetry (<code>flight_telemetry_crash.csv</code>) using the built-in Python WebAssembly IDE.
                 </p>
             </div>
 
-            <!-- Arcade Cabinet Box -->
-            <div class="card" style="padding: 1.5rem; text-align: center;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid var(--border-hairline); padding-bottom: 0.75rem;">
-                    <span class="mono" style="font-size: 0.82rem; font-weight: 700;">CONTROLS: [ARROW KEYS / WASD] Steer &bull; [SPACE] Fire Dual Cannons</span>
-                    <span class="nav-badge mono" id="r2-score-tag">SCORE: 0</span>
-                </div>
-
-                <div style="position: relative; width: 100%; max-width: 800px; margin: 0 auto; border: 2px solid #000000; background: #ffffff;">
-                    <canvas id="shooter-canvas" width="800" height="480" style="display: block; width: 100%; height: auto;"></canvas>
-
-                    <!-- Pre-launch Screen Overlay -->
-                    <div id="shooter-start-overlay" style="position: absolute; inset: 0; background: rgba(255, 255, 255, 0.96); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem;">
-                        <div class="mono" style="font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; letter-spacing: 2px;">ICARUS-1 ASCENT</div>
-                        <p style="color: var(--text-muted); max-width: 480px; font-size: 0.85rem; line-height: 1.6; margin-bottom: 1.5rem;">
-                            Ascend through atmospheric turbulence. Dodge or shoot debris (+15 to +35 pts) and collect energy cells (+50 pts). Flight duration: 75 seconds.
-                        </p>
-                        <button type="button" class="btn btn-primary" onclick="launchShooterGame()" style="padding: 0.85rem 2.5rem; font-size: 0.95rem;">
-                            Ignite Main Engines & Launch &rarr;
-                        </button>
-                    </div>
-
-                    <!-- Dramatic Crash Terminal Overlay -->
-                    <div id="shooter-crash-overlay" style="position: absolute; inset: 0; background: #ffffff; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 2.5rem; text-align: center;">
-                        <div class="mono" style="color: #ef4444; font-size: 1.8rem; font-weight: 800; margin-bottom: 0.5rem;">[CRITICAL FLIGHT ALARM]</div>
-                        <h2 style="font-size: 1.3rem; margin-bottom: 0.75rem; color: #000000;">Main Engine Anomaly & Telemetry Blackout</h2>
-                        <div class="mono" style="background: #fafafa; border: 1px solid var(--border-muted); padding: 1rem 1.5rem; max-width: 520px; text-align: left; font-size: 0.78rem; line-height: 1.6; margin-bottom: 1.5rem;">
-                            [T+34.5s]: BUS VOLTAGE SAG DETECTED (2.45V)<br>
-                            [T+42.0s]: MCU BROWNOUT RESET CYCLE - RECOVERY PARACHUTE SQUIB OFFLINE<br>
-                            [T+61.2s]: TERMINAL GROUND IMPACT AT ECHO-7 (-22.4G)<br>
-                            [STATUS]: Rocket destroyed on impact. Telemetry blackbox retrieved.
-                        </div>
-                        <button type="button" class="btn btn-primary" onclick="commitRound2Shooter()" style="padding: 0.8rem 2rem;">
-                            Acknowledge Crash & Archive Flight Record &rarr;
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- SECTION 3: ROUND 3 - TELEMETRY ANALYSIS (POST-CRASH PYTHON IDE) -->
-        <div id="stage-r3" style="display: none;">
-            <div class="card" style="border-left: 3px solid #000000; margin-bottom: 2rem;">
-                <div class="eyebrow">[ROUND 03 / CRASH FORENSICS]</div>
-                <h1 style="font-size: 1.6rem; color: #000000; margin: 0.3rem 0;">Phase 3: Telemetry Analysis & Diagnostics</h1>
-                <p style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.5;">
-                    The rocket crashed during ascent. The search and rescue team retrieved the onboard flash memory blackbox. Analyze the raw sensor telemetry using the in-browser Python IDE below or download the dataset.
+            <!-- Force Fullscreen Pre-start Gate -->
+            <div id="r2-prestart-box" class="card" style="text-align: center; padding: 3.5rem 2rem;">
+                <div class="mono" style="font-size: 2.2rem; margin-bottom: 0.5rem;">🔒</div>
+                <h2 style="font-size: 1.4rem; margin-bottom: 0.5rem; color: #ffffff;">Enforced Fullscreen Environment</h2>
+                <p style="color: #a1a1aa; max-width: 540px; margin: 0 auto 1.75rem; font-size: 0.86rem; line-height: 1.6;">
+                    Competition integrity requires Phase 2 to be executed in <strong>Forced Fullscreen Mode</strong>.
+                    Any window unfocus, tab switch, or fullscreen escape is logged directly to the Flight Director's surveillance feed.
                 </p>
+                <button type="button" class="btn btn-primary" onclick="startRound2WithFullscreen()" style="padding: 0.9rem 2.75rem; font-size: 1rem;">
+                    Enter Fullscreen & Begin Telemetry Analysis &rarr;
+                </button>
             </div>
 
-            <!-- Download Resources Bar -->
-            <div style="display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
-                <a href="./assets/flight_telemetry_crash.csv" download="flight_telemetry_crash.csv" class="btn btn-primary" style="font-size: 0.8rem; padding: 0.5rem 1.25rem;">
-                    ⬇ Download Raw Telemetry CSV
-                </a>
-                <a href="https://drive.google.com" target="_blank" rel="noopener" class="btn btn-secondary" style="font-size: 0.8rem; padding: 0.5rem 1.25rem;">
-                    Google Drive Mirror ↗
-                </a>
-                <label class="btn btn-secondary" style="font-size: 0.8rem; padding: 0.5rem 1.25rem; cursor: pointer; margin: 0;">
-                    📂 Upload Python Script
-                    <input type="file" id="r3-file-input" accept=".py,.txt" style="display: none;" onchange="handleScriptUpload(event)">
-                </label>
-            </div>
+            <!-- Active Telemetry Workspace (Shown after fullscreen entered) -->
+            <div id="r2-active-workspace" style="display: none;">
+                <div class="alert alert-info" style="margin-bottom: 1.5rem; font-size: 0.8rem;">
+                    ● Fullscreen Anti-Cheat Active. Do not switch tabs or exit fullscreen while analyzing telemetry.
+                </div>
 
-            <!-- In-Browser VS Code Style Python Editor -->
-            <div class="ide-container">
-                <div class="ide-header">
+                <!-- Telemetry Source Download Bar -->
+                <div class="card" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; padding: 1.25rem 1.5rem; margin-bottom: 1.5rem;">
                     <div>
-                        <strong>diagnostics.py</strong> <span style="color: var(--text-dim); margin-left: 0.5rem;">[flight_telemetry_crash.csv pre-mounted]</span>
+                        <div class="eyebrow" style="color: #38bdf8;">[TELEMETRY BLACKBOX DATASET]</div>
+                        <div style="font-size: 1rem; font-weight: 700; color: #ffffff;">flight_telemetry_crash.csv</div>
+                        <div style="font-size: 0.75rem; color: #a1a1aa;">126 frames &bull; 10 channels (altitude, velocity, voltage, current, IMU, status)</div>
                     </div>
-                    <div id="py-engine-status" style="font-size: 0.72rem; color: var(--text-muted);">
-                        ● Ready to execute
+                    <div style="display: flex; gap: 0.5rem;">
+                        <a href="./assets/flight_telemetry_crash.csv" download="flight_telemetry_crash.csv" class="btn btn-secondary" style="font-size: 0.75rem; padding: 0.5rem 1rem;">
+                            Download CSV &darr;
+                        </a>
+                        <label class="btn btn-secondary" style="font-size: 0.75rem; padding: 0.5rem 1rem; cursor: pointer; margin: 0;">
+                            Upload .py <input type="file" id="r2-script-upload" accept=".py" style="display: none;" onchange="handleScriptUpload(event)">
+                        </label>
                     </div>
                 </div>
 
-                <textarea id="r3-code-editor" class="ide-textarea" spellcheck="false"># ICARUS Flight Operations - Telemetry Blackbox Diagnostics
-# Inspect flight_telemetry_crash.csv to isolate the crash root cause.
+                <!-- In-Browser Python IDE -->
+                <div class="ide-container">
+                    <div class="ide-header">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #10b981;"></span>
+                            <span class="mono" style="font-weight: 700;">telemetry_analysis.py</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <span class="mono" id="py-engine-status" style="font-size: 0.72rem; color: #a1a1aa;">Pyodide Ready</span>
+                            <button type="button" class="btn btn-primary" onclick="executePythonCode()" style="padding: 0.35rem 0.9rem; font-size: 0.75rem;">
+                                ▶ Run Code
+                            </button>
+                        </div>
+                    </div>
+
+                    <textarea id="r2-code-editor" class="ide-textarea" spellcheck="false"># ICARUS TELEMETRY PARSER (Python 3.11)
+# Dataset pre-mounted: 'flight_telemetry_crash.csv'
 
 import csv
 
 with open('flight_telemetry_crash.csv', 'r') as f:
     reader = csv.DictReader(f)
-    packets = list(reader)
+    rows = list(reader)
 
-print(f"[✓] Retrieved {len(packets)} telemetry frames from crash blackbox.\n")
+print(f"[DATASET LOADED] {len(rows)} telemetry frames logged.")
 
-# Find Apogee (Maximum Altitude) and critical electrical voltage drop
-max_alt = 0.0
-min_batt = 5.0
-anomaly_onset_ms = None
+# Scan for anomalies, peak altitude, and impact shock
+max_alt = max(float(r['altitude_m']) for r in rows)
+min_volt = min(float(r['battery_v']) for r in rows)
+min_accel = min(float(r['accel_z_g']) for r in rows)
 
-for p in packets:
-    t = int(p['timestamp_ms'])
-    alt = float(p['altitude_m'])
-    batt = float(p['battery_v'])
-    
-    if alt > max_alt:
-        max_alt = alt
-    if batt < min_batt and batt > 0:
-        min_batt = batt
-    if batt < 3.0 and anomaly_onset_ms is None and batt > 0:
-        anomaly_onset_ms = t
+print(f"Apogee Peak Altitude: {max_alt:.1f} m")
+print(f"Minimum Battery Voltage: {min_volt:.2f} V")
+print(f"Peak Deceleration Shock: {min_accel:.1f} G")
 
-print(f"Apogee (Max Altitude): {max_alt} m")
-print(f"Critical Voltage Sag: {min_batt} V (Onset at t = {anomaly_onset_ms} ms)")
-print(f"Impact Status: {packets[-1]['status_flags']}")
+# Identify anomaly onset
+for r in rows:
+    if "ANOMALY" in r['status_flags'] or float(r['battery_v']) < 3.0:
+        print(f"[ANOMALY ONSET] t={r['timestamp_ms']}ms | V={r['battery_v']}V | I={r['current_ma']}mA | Status={r['status_flags']}")
+        break
 </textarea>
 
-                <div style="padding: 0.6rem 1rem; background: #fafafa; border-top: 1px solid var(--border-muted); display: flex; justify-content: space-between; align-items: center;">
-                    <button type="button" class="btn btn-primary" onclick="executePythonCode()" style="font-size: 0.8rem; padding: 0.45rem 1.4rem;">
-                        ▶ Run Python Code
+                    <div style="background: #18181b; padding: 0.4rem 1rem; border-top: 1px solid #27272a; display: flex; justify-content: space-between; align-items: center;">
+                        <span class="eyebrow" style="font-size: 0.7rem; color: #a1a1aa;">TERMINAL OUTPUT (STDOUT)</span>
+                        <span class="mono" style="font-size: 0.72rem; color: #71717a;">WebAssembly execution stream</span>
+                    </div>
+
+                    <div id="r2-terminal-output" class="ide-terminal">
+[READY] Press 'Run Code' to inspect telemetry blackbox stream...
+                    </div>
+                </div>
+
+                <div style="margin-top: 2rem; text-align: center;">
+                    <button type="button" class="btn btn-primary" onclick="submitRound2Analysis()" style="padding: 0.9rem 3rem; font-size: 0.95rem;">
+                        Commit Telemetry Findings (+50 PTS) &rarr;
                     </button>
-                    <span class="mono" style="font-size: 0.72rem; color: var(--text-dim);">Live in-browser WebAssembly execution</span>
                 </div>
-
-                <div id="r3-terminal-output" class="ide-terminal">
-[READY] Press 'Run Python Code' to inspect telemetry stream...
-                </div>
-            </div>
-
-            <div style="margin-top: 2rem; text-align: center;">
-                <button type="button" class="btn btn-primary" onclick="submitRound3Analysis()" style="padding: 0.85rem 3rem; font-size: 0.95rem;">
-                    Submit Telemetry Analysis Findings &rarr;
-                </button>
             </div>
         </div>
 
-        <!-- SECTION 4: ROUND 4 - FINAL QUIZ / ROOT CAUSE INVESTIGATION -->
-        <div id="stage-r4" style="display: none;">
-            <div class="card" style="border-left: 3px solid #000000; margin-bottom: 2rem;">
-                <div class="eyebrow">[ROUND 04 / INVESTIGATION BOARD]</div>
-                <h1 style="font-size: 1.6rem; color: #000000; margin: 0.3rem 0;">Phase 4: Root-Cause Investigation</h1>
-                <p style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.5;">
-                    Based on the telemetry blackbox data you decoded in Round 3, answer the official investigation board questions to conclude why the CanSat rocket crashed.
+        <!-- SECTION 3: ROUND 3 - ROOT-CAUSE INVESTIGATION QUIZ (FORCE FULLSCREEN) -->
+        <div id="stage-r3" style="display: none;">
+            <div class="card" style="border-left: 4px solid #ef4444; margin-bottom: 2rem;">
+                <div class="eyebrow" style="color: #ef4444;">[PHASE 03 / ACCIDENT INVESTIGATION BOARD]</div>
+                <h1 style="font-size: 1.8rem; color: #ffffff; margin: 0.3rem 0;">Phase 3: Root-Cause Investigation</h1>
+                <p style="color: #a1a1aa; font-size: 0.88rem; line-height: 1.6;">
+                    Answer the official forensic board questions based on the telemetry you analyzed in Phase 2 to conclude why the CanSat rocket crashed (15 Questions, 120 PTS max).
                 </p>
             </div>
 
-            <form id="r4-quiz-form" onsubmit="handleRound4Submit(event)">
+            <!-- Force Fullscreen Pre-start Gate -->
+            <div id="r3-prestart-box" class="card" style="text-align: center; padding: 3.5rem 2rem;">
+                <div class="mono" style="font-size: 2.2rem; margin-bottom: 0.5rem;">📋</div>
+                <h2 style="font-size: 1.4rem; margin-bottom: 0.5rem; color: #ffffff;">Investigation Board Examination</h2>
+                <p style="color: #a1a1aa; max-width: 540px; margin: 0 auto 1.75rem; font-size: 0.86rem; line-height: 1.6;">
+                    This final forensic exam requires <strong>Forced Fullscreen Mode</strong>.
+                    Any window defocussing or tab switching will be logged in real-time to the Flight Director.
+                </p>
+                <button type="button" class="btn btn-primary" onclick="startRound3WithFullscreen()" style="padding: 0.9rem 2.75rem; font-size: 1rem;">
+                    Enter Fullscreen & Begin Investigation (15 Qs) &rarr;
+                </button>
+            </div>
+
+            <!-- 15 Questions Form (Shown after entering fullscreen) -->
+            <form id="r3-quiz-form" style="display: none;" onsubmit="handleRound3Submit(event)">
                 <div class="alert alert-info" style="margin-bottom: 1.5rem; font-size: 0.8rem;">
-                    ● Official Forensic Investigation Board. Answer all 15 questions based on blackbox telemetry (Max 120 PTS: 8 PTS each).
+                    ● Fullscreen Anti-Cheat Active. Answer all 15 questions based on blackbox telemetry (Max 120 PTS: 8 PTS each).
                 </div>
 
                 <!-- Q1 -->
@@ -713,32 +463,32 @@ print(f"Impact Status: {packets[-1]['status_flags']}")
             </form>
         </div>
 
-        <!-- SECTION 5: WAITING CARD (Shown between completed rounds) -->
-        <div id="stage-waiting" class="card" style="display: none; text-align: center; padding: 4rem 2rem;">
-            <div class="mono" style="font-size: 2.2rem; margin-bottom: 0.5rem;" id="waiting-icon">✓</div>
-            <h2 id="waiting-title" style="color: #000000; margin-bottom: 0.5rem; font-size: 1.4rem;">Well Done! Phase Completed</h2>
-            <p id="waiting-subtitle" style="color: var(--text-muted); max-width: 520px; margin: 0 auto 2rem; font-size: 0.88rem; line-height: 1.6;">
+        <!-- SECTION 4: WAITING CARD (Shown between completed rounds) -->
+        <div id="stage-waiting" class="card" style="display: none; text-align: center; padding: 4.5rem 2rem;">
+            <div class="mono" style="font-size: 2.5rem; margin-bottom: 0.5rem;" id="waiting-icon">✓</div>
+            <h2 id="waiting-title" style="color: #ffffff; margin-bottom: 0.5rem; font-size: 1.5rem;">Well Done! Phase Completed</h2>
+            <p id="waiting-subtitle" style="color: #a1a1aa; max-width: 520px; margin: 0 auto 2rem; font-size: 0.88rem; line-height: 1.6;">
                 Your telemetry and solutions have been logged. Waiting for the Flight Director to initiate the next phase...
             </p>
-            <div style="display: inline-block; border: 1px solid var(--border-muted); padding: 1.25rem 2.5rem; margin-bottom: 1.5rem;">
-                <div class="eyebrow" style="margin-bottom: 0.35rem;">MISSION STATUS</div>
-                <div class="mono" id="waiting-status-badge" style="font-size: 1.1rem; font-weight: 700; color: #000000;">
+            <div style="display: inline-block; background: #18181b; border: 1px solid #27272a; border-radius: 12px; padding: 1.25rem 2.5rem; margin-bottom: 1.5rem;">
+                <div class="eyebrow" style="margin-bottom: 0.35rem; color: #a1a1aa;">MISSION STATUS</div>
+                <div class="mono" id="waiting-status-badge" style="font-size: 1.1rem; font-weight: 700; color: #ffffff;">
                     STANDBY FOR NEXT PHASE
                 </div>
             </div>
         </div>
 
-        <!-- SECTION 6: MISSION CONCLUDED (Shown when all 4 rounds are finished) -->
+        <!-- SECTION 5: MISSION CONCLUDED (Shown when all 3 rounds are finished) -->
         <div id="stage-concluded" class="card" style="display: none; text-align: center; padding: 4.5rem 2rem;">
-            <div class="mono" style="font-size: 2.5rem; margin-bottom: 0.75rem;">[MISSION COMPLETE]</div>
-            <h2 style="color: #000000; margin-bottom: 0.5rem; font-size: 1.5rem;">Flight Operations & Forensics Concluded</h2>
-            <p style="color: var(--text-muted); max-width: 540px; margin: 0 auto 2rem; font-size: 0.88rem; line-height: 1.6;">
-                All 4 phases (Launch Planning, Flight Execution, Telemetry Diagnostics, and Root-Cause Investigation) have been certified.
-                Final official standings and awards will be unveiled by the Flight Director.
+            <div class="mono" style="font-size: 2.5rem; margin-bottom: 0.75rem;">🎖️</div>
+            <h2 style="color: #ffffff; margin-bottom: 0.5rem; font-size: 1.6rem;">Flight Operations & Forensics Concluded</h2>
+            <p style="color: #a1a1aa; max-width: 540px; margin: 0 auto 2rem; font-size: 0.88rem; line-height: 1.6;">
+                All 3 phases (Go/No-Go Launch Verification, Telemetry Analysis, and Root-Cause Investigation) have been certified.
+                Final official standings and station awards will be unveiled by the Flight Director.
             </p>
-            <div style="display: inline-block; border: 1px solid var(--border-muted); padding: 1.25rem 3rem;">
-                <div class="eyebrow" style="margin-bottom: 0.35rem;">INVESTIGATION LEDGER</div>
-                <div class="mono" style="font-size: 1.15rem; font-weight: 700; color: #000000;">
+            <div style="display: inline-block; background: #18181b; border: 1px solid #27272a; border-radius: 12px; padding: 1.25rem 3rem;">
+                <div class="eyebrow" style="margin-bottom: 0.35rem; color: #a1a1aa;">INVESTIGATION LEDGER</div>
+                <div class="mono" style="font-size: 1.15rem; font-weight: 700; color: #10b981;">
                     ARCHIVED & SEALED
                 </div>
             </div>
@@ -748,10 +498,10 @@ print(f"Impact Status: {packets[-1]['status_flags']}")
 
     <!-- Scripts -->
     <script src="./js/github_pages_state.js"></script>
-    <script src="./js/space_shooter.js"></script>
+    <script src="./js/gonogo_game.js"></script>
     <script src="./js/python_runner.js"></script>
     <script>
-    let activeShooterGame = null;
+    let activeGoNoGo = null;
     let pythonRunnerInstance = null;
     let isAntiCheatActive = false;
 
@@ -828,14 +578,13 @@ print(f"Impact Status: {packets[-1]['status_flags']}")
     }
 
     // -------------------------------------------------------------------------
-    // Main Stage Dispatcher
+    // Main Stage Dispatcher (3 Rounds Architecture)
     // -------------------------------------------------------------------------
     function hideAllStages() {
         document.getElementById("auth-gate-box").style.display = "none";
         document.getElementById("stage-r1").style.display = "none";
         document.getElementById("stage-r2").style.display = "none";
         document.getElementById("stage-r3").style.display = "none";
-        document.getElementById("stage-r4").style.display = "none";
         document.getElementById("stage-waiting").style.display = "none";
         document.getElementById("stage-concluded").style.display = "none";
     }
@@ -854,7 +603,7 @@ print(f"Impact Status: {packets[-1]['status_flags']}")
         const team = window.IcarusEngine.getTeamData(user.teamId);
 
         // Check if all rounds concluded
-        if (team.r4 && team.r4.status === "submitted") {
+        if (team.r3 && team.r3.status === "submitted") {
             document.getElementById("stage-concluded").style.display = "block";
             return;
         }
@@ -862,29 +611,21 @@ print(f"Impact Status: {packets[-1]['status_flags']}")
         // Branch by active global round
         if (globalRound === 1) {
             if (team.r1 && team.r1.status === "submitted") {
-                showWaitingScreen("Well Done! Round 1 Complete", "Launch Planning verified. Standby for the Flight Director to initiate Round 2: The Launch...", "ROUND 1 VERIFIED");
+                showWaitingScreen("Well Done! Round 1 Complete", "Launch poll verified and authorized. Standby for the Flight Director to initiate Round 2: Telemetry Analysis...", "ROUND 1 VERIFIED");
             } else {
                 document.getElementById("stage-r1").style.display = "block";
             }
         } else if (globalRound === 2) {
             if (team.r2 && team.r2.status === "submitted") {
-                showWaitingScreen("Flight Terminated: Telemetry Lost", "Your CanSat rocket experienced an in-flight anomaly and crashed. Telemetry blackbox retrieved. Standby for Round 3: Telemetry Analysis...", "ROUND 2 RECORDED");
+                showWaitingScreen("Well Done! Telemetry Analysis Logged", "Your crash blackbox analysis script has been certified (+50 PTS). Standby for Round 3: Root-Cause Investigation...", "ROUND 2 CERTIFIED");
             } else {
                 document.getElementById("stage-r2").style.display = "block";
-                initShooterCanvas();
             }
         } else if (globalRound === 3) {
             if (team.r3 && team.r3.status === "submitted") {
-                showWaitingScreen("Well Done! Telemetry Analysis Logged", "Your crash blackbox analysis script has been certified (+50 PTS). Standby for Round 4: Root Cause Investigation...", "ROUND 3 CERTIFIED");
-            } else {
-                document.getElementById("stage-r3").style.display = "block";
-                initPythonIDE();
-            }
-        } else if (globalRound === 4) {
-            if (team.r4 && team.r4.status === "submitted") {
                 document.getElementById("stage-concluded").style.display = "block";
             } else {
-                document.getElementById("stage-r4").style.display = "block";
+                document.getElementById("stage-r3").style.display = "block";
             }
         }
     }
@@ -897,22 +638,8 @@ print(f"Impact Status: {packets[-1]['status_flags']}")
     }
 
     // -------------------------------------------------------------------------
-    // Round 1: Fullscreen Lock & Anti-Cheat
+    // Anti-Cheat & Fullscreen Surveillance Logic
     // -------------------------------------------------------------------------
-    function startRound1WithFullscreen() {
-        const elem = document.documentElement;
-        if (elem.requestFullscreen) {
-            elem.requestFullscreen().catch(() => {});
-        } else if (elem.webkitRequestFullscreen) {
-            elem.webkitRequestFullscreen();
-        }
-
-        document.getElementById("r1-prestart-box").style.display = "none";
-        document.getElementById("r1-quiz-form").style.display = "block";
-
-        activateAntiCheatListeners();
-    }
-
     function triggerAntiCheatAlert(msg, type) {
         const user = window.IcarusEngine.getAuthUser();
         if (user) {
@@ -951,7 +678,93 @@ print(f"Impact Status: {packets[-1]['status_flags']}")
         });
     }
 
-    function handleRound1Submit(e) {
+    function requestFullscreenMode() {
+        const elem = document.documentElement;
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen().catch(() => {});
+        } else if (elem.webkitRequestFullscreen) {
+            elem.webkitRequestFullscreen();
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Round 1: Go / No-Go Launch Decision Game
+    // -------------------------------------------------------------------------
+    function startGoNoGoGame() {
+        document.getElementById("r1-prestart-box").style.display = "none";
+        document.getElementById("r1-game-container").style.display = "block";
+
+        if (!activeGoNoGo) {
+            activeGoNoGo = new window.GoNoGoGame("gonogo-mount");
+            window.activeGoNoGo = activeGoNoGo;
+        }
+        activeGoNoGo.start();
+    }
+
+    window.commitGoNoGoScore = function(score) {
+        const res = window.IcarusEngine.submitRound1GoNoGo(score);
+        alert(res.message);
+        renderCurrentStage();
+    };
+
+    // -------------------------------------------------------------------------
+    // Round 2: Telemetry Analysis (Forced Fullscreen)
+    // -------------------------------------------------------------------------
+    function startRound2WithFullscreen() {
+        requestFullscreenMode();
+        document.getElementById("r2-prestart-box").style.display = "none";
+        document.getElementById("r2-active-workspace").style.display = "block";
+        activateAntiCheatListeners();
+        initPythonIDE();
+    }
+
+    function initPythonIDE() {
+        if (!pythonRunnerInstance) {
+            pythonRunnerInstance = new window.TelemetryPythonRunner("r2-code-editor", "r2-terminal-output", "py-engine-status");
+        }
+    }
+
+    function executePythonCode() {
+        if (pythonRunnerInstance) {
+            pythonRunnerInstance.run();
+        }
+    }
+
+    function handleScriptUpload(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const editor = document.getElementById("r2-code-editor");
+            if (editor) editor.value = event.target.result;
+        };
+        reader.readAsText(file);
+    }
+
+    function submitRound2Analysis() {
+        isAntiCheatActive = false;
+        if (document.fullscreenElement) {
+            document.exitFullscreen().catch(() => {});
+        }
+
+        const editor = document.getElementById("r2-code-editor");
+        const code = editor ? editor.value : "";
+        const res = window.IcarusEngine.submitRound2Analysis(code);
+        alert(res.message);
+        renderCurrentStage();
+    }
+
+    // -------------------------------------------------------------------------
+    // Round 3: Root-Cause Investigation Quiz (Forced Fullscreen)
+    // -------------------------------------------------------------------------
+    function startRound3WithFullscreen() {
+        requestFullscreenMode();
+        document.getElementById("r3-prestart-box").style.display = "none";
+        document.getElementById("r3-quiz-form").style.display = "block";
+        activateAntiCheatListeners();
+    }
+
+    function handleRound3Submit(e) {
         e.preventDefault();
         isAntiCheatActive = false;
         if (document.fullscreenElement) {
@@ -964,93 +777,7 @@ print(f"Impact Status: {packets[-1]['status_flags']}")
             answers[k] = v;
         }
 
-        const res = window.IcarusEngine.submitRound1Quiz(answers);
-        alert(res.message);
-        renderCurrentStage();
-    }
-
-    // -------------------------------------------------------------------------
-    // Round 2: 8-Bit Retro Space Shooter
-    // -------------------------------------------------------------------------
-    function initShooterCanvas() {
-        if (!activeShooterGame) {
-            activeShooterGame = new window.SpaceShooterGame("shooter-canvas", {
-                onScoreUpdate: (score) => {
-                    document.getElementById("r2-score-tag").textContent = `SCORE: ${score}`;
-                },
-                onGameOver: (result) => {
-                    document.getElementById("shooter-crash-overlay").style.display = "flex";
-                }
-            });
-        }
-    }
-
-    function launchShooterGame() {
-        document.getElementById("shooter-start-overlay").style.display = "none";
-        if (activeShooterGame) {
-            activeShooterGame.start();
-        }
-    }
-
-    function commitRound2Shooter() {
-        const score = activeShooterGame ? activeShooterGame.score : 0;
-        window.IcarusEngine.submitRound2ShooterScore(score);
-        if (activeShooterGame) {
-            activeShooterGame.destroy();
-            activeShooterGame = null;
-        }
-        renderCurrentStage();
-    }
-
-    // -------------------------------------------------------------------------
-    // Round 3: Telemetry Analysis & Python IDE
-    // -------------------------------------------------------------------------
-    function initPythonIDE() {
-        if (!pythonRunnerInstance) {
-            pythonRunnerInstance = new window.TelemetryPythonRunner("r3-code-editor", "r3-terminal-output", "py-engine-status");
-        }
-    }
-
-    function executePythonCode() {
-        const code = document.getElementById("r3-code-editor").value;
-        if (pythonRunnerInstance) {
-            pythonRunnerInstance.runCode(code);
-        }
-    }
-
-    function handleScriptUpload(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (evt) => {
-                document.getElementById("r3-code-editor").value = evt.target.result;
-                if (pythonRunnerInstance) {
-                    pythonRunnerInstance.appendOutput(`[UPLOADED] Loaded script: ${file.name}`);
-                }
-            };
-            reader.readAsText(file);
-        }
-    }
-
-    function submitRound3Analysis() {
-        const code = document.getElementById("r3-code-editor").value;
-        const res = window.IcarusEngine.submitRound3Analysis(code);
-        alert(res.message);
-        renderCurrentStage();
-    }
-
-    // -------------------------------------------------------------------------
-    // Round 4: Root Cause Investigation Quiz
-    // -------------------------------------------------------------------------
-    function handleRound4Submit(e) {
-        e.preventDefault();
-        const formData = new FormData(e.target);
-        const answers = {};
-        for (const [k, v] of formData.entries()) {
-            answers[k] = v;
-        }
-
-        const res = window.IcarusEngine.submitRound4Quiz(answers);
+        const res = window.IcarusEngine.submitRound3Quiz(answers);
         alert(res.message);
         renderCurrentStage();
     }
@@ -1067,19 +794,19 @@ print(f"Impact Status: {packets[-1]['status_flags']}")
 
     document.addEventListener("DOMContentLoaded", () => {
         renderCurrentStage();
-        setInterval(updateLiveClock, 1000);
         updateLiveClock();
-
-        // Check if admin advanced global round remotely every 4s
+        setInterval(updateLiveClock, 1000);
         setInterval(() => {
-            const user = window.IcarusEngine.getAuthUser();
-            if (user) {
-                const currentStageEl = document.querySelector("#app-viewport > div[style*='display: block']");
-                if (currentStageEl && currentStageEl.id === "stage-waiting") {
+            if (window.IcarusEngine.getAuthUser()) {
+                const gr = window.IcarusEngine.getGlobalRound();
+                const user = window.IcarusEngine.getAuthUser();
+                const team = window.IcarusEngine.getTeamData(user.teamId);
+                const rKey = `r${gr}`;
+                if (team[rKey] && team[rKey].status === "active" && document.getElementById("stage-waiting").style.display === "block") {
                     renderCurrentStage();
                 }
             }
-        }, 4000);
+        }, 3000);
     });
     </script>
 </body>

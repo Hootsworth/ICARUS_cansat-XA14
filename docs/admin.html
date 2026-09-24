@@ -10,30 +10,33 @@
     <link rel="stylesheet" href="./css/style.css">
     <style>
         .badge-sec-tab {
-            background: #fef2f2;
-            color: #991b1b;
-            border: 1px solid #fecaca;
+            background: #2a1215;
+            color: #ef4444;
+            border: 1px solid #7f1d1d;
             font-family: var(--font-mono);
             font-size: 0.7rem;
-            padding: 2px 6px;
+            padding: 3px 8px;
+            border-radius: 6px;
             font-weight: 700;
         }
         .badge-sec-blur {
-            background: #fffbeb;
-            color: #92400e;
-            border: 1px solid #fde68a;
+            background: #27272a;
+            color: #f59e0b;
+            border: 1px solid #78350f;
             font-family: var(--font-mono);
             font-size: 0.7rem;
-            padding: 2px 6px;
+            padding: 3px 8px;
+            border-radius: 6px;
             font-weight: 700;
         }
         .badge-sec-full {
-            background: #fdf2f8;
-            color: #9d174d;
-            border: 1px solid #fbcfe8;
+            background: #271b2d;
+            color: #f472b6;
+            border: 1px solid #831843;
             font-family: var(--font-mono);
             font-size: 0.7rem;
-            padding: 2px 6px;
+            padding: 3px 8px;
+            border-radius: 6px;
             font-weight: 700;
         }
     </style>
@@ -41,7 +44,7 @@
 <body>
     <nav class="navbar">
         <a href="./admin.html" class="nav-brand">
-            <div style="width: 24px; height: 24px; border: 2px solid var(--text-main); display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-weight: 800; font-size: 0.75rem;">
+            <div style="width: 28px; height: 28px; background: #000000; color: #ffffff; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-weight: 800; font-size: 0.8rem;">
                 I
             </div>
             <div>
@@ -49,9 +52,9 @@
                 <div class="brand-subtitle">Flight Director Master Control</div>
             </div>
         </a>
-        <div style="display: flex; align-items: center; gap: 1rem;">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
             <div class="nav-badge mono" id="live-utc-clock">--:--:-- UTC</div>
-            <div class="nav-badge mono" id="mission-countdown" style="border-color: #000000; color: var(--text-main);">T-00:00:00</div>
+            <div class="nav-badge mono" id="mission-countdown" style="border-color: #3f3f46; color: #ffffff;">T-00:00:00</div>
             <ul class="nav-links">
                 <li><a href="./index.html" class="nav-link" target="_blank">Student Portal &nearr;</a></li>
             </ul>
@@ -60,12 +63,12 @@
 
     <!-- ADMIN LOGIN GATE -->
     <div id="admin-login-container" class="container" style="max-width: 440px; padding-top: 5rem;">
-        <div class="card" style="padding: 2.5rem; border: 1px solid var(--border-muted);">
+        <div class="card" style="padding: 2.5rem;">
             <div style="margin-bottom: 2rem;">
-                <div class="eyebrow">[RESTRICTED ACCESS]</div>
-                <h2 style="font-size: 1.4rem; color: #000000; margin-top: 0.3rem;">Flight Director Authentication</h2>
-                <p style="color: var(--text-muted); font-size: 0.82rem; margin-top: 0.25rem;">
-                    Enter master authorization credentials to unlock flight operations and anti-cheat telemetry.
+                <div class="eyebrow" style="color: #ef4444;">[RESTRICTED ACCESS]</div>
+                <h2 style="font-size: 1.5rem; color: #ffffff; margin-top: 0.3rem;">Flight Director Authentication</h2>
+                <p style="color: #a1a1aa; font-size: 0.82rem; margin-top: 0.25rem;">
+                    Enter master authorization credentials to unlock flight operations, remote dispatch, and anti-cheat telemetry.
                 </p>
             </div>
 
@@ -76,49 +79,49 @@
                     <label class="form-label">Flight Director Password</label>
                     <input type="password" id="admin-password-input" class="form-control" placeholder="••••••••" required autofocus>
                 </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem; margin-top: 0.5rem;">
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.85rem; margin-top: 0.5rem;">
                     Unlock Flight Director Console &rarr;
                 </button>
             </form>
 
             <div style="margin-top: 1.5rem; text-align: center;">
-                <a href="./index.html" class="mono" style="font-size: 0.78rem; color: var(--text-dim);">&larr; Return to Student Portal</a>
+                <a href="./index.html" class="mono" style="font-size: 0.78rem; color: #71717a;">&larr; Return to Student Portal</a>
             </div>
         </div>
     </div>
 
     <!-- ADMIN CONSOLE -->
-    <div id="admin-console-container" class="container" style="display: none; max-width: 1150px; padding-top: 2rem; padding-bottom: 5rem;">
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; border-bottom: 1px solid var(--border-muted); padding-bottom: 1rem;">
+    <div id="admin-console-container" class="container" style="display: none; max-width: 1120px; padding-top: 2rem; padding-bottom: 5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; border-bottom: 1px solid #e4e4e7; padding-bottom: 1.25rem;">
             <div>
-                <div class="eyebrow">[MISSION CONTROL]</div>
+                <div class="eyebrow">[MISSION CONTROL / 3-PHASE ARCHITECTURE]</div>
                 <h1 style="font-size: 1.8rem; margin: 0.2rem 0; color: #000000;">Flight Director Operations Console</h1>
-                <p style="color: var(--text-muted); font-size: 0.84rem; margin: 0;">
-                    Remote round dispatcher, anti-cheat surveillance feed, and private master scoring.
+                <p style="color: #71717a; font-size: 0.84rem; margin: 0;">
+                    Stage dispatcher, live anti-cheat surveillance, retake management, and private master scoring.
                 </p>
             </div>
             <div style="display: flex; gap: 0.75rem; align-items: center;">
-                <span class="badge badge-active" style="padding: 0.35rem 0.8rem;">
+                <span class="badge badge-active" style="padding: 0.4rem 0.9rem;">
                     FLIGHT DIRECTOR ACTIVE
                 </span>
-                <button onclick="window.IcarusEngine.logoutAdmin()" class="btn btn-secondary" style="font-size: 0.72rem; padding: 0.35rem 0.8rem;">
+                <button onclick="window.IcarusEngine.logoutAdmin()" class="btn btn-secondary" style="font-size: 0.72rem; padding: 0.4rem 0.85rem;">
                     Lock Console ✕
                 </button>
             </div>
         </div>
 
-        <!-- STORY ROUND SWITCHER & TIMER DISPATCH -->
-        <div class="card" style="margin-bottom: 2.5rem; border-left: 4px solid #000000;">
+        <!-- 3-ROUND MISSION STAGE SWITCHER & TIMER DISPATCH -->
+        <div class="card" style="margin-bottom: 2rem; border-left: 4px solid #10b981;">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.25rem;">
                 <div>
-                    <div class="eyebrow">[SYNCHRONIZED DISPATCH]</div>
-                    <h2 style="font-size: 1.3rem; margin: 0.2rem 0; color: #000000;">Mission Stage & Timer Controller</h2>
-                    <p style="color: var(--text-muted); font-size: 0.82rem;">
-                        Switch stages remotely for all student laptops and broadcast synchronized timers.
+                    <div class="eyebrow" style="color: #10b981;">[SYNCHRONIZED DISPATCH]</div>
+                    <h2 style="font-size: 1.3rem; margin: 0.2rem 0; color: #ffffff;">Mission Stage & Timer Controller</h2>
+                    <p style="color: #a1a1aa; font-size: 0.82rem;">
+                        Switch stages remotely for all student laptops and broadcast synchronized countdown timers.
                     </p>
                 </div>
                 <div style="display: flex; align-items: center; gap: 0.75rem;">
-                    <span id="current-global-round-badge" class="badge badge-active mono" style="font-size: 0.75rem; background: #000; color: #fff;">
+                    <span id="current-global-round-badge" class="badge badge-active mono" style="font-size: 0.75rem; background: #ffffff; color: #000000;">
                         ACTIVE: STAGE 1
                     </span>
                     <button id="btn-toggle-cfg" type="button" class="btn btn-secondary" style="font-size: 0.72rem; padding: 0.35rem 0.75rem;">
@@ -128,9 +131,9 @@
             </div>
 
             <!-- Firebase Config Box -->
-            <div id="firebase-cfg-box" style="display: none; background: #fafafa; border: 1px solid var(--border-muted); padding: 1.25rem; margin-bottom: 1.5rem;">
-                <div class="eyebrow" style="margin-bottom: 0.5rem;">Firebase Project Configuration (Firestore Sync)</div>
-                <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 0.75rem;">
+            <div id="firebase-cfg-box" style="display: none; background: #18181b; border: 1px solid #27272a; border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem;">
+                <div class="eyebrow" style="margin-bottom: 0.5rem; color: #38bdf8;">Firebase Project Configuration (Firestore Sync)</div>
+                <p style="color: #a1a1aa; font-size: 0.8rem; margin-bottom: 0.75rem;">
                     Configure Firebase keys for multi-laptop instant synchronisation.
                 </p>
                 <textarea id="firebase-cfg-input" class="form-control mono" rows="4" style="font-size: 0.75rem; margin-bottom: 0.75rem;" placeholder='{\n  "apiKey": "...",\n  "authDomain": "...",\n  "projectId": "..."\n}'></textarea>
@@ -140,31 +143,27 @@
                 </div>
             </div>
 
-            <!-- Quick Stage Transition Buttons -->
+            <!-- 3 Stage Transition Buttons -->
             <div style="margin-bottom: 1.5rem;">
-                <div class="eyebrow" style="margin-bottom: 0.5rem;">Direct Mission Stage Switcher (Switches All Connected Stations)</div>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.75rem;">
-                    <button class="btn btn-secondary" onclick="switchMissionStage(1, 15, 'ROUND 1: LAUNCH PLANNING')" style="text-align: left; padding: 0.75rem;">
-                        <div style="font-weight: 700; color: #000;">Stage 1: Planning</div>
-                        <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;">Launch Prep Quiz (15m)</div>
+                <div class="eyebrow" style="margin-bottom: 0.5rem; color: #a1a1aa;">Direct Mission Stage Switcher (Switches All Connected Stations)</div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0.75rem;">
+                    <button class="btn btn-secondary" onclick="switchMissionStage(1, 15, 'ROUND 1: GO / NO-GO LAUNCH POLL')" style="text-align: left; padding: 0.85rem 1rem; border-radius: 12px;">
+                        <div style="font-weight: 700; color: #ffffff;">Stage 1: Launch Poll</div>
+                        <div style="font-size: 0.72rem; color: #a1a1aa; margin-top: 2px;">Go / No-Go Verification (15m)</div>
                     </button>
-                    <button class="btn btn-secondary" onclick="switchMissionStage(2, 10, 'ROUND 2: THE LAUNCH')" style="text-align: left; padding: 0.75rem;">
-                        <div style="font-weight: 700; color: #000;">Stage 2: Launch</div>
-                        <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;">8-Bit Space Arcade (10m)</div>
+                    <button class="btn btn-secondary" onclick="switchMissionStage(2, 25, 'ROUND 2: TELEMETRY ANALYSIS')" style="text-align: left; padding: 0.85rem 1rem; border-radius: 12px;">
+                        <div style="font-weight: 700; color: #ffffff;">Stage 2: Telemetry</div>
+                        <div style="font-size: 0.72rem; color: #a1a1aa; margin-top: 2px;">Blackbox Python Crash IDE (25m)</div>
                     </button>
-                    <button class="btn btn-secondary" onclick="switchMissionStage(3, 25, 'ROUND 3: TELEMETRY ANALYSIS')" style="text-align: left; padding: 0.75rem;">
-                        <div style="font-weight: 700; color: #000;">Stage 3: Telemetry</div>
-                        <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;">Python Crash IDE (25m)</div>
-                    </button>
-                    <button class="btn btn-secondary" onclick="switchMissionStage(4, 20, 'ROUND 4: ROOT-CAUSE INVESTIGATION')" style="text-align: left; padding: 0.75rem;">
-                        <div style="font-weight: 700; color: #000;">Stage 4: Forensics</div>
-                        <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;">Root-Cause Findings (20m)</div>
+                    <button class="btn btn-secondary" onclick="switchMissionStage(3, 20, 'ROUND 3: ROOT-CAUSE INVESTIGATION')" style="text-align: left; padding: 0.85rem 1rem; border-radius: 12px;">
+                        <div style="font-weight: 700; color: #ffffff;">Stage 3: Forensics</div>
+                        <div style="font-size: 0.72rem; color: #a1a1aa; margin-top: 2px;">Accident Board (15 Qs / 20m)</div>
                     </button>
                 </div>
             </div>
 
             <!-- Custom Controls & Timer -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; border-top: 1px solid var(--border-hairline); padding-top: 1.25rem;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; border-top: 1px solid #27272a; padding-top: 1.25rem;">
                 <div>
                     <div class="eyebrow" style="margin-bottom: 0.5rem;">Timer Controls</div>
                     <div style="display: flex; gap: 0.5rem;">
@@ -180,33 +179,33 @@
                 <div>
                     <div class="eyebrow" style="margin-bottom: 0.5rem;">Broadcast Announcement to All Screens</div>
                     <div style="display: flex; gap: 0.5rem;">
-                        <input id="broadcast-msg-input" type="text" class="form-control" placeholder="e.g. 5 minutes remaining! Wrap up script analysis." style="flex: 1; font-size: 0.78rem;">
+                        <input id="broadcast-msg-input" type="text" class="form-control" placeholder="e.g. 5 minutes remaining! Finalize all flight reports." style="flex: 1; font-size: 0.78rem;">
                         <button type="button" class="btn btn-primary" onclick="dispatchBroadcast()" style="font-size: 0.78rem; padding: 0.5rem 1rem;">
                             Send
                         </button>
                     </div>
                     <div style="margin-top: 0.4rem;">
-                        <a href="javascript:void(0)" onclick="clearBroadcast()" class="mono" style="font-size: 0.72rem; color: var(--text-dim);">[Clear Active Broadcast]</a>
+                        <a href="javascript:void(0)" onclick="clearBroadcast()" class="mono" style="font-size: 0.72rem; color: #71717a;">[Clear Active Broadcast]</a>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- STATION RETAKE & STAGE RESET MANAGER -->
-        <div class="card" style="margin-bottom: 2.5rem; border-left: 4px solid #2563eb;">
+        <div class="card" style="margin-bottom: 2rem; border-left: 4px solid #38bdf8;">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
                 <div>
-                    <div class="eyebrow" style="color: #2563eb;">[ROUND RETAKE & RECOVERY]</div>
-                    <h2 style="font-size: 1.3rem; margin: 0.2rem 0; color: #000000;">Station Retake & Stage Reset Manager</h2>
-                    <p style="color: var(--text-muted); font-size: 0.82rem;">
+                    <div class="eyebrow" style="color: #38bdf8;">[ROUND RETAKE & RECOVERY]</div>
+                    <h2 style="font-size: 1.3rem; margin: 0.2rem 0; color: #ffffff;">Station Retake & Stage Reset Manager</h2>
+                    <p style="color: #a1a1aa; font-size: 0.82rem;">
                         Grant permission for specific stations to re-attempt individual rounds. Resets their submission status to active.
                     </p>
                 </div>
-                <div id="retake-status-notice" class="badge mono" style="display: none; padding: 0.4rem 0.8rem; font-size: 0.75rem; background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe;">
+                <div id="retake-status-notice" class="badge mono" style="display: none; padding: 0.4rem 0.8rem; font-size: 0.75rem; background: #0c4a6e; color: #38bdf8; border: 1px solid #0284c7;">
                 </div>
             </div>
 
-            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: flex-end; background: #fafafa; padding: 1.25rem; border: 1px solid var(--border-muted);">
+            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: flex-end; background: #18181b; padding: 1.25rem; border: 1px solid #27272a; border-radius: 12px;">
                 <div style="flex: 1; min-width: 220px;">
                     <label class="form-label" style="font-size: 0.75rem;">Select Station / Flight Group</label>
                     <select id="retake-team-select" class="form-control mono" style="font-size: 0.8rem;">
@@ -227,19 +226,18 @@
                 <div style="flex: 1; min-width: 200px;">
                     <label class="form-label" style="font-size: 0.75rem;">Target Stage to Retake / Reset</label>
                     <select id="retake-round-select" class="form-control mono" style="font-size: 0.8rem;">
-                        <option value="1">Stage 1: Launch Planning Quiz (15 Qs)</option>
-                        <option value="2">Stage 2: 8-Bit Space Arcade Flight</option>
-                        <option value="3">Stage 3: Telemetry Analysis Script</option>
-                        <option value="4">Stage 4: Root-Cause Investigation (15 Qs)</option>
+                        <option value="1">Stage 1: Go / No-Go Launch Poll</option>
+                        <option value="2">Stage 2: Telemetry Analysis Script</option>
+                        <option value="3">Stage 3: Root-Cause Investigation (15 Qs)</option>
                         <option value="all">★ All Stages (Full Station Reset)</option>
                     </select>
                 </div>
 
                 <div style="display: flex; gap: 0.5rem;">
-                    <button type="button" class="btn btn-primary" onclick="handleAdminRetakeSubmit()" style="font-size: 0.78rem; padding: 0.6rem 1.25rem;">
+                    <button type="button" class="btn btn-primary" onclick="handleAdminRetakeSubmit()" style="font-size: 0.78rem; padding: 0.65rem 1.25rem;">
                         Grant Retake / Reset Stage &rarr;
                     </button>
-                    <button type="button" class="btn btn-secondary" onclick="handleAdminForceUnlock()" style="font-size: 0.78rem; padding: 0.6rem 1rem;">
+                    <button type="button" class="btn btn-secondary" onclick="handleAdminForceUnlock()" style="font-size: 0.78rem; padding: 0.65rem 1rem;">
                         Force Unlock Stage
                     </button>
                 </div>
@@ -247,17 +245,17 @@
         </div>
 
         <!-- ANTI-CHEAT REAL-TIME SURVEILLANCE FEED -->
-        <div class="card" style="margin-bottom: 2.5rem; padding: 0; overflow: hidden; border: 1px solid #000000;">
-            <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-muted); display: flex; justify-content: space-between; align-items: center; background: #ffffff;">
+        <div class="card" style="margin-bottom: 2rem; padding: 0; overflow: hidden; border: 1px solid #27272a;">
+            <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid #27272a; display: flex; justify-content: space-between; align-items: center; background: #18181b;">
                 <div>
-                    <div class="eyebrow" style="color: #991b1b;">[SURVEILLANCE & INTEGRITY]</div>
-                    <h2 style="font-size: 1.2rem; margin-top: 0.2rem; color: #000000;">Anti-Cheat Surveillance Log</h2>
-                    <p style="color: var(--text-muted); font-size: 0.8rem; margin: 0;">
-                        Live record of window defocusses, browser tab switches, and fullscreen escapes during Round 1.
+                    <div class="eyebrow" style="color: #ef4444;">[SURVEILLANCE & INTEGRITY]</div>
+                    <h2 style="font-size: 1.2rem; margin-top: 0.2rem; color: #ffffff;">Anti-Cheat Surveillance Log</h2>
+                    <p style="color: #a1a1aa; font-size: 0.8rem; margin: 0;">
+                        Live record of window defocusses, browser tab switches, and fullscreen escapes during Round 2 and Round 3.
                     </p>
                 </div>
                 <div style="display: flex; gap: 0.75rem; align-items: center;">
-                    <span id="security-violation-count" class="badge mono" style="background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; font-weight: 700;">
+                    <span id="security-violation-count" class="badge mono" style="background: #2a1215; color: #ef4444; border: 1px solid #7f1d1d; font-weight: 700;">
                         0 VIOLATIONS
                     </span>
                     <button class="btn btn-secondary" onclick="clearSecurityFeed()" style="font-size: 0.72rem; padding: 0.35rem 0.75rem;">
@@ -281,7 +279,7 @@
                     </thead>
                     <tbody id="security-table-body">
                         <tr>
-                            <td colspan="4" style="text-align: center; color: var(--text-dim); padding: 2rem;">
+                            <td colspan="4" style="text-align: center; color: #71717a; padding: 2rem;">
                                 No anti-cheat incidents logged. Station environments secure.
                             </td>
                         </tr>
@@ -290,13 +288,13 @@
             </div>
         </div>
 
-        <!-- PRIVATE MASTER SCOREBOARD -->
-        <div class="card" style="padding: 0; margin-bottom: 2.5rem; overflow-x: auto; border: 1px solid var(--border-muted);">
-            <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-muted); display: flex; justify-content: space-between; align-items: center;">
+        <!-- PRIVATE MASTER SCOREBOARD (3 ROUNDS) -->
+        <div class="card" style="padding: 0; margin-bottom: 2rem; overflow-x: auto; border: 1px solid #27272a;">
+            <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid #27272a; display: flex; justify-content: space-between; align-items: center; background: #18181b;">
                 <div>
-                    <div class="eyebrow">[STRICTLY PRIVATE]</div>
-                    <h2 style="font-size: 1.2rem; margin-top: 0.2rem; color: #000000;">Master 4-Round Private Scoreboard</h2>
-                    <p style="color: var(--text-muted); font-size: 0.8rem; margin: 0;">
+                    <div class="eyebrow" style="color: #38bdf8;">[STRICTLY PRIVATE]</div>
+                    <h2 style="font-size: 1.2rem; margin-top: 0.2rem; color: #ffffff;">Master 3-Round Private Scoreboard</h2>
+                    <p style="color: #a1a1aa; font-size: 0.8rem; margin: 0;">
                         Restricted to Flight Director. Not visible on student workstations.
                     </p>
                 </div>
@@ -312,11 +310,10 @@
                     <tr>
                         <th style="width: 50px; text-align: center;">Rank</th>
                         <th>Station & Callsign</th>
-                        <th>R1: Planning<br><span style="font-size: 0.7rem; font-weight: 400; color: var(--text-dim);">15 Qs (100 PTS)</span></th>
-                        <th>R2: Launch (Raw / Rank)<br><span style="font-size: 0.7rem; font-weight: 400; color: var(--text-dim);">Top 5: 5,4,3,2,1 PTS</span></th>
-                        <th>R3: Telemetry<br><span style="font-size: 0.7rem; font-weight: 400; color: var(--text-dim);">Max 50 PTS</span></th>
-                        <th>R4: Forensics<br><span style="font-size: 0.7rem; font-weight: 400; color: var(--text-dim);">15 Qs (120 PTS)</span></th>
-                        <th style="background: #fafafa; font-weight: 800; color: #000;">Grand Total</th>
+                        <th>R1: Launch Poll<br><span style="font-size: 0.7rem; font-weight: 400; color: #71717a;">Max 100 PTS</span></th>
+                        <th>R2: Telemetry<br><span style="font-size: 0.7rem; font-weight: 400; color: #71717a;">Max 50 PTS</span></th>
+                        <th>R3: Forensics<br><span style="font-size: 0.7rem; font-weight: 400; color: #71717a;">15 Qs (120 PTS)</span></th>
+                        <th style="background: #18181b; font-weight: 800; color: #ffffff;">Grand Total</th>
                         <th style="text-align: right; width: 140px;">Stage Retake</th>
                     </tr>
                 </thead>
@@ -367,7 +364,7 @@
         const r = window.IcarusEngine.getGlobalRound();
         const b = document.getElementById("current-global-round-badge");
         if (b) {
-            const titles = ["", "STAGE 1: PLANNING", "STAGE 2: LAUNCH", "STAGE 3: TELEMETRY", "STAGE 4: FORENSICS"];
+            const titles = ["", "STAGE 1: LAUNCH POLL", "STAGE 2: TELEMETRY", "STAGE 3: FORENSICS"];
             b.textContent = `ACTIVE: ${titles[r] || 'STAGE ' + r}`;
         }
     }
@@ -395,7 +392,7 @@
         const tid = parseInt(teamSelect.value);
         const rKey = roundSelect.value;
         if (rKey === "all") {
-            for (let i = 1; i <= 4; i++) window.IcarusEngine.unlockTeamRound(tid, i);
+            for (let i = 1; i <= 3; i++) window.IcarusEngine.unlockTeamRound(tid, i);
         } else {
             window.IcarusEngine.unlockTeamRound(tid, rKey);
         }
@@ -434,41 +431,31 @@
         teams.forEach((item, index) => {
             const tr = document.createElement("tr");
 
-            // R1 string
+            // R1 string (Go / No-Go Launch Poll)
             const r1Str = item.r1 && item.r1.status === 'submitted'
-                ? `<span style="font-weight:700; color:var(--text-main);">${item.r1_pts} PTS</span> <span style="font-size:0.7rem; color:var(--text-dim);">(✓ Submitted)</span>`
-                : `<span style="color:var(--text-dim);">PENDING</span>`;
+                ? `<span style="font-weight:700; color:#10b981;">+${item.r1_pts} PTS</span> <span style="font-size:0.7rem; color:#a1a1aa;">(✓ Cleared)</span>`
+                : `<span style="color:#71717a;">PENDING</span>`;
 
-            // R2 string
-            let r2Str = `<span style="color:var(--text-dim);">--</span>`;
-            if (item.r2 && item.r2.rawScore > 0) {
-                const rankBadge = item.r2_pts > 0 
-                    ? `<span class="badge" style="background:#000; color:#fff; font-size:0.7rem; margin-left:4px;">+${item.r2_pts} PTS</span>`
-                    : `<span style="font-size:0.7rem; color:var(--text-dim);">+0 pts</span>`;
-                r2Str = `<strong>${item.r2_raw}</strong> score ${rankBadge}`;
-            }
+            // R2 string (Telemetry Analysis)
+            const r2Str = item.r2 && item.r2.status === 'submitted'
+                ? `<span style="font-weight:700; color:#38bdf8;">+${item.r2_pts} PTS</span>`
+                : `<span style="color:#71717a;">--</span>`;
 
-            // R3 string
+            // R3 string (Forensics Quiz 15 Qs)
             const r3Str = item.r3 && item.r3.status === 'submitted'
-                ? `<span style="font-weight:700; color:var(--text-main);">${item.r3_pts} PTS</span>`
-                : `<span style="color:var(--text-dim);">--</span>`;
-
-            // R4 string
-            const r4Str = item.r4 && item.r4.status === 'submitted'
-                ? `<span style="font-weight:700; color:var(--text-main);">${item.r4_pts} PTS</span>`
-                : `<span style="color:var(--text-dim);">--</span>`;
+                ? `<span style="font-weight:700; color:#ffffff;">+${item.r3_pts} PTS</span>`
+                : `<span style="color:#71717a;">--</span>`;
 
             tr.innerHTML = `
                 <td style="text-align: center; font-weight: 700;" class="mono">${index + 1}</td>
                 <td>
-                    <div style="font-weight: 700; color: var(--text-main);">${item.team.name}</div>
-                    <div class="mono" style="font-size: 0.72rem; color: var(--text-dim);">STATION ${item.team.id} | CODE: ${item.team.code}</div>
+                    <div style="font-weight: 700; color: #ffffff;">${item.team.name}</div>
+                    <div class="mono" style="font-size: 0.72rem; color: #a1a1aa;">STATION ${item.team.id} | CODE: ${item.team.code}</div>
                 </td>
                 <td class="mono">${r1Str}</td>
                 <td class="mono">${r2Str}</td>
                 <td class="mono">${r3Str}</td>
-                <td class="mono">${r4Str}</td>
-                <td class="mono" style="font-size: 1.15rem; font-weight: 800; background: #fafafa; color: var(--text-main);">
+                <td class="mono" style="font-size: 1.15rem; font-weight: 800; background: #18181b; color: #ffffff;">
                     ${item.grand_total} PTS
                 </td>
                 <td style="text-align: right;">
@@ -477,7 +464,6 @@
                         <option value="1">Reset Round 1</option>
                         <option value="2">Reset Round 2</option>
                         <option value="3">Reset Round 3</option>
-                        <option value="4">Reset Round 4</option>
                         <option value="all">Reset All Stages</option>
                     </select>
                 </td>
@@ -493,15 +479,15 @@
 
         if (countBadge) {
             countBadge.textContent = `${events.length} VIOLATIONS LOGGED`;
-            countBadge.style.background = events.length > 0 ? "#fef2f2" : "#f4f4f5";
-            countBadge.style.color = events.length > 0 ? "#991b1b" : "#71717a";
-            countBadge.style.borderColor = events.length > 0 ? "#fecaca" : "#e4e4e7";
+            countBadge.style.background = events.length > 0 ? "#2a1215" : "#18181b";
+            countBadge.style.color = events.length > 0 ? "#ef4444" : "#71717a";
+            countBadge.style.borderColor = events.length > 0 ? "#7f1d1d" : "#27272a";
         }
 
         if (events.length === 0) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="4" style="text-align: center; color: var(--text-dim); padding: 2rem;">
+                    <td colspan="4" style="text-align: center; color: #71717a; padding: 2rem;">
                         No anti-cheat incidents logged. Station environments secure.
                     </td>
                 </tr>
@@ -527,13 +513,13 @@
             }
 
             tr.innerHTML = `
-                <td class="mono" style="font-size: 0.72rem; color: var(--text-dim);">${evt.timestamp || "--"}</td>
+                <td class="mono" style="font-size: 0.72rem; color: #a1a1aa;">${evt.timestamp || "--"}</td>
                 <td>
-                    <strong style="color: #000;">${evt.teamName}</strong>
-                    <div class="mono" style="font-size: 0.7rem; color: var(--text-muted);">Station ${evt.teamId} [Round ${evt.round || 1}]</div>
+                    <strong style="color: #ffffff;">${evt.teamName}</strong>
+                    <div class="mono" style="font-size: 0.7rem; color: #71717a;">Station ${evt.teamId} [Round ${evt.round || 1}]</div>
                 </td>
                 <td><span class="${badgeClass}">${label}</span></td>
-                <td style="font-size: 0.8rem; color: #444;">${evt.detail || "Suspicious navigation detected"}</td>
+                <td style="font-size: 0.8rem; color: #d4d4d8;">${evt.detail || "Suspicious navigation detected"}</td>
             `;
             tbody.appendChild(tr);
         });
@@ -548,9 +534,9 @@
 
     function exportScoreboardCSV() {
         const teams = window.IcarusEngine.getAllTeamsOverview();
-        let csv = "Rank,Station ID,Team Name,Round 1 Quiz Pts,Round 2 Raw Score,Round 2 Rank Pts,Round 3 Telemetry Pts,Round 4 Forensics Pts,Grand Total Pts\n";
+        let csv = "Rank,Station ID,Team Name,Round 1 GoNoGo Pts,Round 2 Telemetry Pts,Round 3 Forensics Pts,Grand Total Pts\n";
         teams.forEach((t, idx) => {
-            csv += `${idx + 1},${t.team.id},"${t.team.name}",${t.r1_pts},${t.r2_raw},${t.r2_pts},${t.r3_pts},${t.r4_pts},${t.grand_total}\n`;
+            csv += `${idx + 1},${t.team.id},"${t.team.name}",${t.r1_pts},${t.r2_pts},${t.r3_pts},${t.grand_total}\n`;
         });
 
         const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
