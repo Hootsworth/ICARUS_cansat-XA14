@@ -1,4 +1,4 @@
-# RVSAT-1 Satellite Telemetry & Flight Operations Challenge
+# Icarus Cansat Telemetry Analysis Challenge
 **Complete Build and Run Playbook**  
 *Built for 11 teams. Auto-graded, seeded telemetry datasets, chained encrypted packages, live downlink API, and real-time contingency finale.*
 
