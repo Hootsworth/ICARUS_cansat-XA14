@@ -302,7 +302,15 @@ async def download_phase_package(request: Request, team_id: int, phase_filename:
         raise HTTPException(status_code=403, detail="Access denied to another team's package.")
         
     # Evidence packages are staged by Round 2 phase.
-    if phase_filename.endswith("_phase2.zip") or phase_filename.endswith("_phase3.zip"):
+    if phase_filename.endswith("_phase1.zip"):
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT 1 FROM round_status WHERE team_id = ? AND round_id = 1 AND status = 'submitted'", (team_id,))
+        unlocked = cur.fetchone()
+        conn.close()
+        if not unlocked and not is_admin(request):
+            raise HTTPException(status_code=403, detail="Round 2 is sealed until Round 1 is verified.")
+    elif phase_filename.endswith("_phase2.zip") or phase_filename.endswith("_phase3.zip"):
         conn = get_db_connection()
         cur = conn.cursor()
         required_phase = "PHASE_1" if phase_filename.endswith("_phase2.zip") else "PHASE_2"
