@@ -150,28 +150,13 @@ async def submit_challenge(request: Request):
         raise HTTPException(status_code=404, detail="Challenge ID not found.")
         
     # Round 2 is staged. Do not allow direct jumps into sealed evidence phases.
-    if ch["round_id"] == 2:
-        conn.close()
-        if ch["phase"] == "PHASE_2":
-            conn = get_db_connection()
-            cur = conn.cursor()
-            cur.execute("SELECT 1 FROM flags WHERE team_id = ? AND phase = 'PHASE_1'", (team["id"],))
-            unlocked = cur.fetchone()
-            if not unlocked:
-                conn.close()
-                raise HTTPException(status_code=403, detail="Phase 2 is sealed. Complete Phase 1 first.")
-        elif ch["phase"] == "PHASE_3":
-            conn = get_db_connection()
-            cur = conn.cursor()
-            cur.execute("SELECT 1 FROM flags WHERE team_id = ? AND phase = 'PHASE_2'", (team["id"],))
-            unlocked = cur.fetchone()
-            if not unlocked:
-                conn.close()
-                raise HTTPException(status_code=403, detail="Phase 3 is sealed. Complete Phase 2 first.")
-        elif ch["phase"] == "BONUS":
-            conn = get_db_connection()
-            cur = conn.cursor()
-        # Continue with the normal submission flow using a fresh connection.
+    if ch["round_id"] == 2 and ch["phase"] in ("PHASE_2", "PHASE_3"):
+        required_phase = "PHASE_1" if ch["phase"] == "PHASE_2" else "PHASE_2"
+        cur.execute("SELECT 1 FROM flags WHERE team_id = ? AND phase = ?", (team["id"], required_phase))
+        if not cur.fetchone():
+            conn.close()
+            raise HTTPException(status_code=403, detail=f"{ch['phase']} is sealed. Complete the previous phase first.")
+
     # 2. Check if already solved correctly
     cur.execute("SELECT * FROM submissions WHERE team_id = ? AND challenge_id = ? AND correct = 1", (team["id"], challenge_id))
     existing_correct = cur.fetchone()
