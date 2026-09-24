@@ -107,22 +107,22 @@
         <div id="stage-r1" style="display: none;">
             <div class="card card-header-accent-green" style="margin-bottom: 2rem;">
                 <div class="eyebrow" style="color: #10b981;">[PHASE 01 / LAUNCH READINESS POLL]</div>
-                <h1 style="font-size: 1.8rem; color: #ffffff; margin: 0.3rem 0;">Phase 1: Go / No-Go Flight Verification</h1>
+                <h1 style="font-size: 1.8rem; color: #ffffff; margin: 0.3rem 0;">Phase 1: Go / No-Go Rapid Verification</h1>
                 <p style="color: #a1a1aa; font-size: 0.88rem; line-height: 1.6;">
-                    Verify 15 critical avionics, sensor, weather, and recovery parameters in real time before the launch window countdown expires. Decide <strong>GO</strong> or <strong>NO-GO</strong> for each flight check.
+                    Rapid-fire verification: 20 randomized computing, math, and logic statements. You have strictly <strong>3.0 seconds</strong> per statement to evaluate <strong>GO</strong> or <strong>NO-GO</strong>!
                 </p>
             </div>
 
             <!-- Start Game Gate -->
             <div id="r1-prestart-box" class="card" style="text-align: center; padding: 3.5rem 2rem;">
-                <div class="mono" style="font-size: 2.2rem; margin-bottom: 0.5rem;">🚀</div>
-                <h2 style="font-size: 1.4rem; margin-bottom: 0.5rem; color: #ffffff;">Subsystem Launch Poll Briefing</h2>
+                <div class="mono" style="font-size: 2.2rem; margin-bottom: 0.5rem;">⚡</div>
+                <h2 style="font-size: 1.4rem; margin-bottom: 0.5rem; color: #ffffff;">Rapid Verification Briefing</h2>
                 <p style="color: #a1a1aa; max-width: 540px; margin: 0 auto 1.75rem; font-size: 0.86rem; line-height: 1.6;">
-                    You will review 15 telemetry inspection cards. Tap <strong>GO</strong> if parameters are strictly within flight limits, or <strong>NO-GO</strong> if any violation or danger is detected.
-                    Keyboard shortcuts: <strong>[G]</strong> for GO &bull; <strong>[N]</strong> for NO-GO.
+                    You will receive 20 randomized statements from the 150-question master pool. Each statement displays for strictly <strong>3 seconds</strong> before expiring.
+                    Decide quickly: <strong>[G]</strong> / Left Arrow for GO &bull; <strong>[N]</strong> / Right Arrow for NO-GO.
                 </p>
                 <button type="button" class="btn btn-primary" onclick="startGoNoGoGame()" style="padding: 0.9rem 2.75rem; font-size: 0.95rem;">
-                    Initiate Launch Poll (60s) &rarr;
+                    Initiate Rapid Poll (20 Questions &bull; 3s Each) &rarr;
                 </button>
             </div>
 
@@ -132,7 +132,7 @@
             </div>
         </div>
 
-        <!-- SECTION 2: ROUND 2 - TELEMETRY ANALYSIS (FORCE FULLSCREEN) -->
+        <!-- SECTION 2: ROUND 2 - TELEMETRY ANALYSIS (STANDARD WINDOW MODE) -->
         <div id="stage-r2" style="display: none;">
             <div class="card card-header-accent-blue" style="margin-bottom: 2rem;">
                 <div class="eyebrow" style="color: #38bdf8;">[PHASE 02 / BLACKBOX CRASH ANALYSIS]</div>
@@ -142,24 +142,8 @@
                 </p>
             </div>
 
-            <!-- Force Fullscreen Pre-start Gate -->
-            <div id="r2-prestart-box" class="card" style="text-align: center; padding: 3.5rem 2rem;">
-                <div class="mono" style="font-size: 2.2rem; margin-bottom: 0.5rem;">🔒</div>
-                <h2 style="font-size: 1.4rem; margin-bottom: 0.5rem; color: #ffffff;">Enforced Fullscreen Environment</h2>
-                <p style="color: #a1a1aa; max-width: 540px; margin: 0 auto 1.75rem; font-size: 0.86rem; line-height: 1.6;">
-                    Competition integrity requires Phase 2 to be executed in <strong>Forced Fullscreen Mode</strong>.
-                    Any window unfocus, tab switch, or fullscreen escape is logged directly to the Flight Director's surveillance feed.
-                </p>
-                <button type="button" class="btn btn-primary" onclick="startRound2WithFullscreen()" style="padding: 0.9rem 2.75rem; font-size: 0.95rem;">
-                    Enter Fullscreen & Begin Telemetry Analysis &rarr;
-                </button>
-            </div>
-
-            <!-- Active Telemetry Workspace (Shown after fullscreen entered) -->
-            <div id="r2-active-workspace" style="display: none;">
-                <div class="alert alert-info" style="margin-bottom: 1.5rem; font-size: 0.8rem;">
-                    ● Fullscreen Anti-Cheat Active. Do not switch tabs or exit fullscreen while analyzing telemetry.
-                </div>
+            <!-- Active Telemetry Workspace (Direct Access - No Fullscreen Enforced) -->
+            <div id="r2-active-workspace">
 
                 <!-- Telemetry Source Download Bar -->
                 <div class="card" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; padding: 1.25rem 1.5rem; margin-bottom: 1.5rem;">
@@ -555,6 +539,7 @@ for r in rows:
                 showWaitingScreen("Well Done! Telemetry Analysis Logged", "Your crash blackbox analysis script has been certified (+50 PTS). Standby for Round 3: Root-Cause Investigation...", "ROUND 2 CERTIFIED");
             } else {
                 document.getElementById("stage-r2").style.display = "block";
+                initPythonIDE();
             }
         } else if (globalRound === 3) {
             if (team.r3 && team.r3.status === "submitted") {
@@ -643,16 +628,8 @@ for r in rows:
     };
 
     // -------------------------------------------------------------------------
-    // Round 2: Telemetry Analysis (Forced Fullscreen)
+    // Round 2: Telemetry Analysis (Standard Window Mode)
     // -------------------------------------------------------------------------
-    function startRound2WithFullscreen() {
-        requestFullscreenMode();
-        document.getElementById("r2-prestart-box").style.display = "none";
-        document.getElementById("r2-active-workspace").style.display = "block";
-        activateAntiCheatListeners();
-        initPythonIDE();
-    }
-
     function initPythonIDE() {
         if (!pythonRunnerInstance) {
             pythonRunnerInstance = new window.TelemetryPythonRunner("r2-code-editor", "r2-terminal-output", "py-engine-status");
@@ -677,11 +654,6 @@ for r in rows:
     }
 
     function submitRound2Analysis() {
-        isAntiCheatActive = false;
-        if (document.fullscreenElement) {
-            document.exitFullscreen().catch(() => {});
-        }
-
         const editor = document.getElementById("r2-code-editor");
         const code = editor ? editor.value : "";
         const res = window.IcarusEngine.submitRound2Analysis(code);
