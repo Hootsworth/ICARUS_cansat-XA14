@@ -140,9 +140,10 @@
         <div class="status-value mono" style="font-size: 1rem; margin: 0.4rem 0;">
             {{ 'ACTIVE' if app_state.round3_active == 'true' else 'LOCKED' }}
         </div>
-        <form action="/admin/action" method="POST">
+        <form action="/admin/action" method="POST" onsubmit="return handleRound3Toggle(event, this)">
             <input type="hidden" name="action" value="toggle_round">
             <input type="hidden" name="val" value="round3_active">
+            <input type="hidden" name="round3_current" value="{{ 'true' if app_state.round3_active == 'true' else 'false' }}">
             <button type="submit" class="btn btn-secondary" style="width: 100%; font-size: 0.72rem;">Toggle Round 3</button>
         </form>
     </div>
@@ -408,6 +409,34 @@
 
 {% block extra_scripts %}
 <script>
+async function handleRound3Toggle(event, form) {
+    event.preventDefault();
+
+    const currentlyActive = form.querySelector('input[name="round3_current"]').value === "true";
+
+    try {
+        const response = await fetch(form.action, {
+            method: "POST",
+            body: new FormData(form)
+        });
+
+        if (!response.ok) {
+            throw new Error("Round 3 toggle failed.");
+        }
+
+        if (!currentlyActive && window.IcarusCommander && window.IcarusCommander.startTimer) {
+            await window.IcarusCommander.startTimer(3, 20, "ROUND 3: CANSAT DROP SIM");
+        }
+
+        window.location.reload();
+    } catch (err) {
+        console.error("[ICARUS] Round 3 toggle error:", err);
+        alert("Could not activate Round 3. Please try again.");
+    }
+
+    return false;
+}
+
 async function triggerRemoteTimer(roundNum, minutes, title) {
     if (window.IcarusCommander && window.IcarusCommander.startTimer) {
         await window.IcarusCommander.startTimer(roundNum, minutes, title);
