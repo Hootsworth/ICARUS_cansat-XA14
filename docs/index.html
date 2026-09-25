@@ -219,187 +219,42 @@ for r in rows:
             </div>
         </div>
 
-        <!-- SECTION 3: ROUND 3 - ROOT-CAUSE INVESTIGATION QUIZ (FORCE FULLSCREEN) -->
+        <!-- SECTION 3: ROUND 3 - FINALS INVESTIGATION QUIZ (TOP 5 FINALISTS ONLY, FORCE FULLSCREEN) -->
         <div id="stage-r3" style="display: none;">
             <div class="card card-header-accent-red" style="margin-bottom: 2rem;">
-                <div class="eyebrow" style="color: #ef4444;">[PHASE 03 / ACCIDENT INVESTIGATION BOARD]</div>
-                <h1 style="font-size: 1.8rem; color: #ffffff; margin: 0.3rem 0;">Phase 3: Root-Cause Investigation</h1>
+                <div class="eyebrow" style="color: #ef4444;">[PHASE 03 / FINALS INVESTIGATION BOARD]</div>
+                <h1 style="font-size: 1.8rem; color: #ffffff; margin: 0.3rem 0;">Phase 3: Finals Forensic Examination</h1>
                 <p style="color: #a1a1aa; font-size: 0.88rem; line-height: 1.6;">
-                    Answer the official forensic board questions based on the telemetry you analyzed in Phase 2 to conclude why the CanSat rocket crashed (15 Questions, 120 PTS max).
+                    Elite finals investigation for top 5 qualifying stations. Complete your station's unique 7-question forensic analysis challenge (105 PTS max).
                 </p>
             </div>
 
             <!-- Force Fullscreen Pre-start Gate -->
             <div id="r3-prestart-box" class="card" style="text-align: center; padding: 3.5rem 2rem;">
                 <div class="mono" style="font-size: 2.2rem; margin-bottom: 0.5rem;">📋</div>
-                <h2 style="font-size: 1.4rem; margin-bottom: 0.5rem; color: #ffffff;">Investigation Board Examination</h2>
+                <h2 style="font-size: 1.4rem; margin-bottom: 0.5rem; color: #ffffff;">Finals Examination Gate</h2>
                 <p style="color: #a1a1aa; max-width: 540px; margin: 0 auto 1.75rem; font-size: 0.86rem; line-height: 1.6;">
-                    This final forensic exam requires <strong>Forced Fullscreen Mode</strong>.
+                    This finals forensic exam requires <strong>Forced Fullscreen Mode</strong>.
                     Any window defocussing or tab switching will be logged in real-time to the Flight Director.
                 </p>
                 <button type="button" class="btn btn-primary" onclick="startRound3WithFullscreen()" style="padding: 0.9rem 2.75rem; font-size: 0.95rem;">
-                    Enter Fullscreen & Begin Investigation (15 Qs) &rarr;
+                    Enter Fullscreen & Begin Finals (7 Qs) &rarr;
                 </button>
             </div>
 
-            <!-- 15 Questions Form (Shown after entering fullscreen) -->
+            <!-- Dynamic 7 Questions Form (Shown after entering fullscreen) -->
             <form id="r3-quiz-form" style="display: none;" onsubmit="handleRound3Submit(event)">
-                <div class="alert alert-info" style="margin-bottom: 1.5rem; font-size: 0.8rem;">
-                    ● Fullscreen Anti-Cheat Active. Answer all 15 questions based on blackbox telemetry (Max 120 PTS: 8 PTS each).
+                <div class="alert alert-info" style="margin-bottom: 1.5rem; font-size: 0.8rem; display: flex; justify-content: space-between; align-items: center;">
+                    <span>● Fullscreen Anti-Cheat Active. Answer all 7 questions (15 PTS each, Max 105 PTS).</span>
+                    <span id="r3-slot-indicator" class="badge badge-red mono" style="font-weight: 700;">FINALIST SLOT --</span>
                 </div>
 
-                <!-- Q1 -->
-                <div class="quiz-card">
-                    <div class="eyebrow">[APOGEE TIMING / 01]</div>
-                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">At what flight timestamp did the rocket reach its apogee (peak altitude where vertical velocity transitioned to 0.0 m/s)?</div>
-                    <label class="quiz-opt"><input type="radio" name="q1" value="A" required> <span>t = 5,000 ms (5.0s)</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q1" value="B" required> <span>t = 15,000 ms (15.0s)</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q1" value="C" required> <span>t = 25,000 ms (25.0s)</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q1" value="D" required> <span>t = 35,000 ms (35.0s)</span></label>
-                </div>
-
-                <!-- Q2 -->
-                <div class="quiz-card">
-                    <div class="eyebrow">[PEAK ALTITUDE RECORD / 02]</div>
-                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">What was the absolute maximum altitude achieved by the vehicle above launch level recorded by the barometric sensor?</div>
-                    <label class="quiz-opt"><input type="radio" name="q2" value="A" required> <span>983.0 meters AGL</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q2" value="B" required> <span>1,215.0 meters AGL</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q2" value="C" required> <span>1,580.4 meters AGL</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q2" value="D" required> <span>2,430.0 meters AGL</span></label>
-                </div>
-
-                <!-- Q3 -->
-                <div class="quiz-card">
-                    <div class="eyebrow">[LIFTOFF DYNAMICS / 03]</div>
-                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">What was the initial vertical acceleration (Gz) registered by the accelerometer during motor burn at liftoff (t = 0 ms)?</div>
-                    <label class="quiz-opt"><input type="radio" name="q3" value="A" required> <span>+1.00 G</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q3" value="B" required> <span>+3.29 G</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q3" value="C" required> <span>+9.81 G</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q3" value="D" required> <span>+18.40 G</span></label>
-                </div>
-
-                <!-- Q4 -->
-                <div class="quiz-card">
-                    <div class="eyebrow">[FREEFALL CHARACTERISTICS / 04]</div>
-                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">Following apogee during initial unpowered descent (t = 25,000 ms to 34,000 ms), what was the steady freefall vertical velocity before anomaly onset?</div>
-                    <label class="quiz-opt"><input type="radio" name="q4" value="A" required> <span>-9.8 m/s</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q4" value="B" required> <span>-38.0 m/s</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q4" value="C" required> <span>-62.5 m/s</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q4" value="D" required> <span>-95.0 m/s</span></label>
-                </div>
-
-                <!-- Q5 -->
-                <div class="quiz-card">
-                    <div class="eyebrow">[ANOMALY ONSET / 05]</div>
-                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">At what timestamp in the blackbox telemetry record does the flight status flag first transition to ANOMALY_EPS_VOLTAGE_SAG_BROWNOUT?</div>
-                    <label class="quiz-opt"><input type="radio" name="q5" value="A" required> <span>t = 15,000 ms</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q5" value="B" required> <span>t = 25,000 ms</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q5" value="C" required> <span>t = 35,000 ms (35.0s)</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q5" value="D" required> <span>t = 49,500 ms</span></label>
-                </div>
-
-                <!-- Q6 -->
-                <div class="quiz-card">
-                    <div class="eyebrow">[BUS VOLTAGE COLLAPSE / 06]</div>
-                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">At the onset of the anomaly (t = 35,000 ms), how low did the battery bus voltage plunge from its previous nominal 3.77V level?</div>
-                    <label class="quiz-opt"><input type="radio" name="q6" value="A" required> <span>Dropped to 3.50 V</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q6" value="B" required> <span>Dropped to 2.39 V</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q6" value="C" required> <span>Dropped to 1.20 V</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q6" value="D" required> <span>Dropped to 0.00 V</span></label>
-                </div>
-
-                <!-- Q7 -->
-                <div class="quiz-card">
-                    <div class="eyebrow">[CURRENT CONSUMPTION SURGE / 07]</div>
-                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">What current draw surge directly coincided with the severe voltage collapse between t = 35,000 ms and 36,500 ms?</div>
-                    <label class="quiz-opt"><input type="radio" name="q7" value="A" required> <span>Current remained normal at 140 mA</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q7" value="B" required> <span>Current surged from ~140 mA up to ~700 mA (0.70 A)</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q7" value="C" required> <span>Current dropped to 0 mA due to open circuit</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q7" value="D" required> <span>Current surged past 10,000 mA</span></label>
-                </div>
-
-                <!-- Q8 -->
-                <div class="quiz-card">
-                    <div class="eyebrow">[DEPLOYMENT ALTITUDE CRITERIA / 08]</div>
-                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">According to flight operational parameters, at what target altitude was the recovery parachute deployment squib programmed to trigger?</div>
-                    <label class="quiz-opt"><input type="radio" name="q8" value="A" required> <span>1,000 meters AGL</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q8" value="B" required> <span>400 meters AGL</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q8" value="C" required> <span>200 meters AGL</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q8" value="D" required> <span>50 meters AGL</span></label>
-                </div>
-
-                <!-- Q9 -->
-                <div class="quiz-card">
-                    <div class="eyebrow">[RECOVERY ACTUATION ROOT CAUSE / 09]</div>
-                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">Why did the parachute deployment squib fail to fire when the CanSat descended through the 400m threshold (t &approx; 39,000 ms)?</div>
-                    <label class="quiz-opt"><input type="radio" name="q9" value="A" required> <span>The parachute canopy was torn by high wind shear</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q9" value="B" required> <span>Severe bus voltage sag below 2.4V caused an MCU brownout reset / power lockout, suppressing the squib firing routine</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q9" value="C" required> <span>The barometric sensor disconnected from the I2C bus</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q9" value="D" required> <span>The flight computer assumed the payload had already landed</span></label>
-                </div>
-
-                <!-- Q10 -->
-                <div class="quiz-card">
-                    <div class="eyebrow">[POST-ANOMALY TERMINAL VELOCITY / 10]</div>
-                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">Following recovery failure at t = 42,500 ms (RECOVERY_DEPLOY_FAILED_TERMINAL_DESCENT), what was the uncontrolled terminal descent velocity?</div>
-                    <label class="quiz-opt"><input type="radio" name="q10" value="A" required> <span>-12.0 m/s</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q10" value="B" required> <span>-24.5 m/s</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q10" value="C" required> <span>-43.5 to -44.8 m/s (~160 km/h)</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q10" value="D" required> <span>-98.0 m/s</span></label>
-                </div>
-
-                <!-- Q11 -->
-                <div class="quiz-card">
-                    <div class="eyebrow">[ATTITUDE & STABILITY / 11]</div>
-                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">What do the gyroscope angular rate readings (gyro_x_dps, gyro_y_dps) reveal about payload attitude between 42,500 ms and 60,000 ms?</div>
-                    <label class="quiz-opt"><input type="radio" name="q11" value="A" required> <span>Stable upright orientation with near-zero angular motion</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q11" value="B" required> <span>Severe chaotic tumbling with rotational rates oscillating wildly up to &plusmn;47&deg;/s</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q11" value="C" required> <span>Steady single-axis roll stabilization at 2&deg;/s</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q11" value="D" required> <span>Dead sensor output reporting constant zero</span></label>
-                </div>
-
-                <!-- Q12 -->
-                <div class="quiz-card">
-                    <div class="eyebrow">[GROUND IMPACT TIMESTAMPS / 12]</div>
-                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">At what exact timestamp did the flight computer register ground collision, changing status to GROUND_IMPACT_TERMINATED?</div>
-                    <label class="quiz-opt"><input type="radio" name="q12" value="A" required> <span>t = 35,000 ms</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q12" value="B" required> <span>t = 49,500 ms</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q12" value="C" required> <span>t = 61,500 ms (61.5s)</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q12" value="D" required> <span>t = 75,000 ms</span></label>
-                </div>
-
-                <!-- Q13 -->
-                <div class="quiz-card">
-                    <div class="eyebrow">[IMPACT DECELERATION FORCE / 13]</div>
-                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">What maximum impact deceleration shock was recorded on the vertical Z-axis accelerometer (accel_z_g) upon collision?</div>
-                    <label class="quiz-opt"><input type="radio" name="q13" value="A" required> <span>-3.29 G</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q13" value="B" required> <span>-9.81 G</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q13" value="C" required> <span>-22.40 G</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q13" value="D" required> <span>-55.00 G</span></label>
-                </div>
-
-                <!-- Q14 -->
-                <div class="quiz-card">
-                    <div class="eyebrow">[ROOT CAUSE CLASSIFICATION / 14]</div>
-                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">Based on the comprehensive telemetry investigation, what was the primary root cause that resulted in the total loss of the CanSat?</div>
-                    <label class="quiz-opt"><input type="radio" name="q14" value="A" required> <span>Parachute canopy structural rip caused by aerodynamic buffeting</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q14" value="B" required> <span>Primary EPS battery voltage collapse under high current load causing MCU brownout and recovery deployment lockout</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q14" value="C" required> <span>Barometer calibration error giving false positive ground detection</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q14" value="D" required> <span>RF radio transmitter frequency drift disabling ground control uplink</span></label>
-                </div>
-
-                <!-- Q15 -->
-                <div class="quiz-card">
-                    <div class="eyebrow">[CORRECTIVE ACTION MANDATE / 15]</div>
-                    <div style="font-weight: 600; margin: 0.4rem 0 0.75rem; font-size: 0.95rem;">To prevent this specific catastrophic failure mode on future missions, what hardware modification is strictly required?</div>
-                    <label class="quiz-opt"><input type="radio" name="q15" value="A" required> <span>Remove the parachute recovery subsystem to save payload weight</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q15" value="B" required> <span>Electrically isolate pyrotechnic squibs / high-current RF stages from MCU logic using separate regulators and supercapacitor buffering</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q15" value="C" required> <span>Reduce telemetry logging frequency from 2 Hz down to 0.1 Hz</span></label>
-                    <label class="quiz-opt"><input type="radio" name="q15" value="D" required> <span>Replace the microcontroller with an analog timer circuit</span></label>
+                <div id="r3-questions-container">
+                    <!-- Dynamic question cards injected by renderFinalsQuiz() -->
                 </div>
 
                 <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.95rem; font-size: 0.95rem; margin-top: 1rem;">
-                    Submit Root-Cause Investigation Findings (15/15) &rarr;
+                    Submit Finals Investigation Findings (7/7) &rarr;
                 </button>
             </form>
         </div>
@@ -443,6 +298,7 @@ for r in rows:
     <script src="./js/github_pages_state.js"></script>
     <script src="./js/gonogo_game.js"></script>
     <script src="./js/python_runner.js"></script>
+    <script src="./js/finals_quiz.js"></script>
     <script>
     let activeGoNoGo = null;
     let pythonRunnerInstance = null;
@@ -542,7 +398,19 @@ for r in rows:
             if (team.r3 && team.r3.status === "submitted") {
                 document.getElementById("stage-concluded").style.display = "block";
             } else {
-                document.getElementById("stage-r3").style.display = "block";
+                const slotNum = window.IcarusEngine.getFinalistSlot(user.teamId);
+                if (!slotNum) {
+                    // Not in the top 5 finalists
+                    showWaitingScreen(
+                        "Mission Complete: Evaluation In Progress",
+                        "Phases 1 & 2 verified and submitted. Standby while the Flight Director conducts the Stage 3 Finals with the top 5 qualifying stations.",
+                        "MISSION LOGGED / STANDBY"
+                    );
+                } else {
+                    // Station is a finalist
+                    document.getElementById("stage-r3").style.display = "block";
+                    renderFinalsQuiz(slotNum);
+                }
             }
         }
     }
@@ -659,8 +527,64 @@ for r in rows:
     }
 
     // -------------------------------------------------------------------------
-    // Round 3: Root-Cause Investigation Quiz (Forced Fullscreen)
+    // Round 3: Finals Forensic Examination Quiz (Forced Fullscreen)
     // -------------------------------------------------------------------------
+    function renderFinalsQuiz(slotNum) {
+        const container = document.getElementById("r3-questions-container");
+        const slotBadge = document.getElementById("r3-slot-indicator");
+        if (!container) return;
+
+        if (slotBadge) {
+            slotBadge.textContent = `FINALIST SLOT 0${slotNum}`;
+        }
+
+        const slotKey = `slot${slotNum}`;
+        const questions = window.ICARUS_FINALS_QUESTIONS && window.ICARUS_FINALS_QUESTIONS[slotKey];
+        if (!questions) {
+            container.innerHTML = `<div class="alert alert-danger">Finals questions bank for slot ${slotNum} not found. Please contact Flight Director.</div>`;
+            return;
+        }
+
+        let html = "";
+        questions.forEach((q, idx) => {
+            const qNum = idx + 1;
+            // Format question text, supporting markdown-style code blocks
+            let formattedQ = q.question.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            formattedQ = formattedQ.replace(/```python\n([\s\S]*?)```/g, '<pre style="background:#09090b; padding:0.75rem 1rem; border-radius:8px; border:1px solid #27272a; color:#38bdf8; font-family:var(--font-mono); font-size:0.85rem; margin:0.5rem 0; overflow-x:auto;"><code>$1</code></pre>');
+            formattedQ = formattedQ.replace(/`([^`]+)`/g, '<code class="mono" style="background:#18181b; padding:2px 6px; border-radius:4px; color:#38bdf8;">$1</code>');
+            formattedQ = formattedQ.replace(/\n\n/g, '<br><br>').replace(/\n/g, '<br>');
+
+            html += `
+                <div class="quiz-card" style="margin-bottom: 1.25rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <span class="eyebrow" style="color: #ef4444;">[QUESTION 0${qNum} / 07]</span>
+                        <span class="badge mono" style="font-size: 0.68rem; background: #18181b; color: #a1a1aa; border: 1px solid #27272a;">${q.category}</span>
+                    </div>
+                    <div style="font-weight: 600; margin-bottom: 0.85rem; font-size: 0.95rem; color: #ffffff; line-height: 1.5;">
+                        ${formattedQ}
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            `;
+
+            q.options.forEach(opt => {
+                const optText = opt.text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                html += `
+                    <label class="quiz-opt" style="cursor: pointer;">
+                        <input type="radio" name="${q.id}" value="${opt.key}" required>
+                        <span style="color: #e4e4e7;"><strong class="mono" style="color:#ffffff;">${opt.key}.</strong> ${optText}</span>
+                    </label>
+                `;
+            });
+
+            html += `
+                    </div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+    }
+
     function startRound3WithFullscreen() {
         requestFullscreenMode();
         document.getElementById("r3-prestart-box").style.display = "none";

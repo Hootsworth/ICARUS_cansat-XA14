@@ -170,9 +170,9 @@
                         <div style="font-weight: 700; color: #ffffff;">Stage 2: Telemetry</div>
                         <div style="font-size: 0.72rem; color: #a1a1aa; margin-top: 2px;">Blackbox Python Crash IDE (25m)</div>
                     </button>
-                    <button class="btn btn-secondary" onclick="switchMissionStage(3, 20, 'ROUND 3: ROOT-CAUSE INVESTIGATION')" style="text-align: left; padding: 0.85rem 1rem; border-radius: 12px;">
-                        <div style="font-weight: 700; color: #ffffff;">Stage 3: Forensics</div>
-                        <div style="font-size: 0.72rem; color: #a1a1aa; margin-top: 2px;">Accident Board (15 Qs / 20m)</div>
+                    <button class="btn btn-secondary" onclick="switchMissionStage(3, 10, 'ROUND 3: FINALS EXAMINATION (TOP 5)')" style="text-align: left; padding: 0.85rem 1rem; border-radius: 12px;">
+                        <div style="font-weight: 700; color: #ffffff;">Stage 3: Finals Quiz</div>
+                        <div style="font-size: 0.72rem; color: #a1a1aa; margin-top: 2px;">Top 5 Finalists (7 Qs / 10m)</div>
                     </button>
                 </div>
             </div>
@@ -202,6 +202,60 @@
                     <div style="margin-top: 0.4rem;">
                         <a href="javascript:void(0)" onclick="clearBroadcast()" class="mono" style="font-size: 0.72rem; color: #71717a;">[Clear Active Broadcast]</a>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TOP 5 FINALIST TEAMS SELECTOR (FOR STAGE 3 FINALS QUIZ) -->
+        <div class="card card-header-accent-red" style="margin-bottom: 2rem;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
+                <div>
+                    <div class="eyebrow" style="color: #ef4444;">⭐ [STAGE 3 QUALIFICATION]</div>
+                    <h2 style="font-size: 1.3rem; margin: 0.2rem 0; color: #ffffff;">Top 5 Finalist Teams Selector</h2>
+                    <p style="color: #a1a1aa; font-size: 0.82rem;">
+                        Select the 5 top-performing stations to advance into the Stage 3 Finals. Each finalist receives a unique question set (Slot 1–5).
+                    </p>
+                </div>
+                <div id="finalists-status-notice" class="badge badge-green mono" style="display: none; padding: 0.4rem 0.8rem; font-size: 0.75rem;">
+                </div>
+            </div>
+
+            <div style="background: #18181b; padding: 1.25rem; border: 1px solid #27272a; border-radius: 12px; margin-bottom: 1rem;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; margin-bottom: 1rem;">
+                    <div>
+                        <label class="form-label" style="font-size: 0.75rem; color: #38bdf8;">Slot 1 (Finalist #1)</label>
+                        <select id="finalist-slot-1" class="form-control mono" style="font-size: 0.8rem;"></select>
+                    </div>
+                    <div>
+                        <label class="form-label" style="font-size: 0.75rem; color: #38bdf8;">Slot 2 (Finalist #2)</label>
+                        <select id="finalist-slot-2" class="form-control mono" style="font-size: 0.8rem;"></select>
+                    </div>
+                    <div>
+                        <label class="form-label" style="font-size: 0.75rem; color: #38bdf8;">Slot 3 (Finalist #3)</label>
+                        <select id="finalist-slot-3" class="form-control mono" style="font-size: 0.8rem;"></select>
+                    </div>
+                    <div>
+                        <label class="form-label" style="font-size: 0.75rem; color: #38bdf8;">Slot 4 (Finalist #4)</label>
+                        <select id="finalist-slot-4" class="form-control mono" style="font-size: 0.8rem;"></select>
+                    </div>
+                    <div>
+                        <label class="form-label" style="font-size: 0.75rem; color: #38bdf8;">Slot 5 (Finalist #5)</label>
+                        <select id="finalist-slot-5" class="form-control mono" style="font-size: 0.8rem;"></select>
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; border-top: 1px solid #27272a; padding-top: 0.75rem;">
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <button type="button" class="btn btn-secondary" onclick="autoSelectTop5Finalists()" style="font-size: 0.78rem; padding: 0.5rem 1rem;">
+                            ⚡ Auto-Pick Top 5 by Score
+                        </button>
+                        <span id="current-finalists-summary" class="mono" style="font-size: 0.75rem; color: #a1a1aa;">
+                            Current: None locked
+                        </span>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="lockInFinalists()" style="font-size: 0.78rem; padding: 0.55rem 1.4rem; background: #ef4444; border-color: #dc2626;">
+                        ★ Lock In & Broadcast Finalists &rarr;
+                    </button>
                 </div>
             </div>
         </div>
@@ -344,7 +398,7 @@
                         <th>License Key</th>
                         <th>R1: Launch Poll<br><span style="font-size: 0.7rem; font-weight: 400; color: #71717a;">Max 100 PTS</span></th>
                         <th>R2: Telemetry<br><span style="font-size: 0.7rem; font-weight: 400; color: #71717a;">Max 50 PTS</span></th>
-                        <th>R3: Forensics<br><span style="font-size: 0.7rem; font-weight: 400; color: #71717a;">15 Qs (120 PTS)</span></th>
+                        <th>R3: Finals Quiz<br><span style="font-size: 0.7rem; font-weight: 400; color: #71717a;">Top 5 (105 PTS)</span></th>
                         <th style="background: #18181b; font-weight: 800; color: #ffffff;">Grand Total</th>
                         <th style="text-align: right; width: 140px;">Stage Retake</th>
                     </tr>
@@ -374,6 +428,7 @@
             consoleContainer.style.display = "block";
             updateGlobalRoundDisplay();
             renderLicenseKeys();
+            initFinalistSelectors();
             renderAdminStandings();
             renderSecurityFeed();
         }
@@ -470,6 +525,94 @@
         }
     }
 
+    // -------------------------------------------------------------------------
+    // Top 5 Finalists Management
+    // -------------------------------------------------------------------------
+    function initFinalistSelectors() {
+        const teams = window.IcarusEngine.getAllTeamsOverview();
+        const currentFinalists = window.IcarusEngine.getFinalists();
+
+        for (let slot = 1; slot <= 5; slot++) {
+            const selectEl = document.getElementById(`finalist-slot-${slot}`);
+            if (!selectEl) continue;
+
+            const existingVal = selectEl.value;
+            selectEl.innerHTML = `<option value="">-- Choose Station --</option>`;
+            teams.sort((a, b) => a.team.id - b.team.id).forEach(item => {
+                const opt = document.createElement("option");
+                opt.value = item.team.id;
+                opt.textContent = `Station 0${item.team.id > 9 ? item.team.id : '0' + item.team.id} — ${item.team.name} (${item.grand_total} PTS)`;
+                selectEl.appendChild(opt);
+            });
+
+            if (currentFinalists[slot - 1]) {
+                selectEl.value = currentFinalists[slot - 1];
+            } else if (existingVal) {
+                selectEl.value = existingVal;
+            }
+        }
+        updateFinalistAdminUI();
+    }
+
+    function updateFinalistAdminUI() {
+        const currentFinalists = window.IcarusEngine.getFinalists();
+        const summaryEl = document.getElementById("current-finalists-summary");
+        if (!summaryEl) return;
+
+        if (!currentFinalists || currentFinalists.length === 0) {
+            summaryEl.innerHTML = `<span style="color:#71717a;">Current: No finalists locked</span>`;
+            return;
+        }
+
+        const teamNames = currentFinalists.map((tid, idx) => {
+            const t = window.IcarusEngine.getTeamData(tid);
+            return `<span class="badge badge-active mono" style="font-size:0.7rem; background:#18181b; color:#ffffff; border:1px solid #3f3f46;">Slot 0${idx+1}: Stn ${tid} (${t.name})</span>`;
+        }).join(" ");
+
+        summaryEl.innerHTML = `Active Finalists: ${teamNames}`;
+    }
+
+    function autoSelectTop5Finalists() {
+        const teams = window.IcarusEngine.getAllTeamsOverview();
+        // Sort descending by grand total
+        const sorted = [...teams].sort((a, b) => b.grand_total - a.grand_total);
+        for (let slot = 1; slot <= 5; slot++) {
+            const selectEl = document.getElementById(`finalist-slot-${slot}`);
+            if (selectEl && sorted[slot - 1]) {
+                selectEl.value = sorted[slot - 1].team.id;
+            }
+        }
+    }
+
+    function lockInFinalists() {
+        const selected = [];
+        for (let slot = 1; slot <= 5; slot++) {
+            const selectEl = document.getElementById(`finalist-slot-${slot}`);
+            const val = selectEl ? parseInt(selectEl.value) : null;
+            if (!val || isNaN(val)) {
+                alert(`Please select a station for Slot ${slot}. All 5 slots must be filled.`);
+                return;
+            }
+            if (selected.includes(val)) {
+                alert(`Duplicate selection detected: Station ${val} is chosen more than once. Each slot must be a unique station.`);
+                return;
+            }
+            selected.push(val);
+        }
+
+        window.IcarusEngine.setFinalists(selected);
+        updateFinalistAdminUI();
+
+        const notice = document.getElementById("finalists-status-notice");
+        if (notice) {
+            notice.textContent = `✓ 5 Finalists Locked: Stations [${selected.join(", ")}]`;
+            notice.style.display = "inline-block";
+            setTimeout(() => { notice.style.display = "none"; }, 5000);
+        }
+
+        renderAdminStandings();
+    }
+
     async function switchMissionStage(stageNum, minutes, title) {
         window.IcarusEngine.setGlobalRound(stageNum);
         updateGlobalRoundDisplay();
@@ -554,10 +697,14 @@
                 ? `<span style="font-weight:700; color:#38bdf8;">+${item.r2_pts} PTS</span>`
                 : `<span style="color:#71717a;">--</span>`;
 
-            // R3 string (Forensics Quiz 15 Qs)
-            const r3Str = item.r3 && item.r3.status === 'submitted'
-                ? `<span style="font-weight:700; color:#ffffff;">+${item.r3_pts} PTS</span>`
-                : `<span style="color:#71717a;">--</span>`;
+            // R3 string (Finals Quiz — Top 5 Finalists)
+            const finalistSlot = window.IcarusEngine.getFinalistSlot(item.team.id);
+            let r3Str = `<span style="color:#71717a;">--</span>`;
+            if (item.r3 && item.r3.status === 'submitted') {
+                r3Str = `<span style="font-weight:700; color:#ef4444;">+${item.r3_pts} PTS</span> <span style="font-size:0.7rem; color:#a1a1aa;">(Slot 0${finalistSlot || '?'})</span>`;
+            } else if (finalistSlot) {
+                r3Str = `<span class="badge badge-active mono" style="font-size:0.68rem; background:rgba(239,68,68,0.15); color:#f87171; border-color:rgba(239,68,68,0.3);">FINALIST 0${finalistSlot}</span>`;
+            }
 
             tr.innerHTML = `
                 <td style="text-align: center; font-weight: 700;" class="mono">${index + 1}</td>

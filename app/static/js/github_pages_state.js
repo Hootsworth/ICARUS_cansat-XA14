@@ -274,35 +274,51 @@ class IcarusGitHubPagesEngine {
     }
 
     // -------------------------------------------------------------------------
-    // Round 3: Root Cause Investigation Quiz Evaluation (15 Questions)
+    // Round 3: Finals Quiz Evaluation (7 Questions — Top 5 Finalists Only)
     // -------------------------------------------------------------------------
+    setFinalists(teamIds) {
+        // teamIds: array of up to 5 team IDs e.g. [3, 7, 1, 9, 5]
+        localStorage.setItem("ICARUS_FINALISTS", JSON.stringify(teamIds));
+        // Sync to Firestore
+        if (window.IcarusCommander && window.IcarusCommander.syncFinalists) {
+            window.IcarusCommander.syncFinalists(teamIds);
+        }
+    }
+
+    getFinalists() {
+        try {
+            return JSON.parse(localStorage.getItem("ICARUS_FINALISTS")) || [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    getFinalistSlot(teamId) {
+        const finalists = this.getFinalists();
+        const idx = finalists.indexOf(parseInt(teamId));
+        return idx >= 0 ? idx + 1 : null; // 1-indexed slot, null if not a finalist
+    }
+
     submitRound3Quiz(answers) {
         const team = this.getTeamData();
-        const rubric = {
-            q1: "B",  // 15,000 ms (15.0s) Apogee timestamp
-            q2: "B",  // 1,215.0 m peak altitude
-            q3: "B",  // 3.29 G liftoff acceleration
-            q4: "B",  // -38.0 m/s nominal freefall velocity
-            q5: "C",  // 35,000 ms (35.0s) EPS voltage sag anomaly onset
-            q6: "B",  // 2.39 V voltage sag level
-            q7: "B",  // ~700 mA current surge
-            q8: "B",  // 400 m deployment threshold altitude
-            q9: "B",  // MCU brownout reset prevented squib firing
-            q10: "C", // -43.5 to -44.8 m/s terminal descent velocity
-            q11: "B", // Violent tumbling with gyro rates swinging to ±47 deg/s
-            q12: "C", // 61,500 ms (61.5s) ground impact timestamp
-            q13: "C", // -22.40 G peak impact deceleration shock
-            q14: "B", // Primary EPS voltage collapse under high load causing recovery failure
-            q15: "B"  // Electrically isolate pyrotechnic/RF circuitry from MCU logic
-        };
-
-        let correct = 0;
-        const total = 15;
-        for (const [k, v] of Object.entries(rubric)) {
-            if (answers[k] && answers[k] === v) correct++;
+        const slotNum = this.getFinalistSlot(team.id);
+        if (!slotNum) {
+            return { success: false, message: "Your station is not selected as a finalist." };
         }
 
-        const score = correct * 8; // 15 * 8 = 120 PTS max
+        const slotKey = `slot${slotNum}`;
+        const questions = window.ICARUS_FINALS_QUESTIONS && window.ICARUS_FINALS_QUESTIONS[slotKey];
+        if (!questions) {
+            return { success: false, message: "Finals question set not loaded." };
+        }
+
+        let correct = 0;
+        const total = questions.length; // 7
+        questions.forEach(q => {
+            if (answers[q.id] && answers[q.id] === q.answer) correct++;
+        });
+
+        const score = correct * 15; // 7 × 15 = 105 PTS max
         team.r3.status = "submitted";
         team.r3.score = score;
         team.r3.answers = answers;
@@ -314,7 +330,7 @@ class IcarusGitHubPagesEngine {
             score: score,
             correct: correct,
             total: total,
-            message: `Root Cause Investigation evaluated: ${correct}/${total} findings correct (+${score} PTS).`
+            message: `Finals Investigation evaluated: ${correct}/${total} findings correct (+${score} PTS).`
         };
     }
 

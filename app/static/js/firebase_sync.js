@@ -67,6 +67,21 @@
             }
         }
 
+        // Auto sync finalists list to local storage
+        if (state.finalists && Array.isArray(state.finalists)) {
+            const currentFinalists = localStorage.getItem("ICARUS_FINALISTS");
+            const newFinalists = JSON.stringify(state.finalists);
+            if (currentFinalists !== newFinalists) {
+                localStorage.setItem("ICARUS_FINALISTS", newFinalists);
+                if (typeof renderCurrentStage === "function") {
+                    renderCurrentStage();
+                }
+                if (typeof updateFinalistAdminUI === "function") {
+                    updateFinalistAdminUI();
+                }
+            }
+        }
+
         // 1. Handle Announcement Banner
         if (state.announcement && state.announcement.trim()) {
             if (announcementBanner) {
@@ -251,6 +266,17 @@
                     try {
                         await setDoc(doc(db, "icarus_security_logs", String(entry.id)), entry);
                     } catch (e) {}
+                },
+
+                async syncFinalists(finalists) {
+                    try {
+                        await setDoc(doc(db, "icarus_competition", "state"), {
+                            finalists: finalists,
+                            updated_at: new Date().toISOString()
+                        }, { merge: true });
+                    } catch (e) {
+                        console.warn("[Firebase syncFinalists error]", e);
+                    }
                 },
 
                 async syncTeamData(teamData, teamId) {
