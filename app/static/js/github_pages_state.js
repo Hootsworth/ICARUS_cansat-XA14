@@ -347,6 +347,16 @@ class IcarusGitHubPagesEngine {
         };
     }
 
+    resetAllTeams() {
+        for (let i = 1; i <= 11; i++) {
+            this.resetTeamRound(i, "all");
+        }
+        return {
+            success: true,
+            message: "All 11 stations reset — every round score cleared to 0."
+        };
+    }
+
     unlockTeamRound(teamId, roundNum) {
         const tid = parseInt(teamId);
         const team = this.getTeamData(tid);
